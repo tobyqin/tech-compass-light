@@ -1,0 +1,152 @@
+.edit-solution {
+  padding: 1rem;
+  position: relative;
+  min-height: 100%;
+
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .section-card {
+    background: var(--surface-card);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .section-header {
+      margin-bottom: 1.5rem;
+
+      h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        i {
+          color: var(--primary-color);
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-field {
+      flex: 1;
+
+      &.one-third {
+        flex: 0 0 calc(33.33% - 0.67rem);
+      }
+
+      &.two-thirds {
+        flex: 0 0 calc(66.67% - 0.33rem);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 500;
+
+        .admin-note {
+          font-size: 0.875rem;
+          color: var(--text-color-secondary);
+          font-weight: normal;
+        }
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--surface-card);
+    border-radius: var(--border-radius);
+    position: sticky;
+    bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .messages-container {
+      flex: 1;
+
+      ::ng-deep .p-messages {
+        margin: 0;
+        
+        .p-message {
+          margin: 0;
+          padding: 0.5rem 1rem;
+        }
+      }
+    }
+
+    .buttons-container {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  // PrimeNG component style overrides
+  ::ng-deep {
+    .messages-bottom {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      width: auto;
+      max-width: 90%;
+      z-index: 1000;
+
+      .p-message {
+        margin: 0;
+      }
+    }
+
+    .p-inputtext,
+    .p-dropdown,
+    .p-inputnumber,
+    .p-chips {
+      width: 100%;
+    }
+
+    .p-chips {
+      .p-chips-multiple-container {
+        width: 100%;
+      }
+    }
+
+    .p-button {
+      &.p-button-icon-only {
+        width: 3rem;
+      }
+    }
+
+    .p-inputtextarea {
+      resize: vertical;
+    }
+
+    // Required field marker
+    .p-float-label label.required::after {
+      content: "*";
+      color: #e24c4c;
+      margin-left: 0.25rem;
+    }
+  }
+} 

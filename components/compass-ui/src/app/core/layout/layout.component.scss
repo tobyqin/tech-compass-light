@@ -1,0 +1,151 @@
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .layout-header {
+    background: var(--surface-card);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+
+    .header-container {
+      width: 100%;
+      padding: 0.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex: 1;
+
+        .logo {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          text-decoration: none;
+          color: var(--text-color);
+          min-width: max-content;
+
+          .logo-icon {
+            height: 32px;
+            width: auto;
+          }
+
+          span {
+            font-size: 1.25rem;
+            font-weight: 600;
+          }
+        }
+
+        ::ng-deep .p-menubar {
+          background: transparent;
+          border: none;
+          padding: 0;
+          flex: 1;
+
+          .p-menubar-root-list {
+            gap: 1rem;
+          }
+        }
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .user-menu-wrapper {
+          position: relative;
+        }
+      }
+    }
+  }
+
+  .layout-main {
+    flex: 1;
+    background: var(--surface-ground);
+
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+  }
+
+  .layout-footer {
+    background: var(--surface-dark-ground);
+    border-top: 1px solid var(--surface-border);
+    padding: 2rem 0;
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+
+        .about-text {
+          flex: 1;
+          color: var(--text-dark-color);
+          margin: 0;
+          padding: 1rem 0;
+          display: flex;
+          align-items: center;
+
+          ::ng-deep {
+            p {
+              margin: 0;
+            }
+            
+            a {
+              color: var(--primary-color);
+              text-decoration: none;
+              font-weight: 400;
+
+              &:hover {
+                color: var(--primary-600);
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+
+        .quick-links {
+          list-style: none;
+          padding: 1rem 0;
+          margin: 0;
+          display: flex;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          align-items: center;
+
+          li {
+            color: var(--text-dark-color);
+            margin: 0;
+
+            a {
+              color: var(--secondary-color);
+              text-decoration: none;
+              white-space: nowrap;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

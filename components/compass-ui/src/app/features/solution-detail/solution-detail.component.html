@@ -1,0 +1,348 @@
+<div class="solution-detail-container" *ngIf="solution$ | async as solution">
+  <div class="breadcrumb">
+    <p-breadcrumb [model]="[
+      { label: 'Home', routerLink: '/' },
+      { label: 'Solution Catalog', routerLink: '/solutions' },
+      { label: solution.name }
+    ]"></p-breadcrumb>
+  </div>
+
+  <div class="solution-header">
+    <div class="solution-logo">
+      <img [src]="solution.logo || '/assets/default-solution-logo.svg'" [alt]="solution.name">
+    </div>
+    <div class="solution-info">
+      <h1>{{ solution.name }}</h1>
+      <div class="tags">
+        <p-tag *ngFor="let tag of solution.tags" [value]="tag" severity="contrast"></p-tag>
+      </div>
+      <div class="rating-summary">
+        <p-rating [ngModel]="solution.rating" [readonly]="true" [cancel]="false"></p-rating>
+        <span class="rating-count">({{ solution.rating_count }} ratings)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="solution-content">
+    <div class="content-main">
+      <p-tabView [(activeIndex)]="activeTab">
+        <p-tabPanel header="Overview">
+          <div class="overview-content">
+            <div class="brief-section">
+              <h3>Brief</h3>
+              <p class="brief-text">{{ solution.brief }}</p>
+            </div>
+            
+            <div class="pros-cons">
+              <div class="pros">
+                <h3>Pros</h3>
+                <ul>
+                  <li *ngFor="let pro of solution.pros">{{ pro }}</li>
+                </ul>
+              </div>
+              <div class="cons">
+                <h3>Cons</h3>
+                <ul>
+                  <li *ngFor="let con of solution.cons">{{ con }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="description-section">
+              <h3>Description</h3>
+              <markdown [data]="solution.description"></markdown>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Comments ({{ totalOfficialComments + totalUserComments }})">
+          <div class="comments-section">
+            <div class="new-comment">
+              <h3>Add a Comment</h3>
+              <div *ngIf="isLoggedIn; else loginToComment">
+                <textarea pInputTextarea [(ngModel)]="newComment" rows="3" placeholder="Write your comment here..."></textarea>
+                <div class="adopted-user-checkbox">
+                  <p-checkbox [(ngModel)]="newCommentIsAdopted" [binary]="true" label="I am an adopted user for this tech solution."></p-checkbox>
+                </div>
+                <p-button label="Submit" (click)="submitComment(solution$.value?.slug || '')" [disabled]="!newComment.trim()" styleClass="p-button-primary p-button-rounded"></p-button>
+              </div>
+              <ng-template #loginToComment>
+                <p>Please <a href="javascript:void(0)" (click)="showLoginDialog()">sign in</a> to add a comment.</p>
+              </ng-template>
+            </div>
+
+            <!-- Official Comments Section -->
+            <div class="comments-list">
+              <h3>Official Reviews ({{ totalOfficialComments }})</h3>
+              <div class="comments-container">
+                <div *ngFor="let comment of officialComments$.value" class="comment">
+                  <div class="comment-header">
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        <img [src]="environment.apiUrl + '/users/' + comment.username + '/avatar'" [alt]="comment.full_name">
+                      </div>
+                      <div class="user-details">
+                        <span class="username">
+                          {{ comment.full_name }}
+                          <span *ngIf="comment.is_adopted_user" class="adopted-badge">(adopted user)</span>
+                          <p-tag value="OFFICIAL" severity="success" [rounded]="true"></p-tag>
+                        </span>
+                      </div>
+                    </div>
+                    <span class="date">{{ comment.created_at | date }}</span>
+                  </div>
+                  <div class="comment-content">{{ comment.content }}</div>
+                </div>
+                <div *ngIf="!loadingOfficialComments && officialComments$.value.length === 0" class="no-comments-message">
+                   No official reviews yet.
+                </div>
+                <p-progressSpinner *ngIf="loadingOfficialComments"></p-progressSpinner>
+              </div>
+            </div>
+
+            <!-- User Comments Section -->
+            <div class="comments-list">
+              <h3>User Reviews ({{ totalUserComments }})</h3>
+              <div class="comments-container">
+                <div *ngFor="let comment of userComments$.value" class="comment">
+                  <div class="comment-header">
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        <img [src]="environment.apiUrl + '/users/' + comment.username + '/avatar'" [alt]="comment.full_name">
+                      </div>
+                      <div class="user-details">
+                        <span class="username">
+                          {{ comment.full_name }}
+                          <span *ngIf="comment.is_adopted_user" class="adopted-badge">(adopted user)</span>
+                        </span>
+                      </div>
+                    </div>
+                    <span class="date">{{ comment.created_at | date }}</span>
+                  </div>
+                  <div class="comment-content">{{ comment.content }}</div>
+                </div>
+                <div *ngIf="!loadingUserComments && userComments$.value.length === 0" class="no-comments-message">
+                  No user reviews yet. Be the first one to share your experience!
+                </div>
+                <div class="load-more-container" *ngIf="hasMoreUserComments">
+                  <p-button 
+                    label="Load More User Comments" 
+                    [loading]="loadingUserComments"
+                    styleClass="p-button-secondary"
+                    (onClick)="loadComments(solution$.value?.slug || '', true)">
+                  </p-button>
+                </div>
+                <p-progressSpinner *ngIf="loadingUserComments"></p-progressSpinner>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Ratings ({{ totalRatings }})">
+          <div class="ratings-section">
+            <div class="new-rating">
+              <h3>Add Your Rating</h3>
+              <div *ngIf="isLoggedIn; else loginToRate">
+                <div class="rating-input">
+                  <p-rating [(ngModel)]="newRating.score" [cancel]="false"></p-rating>
+                  <textarea pInputTextarea [(ngModel)]="newRating.comment" rows="3" placeholder="Add a comment (optional)"></textarea>
+                  <div class="adopted-user-checkbox">
+                    <p-checkbox [(ngModel)]="newRating.is_adopted_user" [binary]="true" label="I am an adopted user for this tech solution."></p-checkbox>
+                  </div>
+                </div>
+                <p-button label="Submit" (click)="submitRating(solution$.value?.slug || '')" [disabled]="newRating.score === 0" styleClass="p-button-primary p-button-rounded"></p-button>
+              </div>
+              <ng-template #loginToRate>
+                <p>Please <a href="javascript:void(0)" (click)="showLoginDialog()">sign in</a> to add a rating.</p>
+              </ng-template>
+            </div>
+            
+            <div class="ratings-list">
+              <h3>Ratings ({{ totalRatings }})</h3>
+              <div class="ratings-container">
+                <div *ngFor="let rating of ratings$.value" class="rating">
+                  <div class="rating-header">
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        <img [src]="environment.apiUrl + '/users/' + rating.username + '/avatar'" [alt]="rating.full_name">
+                      </div>
+                      <div class="user-details">
+                        <span class="username">
+                          {{ rating.full_name }}
+                          <span *ngIf="rating.is_adopted_user" class="adopted-badge">(adopted user)</span>
+                        </span>
+                      </div>
+                    </div>
+                    <span class="date">{{ rating.created_at | date }}</span>
+                  </div>
+                  <div class="rating-score">
+                    <p-rating [ngModel]="rating.score" [readonly]="true" [cancel]="false"></p-rating>
+                  </div>
+                  <div *ngIf="rating.comment" class="rating-comment">{{ rating.comment }}</div>
+                </div>
+                <div class="load-more-container" *ngIf="hasMoreRatings">
+                  <p-button 
+                    label="Load More Ratings" 
+                    [loading]="loadingRatings"
+                    styleClass="p-button-secondary"
+                    (onClick)="loadRatings(solution$.value?.slug || '', true)">
+                  </p-button>
+                </div>
+                <p-progressSpinner *ngIf="loadingRatings"></p-progressSpinner>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Adopted Users ({{ totalAdoptedUsers }})">
+          <div class="adopted-users-section">
+            <div class="info-message">
+              <i class="pi pi-info-circle"></i>
+              <span>Note: This list only shows adopted users who have participated in discussions and ratings.</span>
+            </div>
+            <div class="adopted-users-grid">
+              <div *ngFor="let user of adoptedUsers$.value" class="adopted-user-card">
+                <div class="user-info">
+                  <div class="user-avatar">
+                    <img [src]="environment.apiUrl + '/users/' + user.username + '/avatar'" [alt]="user.full_name">
+                  </div>
+                  <div class="user-details">
+                    <div class="user-header">
+                      <h3>{{ user.full_name }}</h3>
+                      <span class="username">({{ user.username }})</span>
+                    </div>
+                    <div class="user-actions">
+                      <p-button 
+                        icon="pi pi-envelope" 
+                        (onClick)="sendEmail(user.email)"
+                        styleClass="p-button-rounded p-button-text">
+                      </p-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="load-more-container" *ngIf="hasMoreAdoptedUsers">
+              <p-button 
+                label="Load More Users" 
+                [loading]="loadingAdoptedUsers"
+                styleClass="p-button-secondary"
+                (onClick)="loadAdoptedUsers(solution$.value?.slug || '', true)">
+              </p-button>
+            </div>
+
+            <div *ngIf="!loadingAdoptedUsers && adoptedUsers$.value.length === 0" class="no-users-message">
+              <i class="pi pi-users"></i>
+              <p>No adopted users participated in solution discussion.</p>
+            </div>
+
+            <p-progressSpinner *ngIf="loadingAdoptedUsers"></p-progressSpinner>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+
+    <div class="content-sidebar">
+      <p-card>
+        <div class="info-section">
+          <div class="section-header">
+            <h3>Basic Information</h3>
+            <p-button 
+              *ngIf="canEditSolution()" 
+              icon="pi pi-pencil" 
+              styleClass="p-button-text p-button-primary p-button-sm"
+              (onClick)="navigateToEditSolution()"
+              pTooltip="Edit Solution Information">
+            </p-button>
+          </div>
+          <div class="info-item">
+            <label>Category</label>
+            <span>{{ solution.category }}</span>
+          </div>
+          <div class="info-item">
+            <label>Stage</label>
+            <p-tag [value]="solution.stage" [severity]="getStageSeverity(solution.stage)"></p-tag>
+          </div>
+          <div class="info-item">
+            <label>Recommend Status</label>
+            <p-tag [value]="solution.recommend_status" [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
+          </div>
+          <div class="info-item" *ngIf="solution.version">
+            <label>Version</label>
+            <span>{{ solution.version }}</span>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>Adoption Status</h3>
+          <div class="info-item">
+            <label>Adoption Level</label>
+            <p-tag [value]="solution.adoption_level" [severity]="getAdoptionLevelSeverity(solution.adoption_level)"></p-tag>
+          </div>
+          <div class="info-item">
+            <label>Adoption Users (Estimated)</label>
+            <span>{{ solution.adoption_user_count | number }}</span>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>Team Information</h3>
+          <div class="info-item">
+            <label>Department</label>
+            <span>{{ solution.department }}</span>
+          </div>
+          <div class="info-item">
+            <label>Team</label>
+            <span>{{ solution.team }}</span>
+          </div>
+          <div class="info-item">
+            <label>Team Email</label>
+            <a [href]="'mailto:' + solution.team_email">{{ solution.team_email }}</a>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>Maintainer</h3>
+          <div class="maintainer-avatar">
+            <img [src]="environment.apiUrl + '/users/' + solution.maintainer_id + '/avatar'" [alt]="solution.maintainer_name">
+          </div>
+          <div class="info-item">
+            <label>Name</label>
+            <span>{{ solution.maintainer_name }} <span class="text-color-secondary">({{ solution.maintainer_id }})</span></span>
+          </div>
+          <div class="info-item">
+            <label>Email</label>
+            <a [href]="'mailto:' + solution.maintainer_email">{{ solution.maintainer_email }}</a>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>Links</h3>
+          <div class="info-item" *ngIf="solution.official_website">
+            <a [href]="solution.official_website" target="_blank">
+              <i class="pi pi-external-link"></i> Official Website
+            </a>
+          </div>
+          <div class="info-item" *ngIf="solution.documentation_url">
+            <a [href]="solution.documentation_url" target="_blank">
+              <i class="pi pi-file"></i> Documentation
+            </a>
+          </div>
+          <div class="info-item" *ngIf="solution.demo_url">
+            <a [href]="solution.demo_url" target="_blank">
+              <i class="pi pi-play"></i> Demo
+            </a>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="loading">
+  <p-progressSpinner></p-progressSpinner>
+  <p>Loading solution details...</p>
+</div>
+
+<p-toast></p-toast>

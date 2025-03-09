@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.env
+*.env
+.env.*
+.venv/
+env/
+venv/
+venv*/
+dist/
+build/
+*.egg-info/
+.coverage
+.pytest_cache/
+
+# Angular
+node_modules/
+dist/
+.angular/
+*.ngfactory.ts
+*.ngsummary.json
+package-lock.json
+
+# IDE
+.idea/
+.vscode/

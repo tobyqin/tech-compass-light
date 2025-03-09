@@ -1,0 +1,68 @@
+<p-card class="solution-card">
+  <ng-template pTemplate="header">
+    <span class="new-badge" *ngIf="showNewBadge">NEW</span>
+    <div class="card-header">
+      <div class="logo-and-status">
+        <img [src]="solution.logo || '/assets/default-solution-logo.svg'" 
+             [alt]="solution.name + ' logo'" 
+             class="solution-logo">
+        <div class="status-badge">
+          <p-tag 
+            [value]="solution.recommend_status" 
+            [severity]="getRecommendStatusSeverity()">
+          </p-tag>
+        </div>
+      </div>
+      <div class="title-row">
+        <h3 class="title">
+          <a [routerLink]="['/solutions', solution.slug]">{{ solution.name }}</a>
+        </h3>
+        <div class="rating-info">
+          <p-rating 
+            [(ngModel)]="solution.rating" 
+            [readonly]="true" 
+            [cancel]="false"
+            [stars]="5">
+          </p-rating>
+          <span class="rating-count" *ngIf="solution.rating_count > 0">({{ solution.rating_count }})</span>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <p class="description">{{ solution.brief }}</p>
+
+  <div class="tags">
+    <p-chip *ngFor="let tag of solution.tags.slice(0,2)" [label]="tag"></p-chip>
+    <p-chip *ngIf="solution.tags.length > 2" [label]="solution.tags.length > 3 ? '+' + (solution.tags.length - 2) : solution.tags[2]"></p-chip>
+  </div>
+
+  <div class="meta-info">
+    <div class="category-row">
+      <i class="pi pi-folder"></i> {{solution.category}}
+    </div>
+    <div class="team-maintainer-row">
+      <span><i class="pi pi-users"></i> {{solution.department}}</span>
+      <span class="maintainer">
+        <i class="pi pi-user"></i>
+        <a [href]="'mailto:' + solution.maintainer_email" class="maintainer-name">
+          {{solution.maintainer_name}}
+        </a>
+      </span>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="card-footer">
+      <span class="update-time">
+        <i class="pi pi-clock"></i>
+        Updated {{solution.updated_at | date:'mediumDate'}}
+      </span>
+      <p-button 
+        [routerLink]="['/solutions', solution.slug]"
+        label="Learn More" 
+        styleClass="p-button-outlined p-button-rounded">
+      </p-button>
+    </div>
+  </ng-template>
+</p-card> 
