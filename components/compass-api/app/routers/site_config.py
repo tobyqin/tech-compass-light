@@ -31,7 +31,7 @@ async def get_all_site_configs(
 @router.get("/{key}", response_model=StandardResponse[List[SiteConfigInDB]], tags=["site-config"])
 async def get_site_configs_by_key(
     key: str = Path(..., description="Configuration key"),
-    active_only: bool = Query(False, description="Filter by active status"),
+    active: bool = Query(False, description="Filter by active status"),
     skip: int = Query(0, ge=0, description="Number of items to skip"),
     limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return"),
 ):
@@ -40,8 +40,8 @@ async def get_site_configs_by_key(
     This endpoint is public and does not require authentication.
     """
     config_service = SiteConfigService()
-    configs = await config_service.get_site_configs_by_key(key=key, active_only=active_only, skip=skip, limit=limit)
-    total = await config_service.count_site_configs_by_key(key=key, active_only=active_only)
+    configs = await config_service.get_site_configs_by_key(key=key, active=active, skip=skip, limit=limit)
+    total = await config_service.count_site_configs_by_key(key=key, active=active)
 
     return StandardResponse.paginated(configs, total, skip, limit)
 

@@ -1,12 +1,22 @@
 {
-  "footer": {
-    "aboutText": "**Tech Compass** - Your technology solutions library, visit [GitHub](https://github.com/tobyqin/tech-compass) to learn more.",
-    "quickLinks": [
-      { "label": "Home", "path": "/" },
-      { "label": "Solution Catalog", "path": "/solutions" },
-      { "label": "Search", "path": "/search" },
-      { "label": "About", "path": "/about" }
-    ],
-    "copyright": " 2024 Tech Compass"
-  }
+  "aboutText": "**Tech Compass** - Your technology solutions library, visit [GitHub](https://github.com/tobyqin/tech-compass) to learn more.",
+  "quickLinks": [
+    {
+      "label": "Home",
+      "path": "/"
+    },
+    {
+      "label": "Solution Catalog",
+      "path": "/solutions"
+    },
+    {
+      "label": "Search",
+      "path": "/search"
+    },
+    {
+      "label": "About",
+      "path": "/about"
+    }
+  ],
+  "copyright": " 2024 Tech Compass"
 }

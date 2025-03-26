@@ -27,21 +27,21 @@ class SiteConfigService:
         return await self.collection.count_documents({})
 
     async def get_site_configs_by_key(
-        self, key: str, active_only: bool = False, skip: int = 0, limit: int = 100
+        self, key: str, active: bool = False, skip: int = 0, limit: int = 100
     ) -> List[SiteConfigInDB]:
         """Get site configurations by key"""
         query = {"key": key}
-        if active_only:
+        if active:
             query["active"] = True
 
         cursor = self.collection.find(query).skip(skip).limit(limit)
         configs = await cursor.to_list(length=limit)
         return [SiteConfigInDB(**config) for config in configs]
 
-    async def count_site_configs_by_key(self, key: str, active_only: bool = False) -> int:
+    async def count_site_configs_by_key(self, key: str, active: bool = False) -> int:
         """Count site configurations by key"""
         query = {"key": key}
-        if active_only:
+        if active:
             query["active"] = True
         return await self.collection.count_documents(query)
 
