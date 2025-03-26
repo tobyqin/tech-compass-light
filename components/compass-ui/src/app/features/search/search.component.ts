@@ -1,17 +1,62 @@
-import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CarouselModule } from "primeng/carousel";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { MessageModule } from "primeng/message";
 import { InputTextModule } from "primeng/inputtext";
-import { SolutionService } from "../../core/services/solution.service";
-import { Solution } from "../../shared/interfaces/solution.interface";
-import { SolutionCardComponent } from "../../shared/components/solution-card/solution-card.component";
-import { siteConfig } from "../../core/config/site.config";
-import { FormsModule } from "@angular/forms";
-import { Subject } from "rxjs";
+import { MessageModule } from "primeng/message";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Subject, Subscription } from "rxjs";
 import { debounceTime, distinctUntilChanged } from "rxjs/operators";
+import { SiteConfigService } from "../../core/services/site-config.service";
+import { SolutionService } from "../../core/services/solution.service";
+import { SolutionCardComponent } from "../../shared/components/solution-card/solution-card.component";
+import { Solution } from "../../shared/interfaces/solution.interface";
+
+// Interface for search configuration
+interface SearchConfig {
+  name: string;
+  logo: {
+    path: string;
+    alt: string;
+  };
+  favicon: {
+    svg: string;
+    png: string;
+  };
+  hero: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+  };
+  intro: {
+    items: Array<{
+      icon: string;
+      title: string;
+      description: string;
+    }>;
+  };
+  benefits: {
+    title: string;
+    image: string;
+    items: Array<{
+      icon: string;
+      text: string;
+    }>;
+  };
+  testimonials: {
+    title: string;
+    items: Array<{
+      quote: string;
+      author: {
+        name: string;
+        title: string;
+        company: string;
+        avatar: string;
+      };
+    }>;
+  };
+}
 
 @Component({
   selector: "tc-search",
@@ -29,8 +74,9 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators";
   templateUrl: "./search.component.html",
   styleUrls: ["./search.component.scss"],
 })
-export class SearchComponent implements OnInit {
-  config = siteConfig;
+export class SearchComponent implements OnInit, OnDestroy {
+  // Replace static config with dynamic one that will be loaded from API
+  config: SearchConfig | null = null;
   recommendedSolutions: Solution[] = [];
   newSolutions: Solution[] = [];
   searchResults: Solution[] = [];
@@ -42,6 +88,7 @@ export class SearchComponent implements OnInit {
   searchError: string | null = null;
   searchKeyword = "";
   private searchSubject = new Subject<string>();
+  private configSubscription: Subscription | null = null;
 
   responsiveOptions = [
     {
@@ -61,7 +108,10 @@ export class SearchComponent implements OnInit {
     },
   ];
 
-  constructor(private solutionService: SolutionService) {
+  constructor(
+    private solutionService: SolutionService,
+    private siteConfigService: SiteConfigService
+  ) {
     this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((keyword) => {
@@ -75,8 +125,40 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadRecommendedSolutions();
-    this.loadNewSolutions();
+    // Load configuration first
+    this.loadConfig().then(() => {
+      // Then load solutions data
+      this.loadRecommendedSolutions();
+      this.loadNewSolutions();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.configSubscription) {
+      this.configSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Load search page configuration
+   */
+  private loadConfig(): Promise<void> {
+    return new Promise((resolve) => {
+      this.configSubscription = this.siteConfigService
+        .getConfig<SearchConfig>("search")
+        .subscribe({
+          next: (config) => {
+            this.config = config;
+            console.log("Loaded search configuration:", config);
+            resolve();
+          },
+          error: (error) => {
+            console.error("Failed to load search configuration:", error);
+            // Even if config fails, we can still proceed with loading solutions
+            resolve();
+          },
+        });
+    });
   }
 
   private loadRecommendedSolutions(): void {

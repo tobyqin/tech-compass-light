@@ -2,7 +2,6 @@
 
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AboutComponent } from "./about.component";
-import { siteConfig } from "../../core/config/site.config";
 
 describe("AboutComponent", () => {
   let component: AboutComponent;

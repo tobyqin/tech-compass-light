@@ -1,4 +1,4 @@
-<div class="search-container">
+<div class="search-container" *ngIf="config">
   <section class="hero-section">
     <div class="hero-content">
       <h1>{{ config.hero.title }}</h1>
@@ -150,4 +150,11 @@
       </div>
     </div>
   </section>
+</div>
+
+<div class="loading-container" *ngIf="!config">
+  <div class="loading-spinner">
+    <i class="pi pi-spin pi-spinner"></i>
+  </div>
+  <p>Loading search page...</p>
 </div> 

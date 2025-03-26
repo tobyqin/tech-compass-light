@@ -601,3 +601,28 @@ $section-spacing-sm: 2rem;
     }
   }
 }
+
+// Loading container when config is not loaded
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: $section-spacing;
+  text-align: center;
+
+  .loading-spinner {
+    margin-bottom: 1rem;
+
+    i {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+  }
+
+  p {
+    color: var(--text-color-secondary);
+    font-size: 1.1rem;
+  }
+}
