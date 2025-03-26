@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
-from typing import Optional, List
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 from app.core.auth import get_current_active_user, get_current_superuser
-from app.models.site_config import SiteConfigCreate, SiteConfigUpdate, SiteConfigInDB
-from app.models.user import User
 from app.models.response import StandardResponse
+from app.models.site_config import SiteConfigCreate, SiteConfigInDB, SiteConfigUpdate
+from app.models.user import User
 from app.services.site_config_service import SiteConfigService
 
 router = APIRouter()
@@ -14,7 +15,7 @@ router = APIRouter()
 async def get_all_site_configs(
     skip: int = Query(0, ge=0, description="Number of items to skip"),
     limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return"),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """
     Get all site configurations with pagination.
@@ -23,7 +24,7 @@ async def get_all_site_configs(
     config_service = SiteConfigService()
     configs = await config_service.get_all_site_configs(skip=skip, limit=limit)
     total = await config_service.count_site_configs()
-    
+
     return StandardResponse.paginated(configs, total, skip, limit)
 
 
@@ -32,26 +33,23 @@ async def get_site_configs_by_key(
     key: str = Path(..., description="Configuration key"),
     active_only: bool = Query(False, description="Filter by active status"),
     skip: int = Query(0, ge=0, description="Number of items to skip"),
-    limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return")
+    limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return"),
 ):
     """
     Get site configurations by key.
     This endpoint is public and does not require authentication.
     """
     config_service = SiteConfigService()
-    configs = await config_service.get_site_configs_by_key(
-        key=key, active_only=active_only, skip=skip, limit=limit
-    )
+    configs = await config_service.get_site_configs_by_key(key=key, active_only=active_only, skip=skip, limit=limit)
     total = await config_service.count_site_configs_by_key(key=key, active_only=active_only)
-    
+
     return StandardResponse.paginated(configs, total, skip, limit)
 
 
-@router.post("", response_model=StandardResponse[SiteConfigInDB], status_code=status.HTTP_201_CREATED, tags=["site-config"])
-async def create_site_config(
-    config: SiteConfigCreate,
-    current_user: User = Depends(get_current_active_user)
-):
+@router.post(
+    "", response_model=StandardResponse[SiteConfigInDB], status_code=status.HTTP_201_CREATED, tags=["site-config"]
+)
+async def create_site_config(config: SiteConfigCreate, current_user: User = Depends(get_current_active_user)):
     """
     Create a new site configuration.
     Requires authentication. The key is specified in the request body.
@@ -73,7 +71,7 @@ async def create_site_config(
 async def update_site_config(
     config_update: SiteConfigUpdate,
     id: str = Path(..., description="Configuration ID"),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
 ):
     """
     Update a site configuration.
@@ -92,8 +90,7 @@ async def update_site_config(
 
 @router.delete("/{id}", response_model=StandardResponse[dict], tags=["site-config"])
 async def delete_site_config(
-    id: str = Path(..., description="Configuration ID"),
-    current_user: User = Depends(get_current_superuser)
+    id: str = Path(..., description="Configuration ID"), current_user: User = Depends(get_current_superuser)
 ):
     """
     Delete a site configuration.
