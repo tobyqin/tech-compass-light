@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { BreadcrumbModule } from "primeng/breadcrumb";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import { Subscription } from "rxjs";
-import { siteConfig } from "../../../app/core/config/site.config";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { MarkdownModule } from "ngx-markdown";
+import { BreadcrumbModule } from "primeng/breadcrumb";
+import { Subscription } from "rxjs";
+import { SiteConfigService } from "../../core/services/site-config.service";
+import { environment } from "../../../environments/environment";
 
 // External libraries
 declare const d3: any;
@@ -34,6 +34,15 @@ interface Ring {
   name: string;
 }
 
+// Interface for radar configuration from site config
+interface RadarConfig {
+    title: string;
+    faqs: Array<{
+      title: string;
+      content: string;
+    }>;
+}
+
 @Component({
   selector: "tc-tech-radar",
   standalone: true,
@@ -57,21 +66,50 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null;
   private quadrantsSubscription: Subscription | null = null;
   private ringsSubscription: Subscription | null = null;
+  private configSubscription: Subscription | null = null;
   private scriptsLoaded = false;
   private quadrants: Quadrant[] = [];
   private rings: Ring[] = [];
 
-  faqs = siteConfig.techRadar.faqs;
-  title = siteConfig.techRadar.title;
+  // Initialize with default values that will be overridden by config
+  faqs: Array<{ title: string; content: string }> = [];
+  title: string = "Tech Radar";
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private siteConfigService: SiteConfigService
+  ) {}
 
   ngOnInit() {
-    this.initializeRadar();
+    this.loadConfig().then(() => this.initializeRadar());
   }
 
   ngOnDestroy() {
     this.cleanup();
+  }
+
+  /**
+   * Load site configuration
+   */
+  private loadConfig(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.configSubscription = this.siteConfigService
+        .getConfig<RadarConfig>("radar")
+        .subscribe({
+          next: (config) => {
+            if (config && config) {
+              this.title = config.title;
+              this.faqs = config.faqs;
+            }
+            resolve();
+          },
+          error: (error) => {
+            console.error("Failed to load radar configuration:", error);
+            // Continue with initialization even if config fails
+            resolve();
+          },
+        });
+    });
   }
 
   /**
@@ -271,6 +309,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     }
     if (this.ringsSubscription) {
       this.ringsSubscription.unsubscribe();
+    }
+    if (this.configSubscription) {
+      this.configSubscription.unsubscribe();
     }
     this.removeScripts();
   }
