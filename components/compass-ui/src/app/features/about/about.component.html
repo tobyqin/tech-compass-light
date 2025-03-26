@@ -1,4 +1,4 @@
-<div class="about-container">
+<div class="about-container" *ngIf="aboutConfig">
   <div class="hero-section">
     <h1>{{ aboutConfig.hero.title }}</h1>
     <p>{{ aboutConfig.hero.subtitle }}</p>
@@ -49,4 +49,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Loading state -->
+<div class="loading-container" *ngIf="!aboutConfig">
+  <div class="loading-spinner">
+    <i class="pi pi-spin pi-spinner"></i>
+  </div>
+  <p>Loading about information...</p>
 </div>

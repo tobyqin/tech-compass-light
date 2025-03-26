@@ -312,3 +312,27 @@
     transform: scale(1);
   }
 }
+
+// Add loading container styles at the end of the file
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  text-align: center;
+
+  .loading-spinner {
+    margin-bottom: 1rem;
+
+    i {
+      font-size: 2rem;
+      color: var(--primary-color);
+    }
+  }
+
+  p {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+  }
+}
