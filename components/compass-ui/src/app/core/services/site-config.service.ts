@@ -35,20 +35,20 @@ export class SiteConfigService {
   /**
    * Get site configuration by key
    * @param key Configuration key (e.g., 'radar', 'home', 'about', 'footer')
-   * @param activeOnly Return only active configurations
+   * @param active Return only active configurations
    * @param skip Number of items to skip
    * @param limit Maximum number of items to return
    * @returns Observable with configuration data
    */
   getConfig<T>(
     key: string,
-    activeOnly: boolean = true,
+    active: boolean = true,
     skip: number = 0,
     limit: number = 1
   ): Observable<T> {
     const url = `${environment.apiUrl}/site-config/${key}`;
     const params = {
-      active_only: activeOnly.toString(),
+      active: active.toString(),
       skip: skip.toString(),
       limit: limit.toString(),
     };
