@@ -16,7 +16,6 @@ build/
 
 # Angular
 node_modules/
-dist/
 .angular/
 *.ngfactory.ts
 *.ngsummary.json
