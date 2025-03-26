@@ -12,17 +12,17 @@
     {
       "label": "Tech Radar",
       "icon": "pi pi-wave-pulse",
-      "path": "/"
+      "path": "/tech-radar"
     },
     {
       "label": "Categories",
       "icon": "pi pi-folder",
-      "path": "/categories"
+      "path": "/tech-radar/categories"
     },
     {
-      "label": "Solutions",
+      "label": "Catalog",
       "icon": "pi pi-list",
-      "path": "/solutions"
+      "path": "/tech-radar/items"
     },
     {
       "label": "Useful Links",
@@ -45,7 +45,7 @@
     {
       "label": "About",
       "icon": "pi pi-info-circle",
-      "path": "/about"
+      "path": "/tech-radar/about"
     }
   ]
 }

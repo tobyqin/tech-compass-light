@@ -6,16 +6,12 @@
       "path": "/"
     },
     {
-      "label": "Solution Catalog",
-      "path": "/solutions"
-    },
-    {
       "label": "Search",
-      "path": "/search"
+      "path": "/tech-radar/search"
     },
     {
       "label": "About",
-      "path": "/about"
+      "path": "/tech-radar/about"
     }
   ],
   "copyright": " 2024 Tech Compass"

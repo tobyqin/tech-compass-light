@@ -69,14 +69,14 @@ const routes: Routes = [
       },
       {
         path: "tech-radar",
-        title: "Tech Radar",
+        title: "Technology Radar",
         loadComponent: () =>
           import("./features/tech-radar/tech-radar.component").then(
             (m) => m.TechRadarComponent
           ),
       },
       {
-        path: "search",
+        path: "tech-radar/search",
         title: "Search",
         loadComponent: () =>
           import("./features/search/search.component").then(
@@ -84,7 +84,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "solutions/new",
+        path: "tech-radar/items/new",
         title: "Submit Solution",
         loadChildren: () =>
           import("./features/submit-solution/submit-solution.module").then(
@@ -92,31 +92,31 @@ const routes: Routes = [
           ),
       },
       {
-        path: "solutions",
-        title: "Solution Catalog",
+        path: "tech-radar/items",
+        title: "Technology Catalog",
         loadComponent: () =>
           import("./features/solution-catalog/solution-catalog.component").then(
             (m) => m.SolutionCatalogComponent
           ),
       },
       {
-        path: "solutions/:slug",
-        title: "Solution Details",
+        path: "tech-radar/items/:slug",
+        title: "Technology Item",
         loadComponent: () =>
           import("./features/solution-detail/solution-detail.component").then(
             (m) => m.SolutionDetailComponent
           ),
       },
       {
-        path: "categories",
-        title: "Categories",
+        path: "tech-radar/categories",
+        title: "Technology Categories",
         loadChildren: () =>
           import("./features/categories/categories.module").then(
             (m) => m.CategoriesModule
           ),
       },
       {
-        path: "about",
+        path: "tech-radar/about",
         title: "About",
         loadChildren: () =>
           import("./features/about/about.module").then((m) => m.AboutModule),
