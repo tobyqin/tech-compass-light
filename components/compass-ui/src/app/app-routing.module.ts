@@ -1,21 +1,59 @@
 import { Injectable, NgModule } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { RouterModule, Routes, TitleStrategy } from "@angular/router";
-import { siteConfig } from "./core/config/site.config";
 import { AuthGuard } from "./core/guards/auth.guard";
+import { SiteConfigService } from "./core/services/site-config.service";
+
+// Interface for navigation config
+interface NavigationConfig {
+  name: string;
+  logo: {
+    path: string;
+    alt: string;
+  };
+  favicon: {
+    svg: string;
+    png: string;
+  };
+  navigation: Array<any>; // Simplified for this use case
+}
 
 @Injectable()
 class CustomTitleStrategy extends TitleStrategy {
-  constructor(private readonly title: Title) {
+  private appName = "Tech Compass"; // Default fallback value
+
+  constructor(
+    private readonly title: Title,
+    private siteConfigService: SiteConfigService
+  ) {
     super();
+    // Load application name from site config
+    this.loadAppName();
+  }
+
+  /**
+   * Load application name from site config
+   */
+  private loadAppName(): void {
+    this.siteConfigService.getConfig<NavigationConfig>("navigation").subscribe({
+      next: (config) => {
+        if (config && config.name) {
+          this.appName = config.name;
+        }
+      },
+      error: (error) => {
+        console.error("Failed to load app name for title:", error);
+        // Keep using the default appName
+      },
+    });
   }
 
   override updateTitle(routerState: any) {
     const title = this.buildTitle(routerState);
     if (title) {
-      this.title.setTitle(`${title} - ${siteConfig.name}`);
+      this.title.setTitle(`${title} - ${this.appName}`);
     } else {
-      this.title.setTitle(siteConfig.name);
+      this.title.setTitle(this.appName);
     }
   }
 }
@@ -107,6 +145,9 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [{ provide: TitleStrategy, useClass: CustomTitleStrategy }],
+  providers: [
+    { provide: TitleStrategy, useClass: CustomTitleStrategy },
+    // SiteConfigService is already provided with providedIn: 'root' in the service
+  ],
 })
 export class AppRoutingModule {}
