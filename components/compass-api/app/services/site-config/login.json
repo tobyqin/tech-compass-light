@@ -1,0 +1,15 @@
+{
+  "title": "Welcome Back!",
+  "subtitle": "Sign in to continue to Tech Compass",
+  "usernameLabel": "Username",
+  "usernamePlaceholder": "Enter your username",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "signInButton": "Sign In",
+  "cancelButton": "Cancel",
+  "errors": {
+    "emptyFields": "Please enter both username and password",
+    "defaultError": "Authentication failed. Please try again.",
+    "inactiveUser": "Your account is inactive. Please contact an administrator."
+  }
+}
