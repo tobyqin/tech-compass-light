@@ -1,14 +1,32 @@
-import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DynamicDialogRef } from "primeng/dynamicdialog";
 import { ButtonModule } from "primeng/button";
+import { DynamicDialogRef } from "primeng/dynamicdialog";
 import { InputTextModule } from "primeng/inputtext";
-import { PasswordModule } from "primeng/password";
 import { MessageModule } from "primeng/message";
+import { PasswordModule } from "primeng/password";
 import { RippleModule } from "primeng/ripple";
+import { Subscription } from "rxjs";
 import { AuthService } from "../../services/auth.service";
-import { siteConfig } from "../../config/site.config";
+import { SiteConfigService } from "../../services/site-config.service";
+
+// Interface for login configuration from site config
+interface LoginConfig {
+  title: string;
+  subtitle: string;
+  usernameLabel: string;
+  usernamePlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  signInButton: string;
+  cancelButton: string;
+  errors: {
+    emptyFields: string;
+    inactiveUser: string;
+    defaultError: string;
+  };
+}
 
 @Component({
   selector: "app-login-dialog",
@@ -25,13 +43,19 @@ import { siteConfig } from "../../config/site.config";
   template: `
     <div class="sign-in-dialog" (keydown.enter)="onSignIn()">
       <div class="dialog-header">
-        <h2>{{ config.auth.signIn.title }}</h2>
-        <p class="subtitle">{{ config.auth.signIn.subtitle }}</p>
+        <h2>{{ config?.title || "Sign In" }}</h2>
+        <p class="subtitle">
+          {{
+            config?.subtitle || "Enter your credentials to access your account"
+          }}
+        </p>
       </div>
 
       <div class="dialog-content">
         <div class="field">
-          <label for="username">{{ config.auth.signIn.usernameLabel }}</label>
+          <label for="username">{{
+            config?.usernameLabel || "Username"
+          }}</label>
           <span class="p-input-icon-left">
             <i class="pi pi-user"></i>
             <input
@@ -40,13 +64,17 @@ import { siteConfig } from "../../config/site.config";
               pInputText
               [(ngModel)]="username"
               [class.ng-invalid]="submitted && !username"
-              [placeholder]="config.auth.signIn.usernamePlaceholder"
+              [placeholder]="
+                config?.usernamePlaceholder || 'Enter your username'
+              "
             />
           </span>
         </div>
 
         <div class="field">
-          <label for="password">{{ config.auth.signIn.passwordLabel }}</label>
+          <label for="password">{{
+            config?.passwordLabel || "Password"
+          }}</label>
           <div class="password-wrapper">
             <i class="pi pi-lock"></i>
             <p-password
@@ -55,7 +83,9 @@ import { siteConfig } from "../../config/site.config";
               [feedback]="false"
               [toggleMask]="true"
               [class.ng-invalid]="submitted && !password"
-              [placeholder]="config.auth.signIn.passwordPlaceholder"
+              [placeholder]="
+                config?.passwordPlaceholder || 'Enter your password'
+              "
               [style]="{ width: '100%' }"
             ></p-password>
           </div>
@@ -71,12 +101,12 @@ import { siteConfig } from "../../config/site.config";
 
       <div class="dialog-footer">
         <p-button
-          [label]="config.auth.signIn.cancelButton"
+          [label]="config?.cancelButton || 'Cancel'"
           (click)="onCancel()"
           styleClass="p-button-text p-button-secondary"
         ></p-button>
         <p-button
-          [label]="config.auth.signIn.signInButton"
+          [label]="config?.signInButton || 'Sign In'"
           (click)="onSignIn()"
           [loading]="loading"
           icon="pi pi-sign-in"
@@ -201,24 +231,63 @@ import { siteConfig } from "../../config/site.config";
     `,
   ],
 })
-export class LoginDialogComponent {
-  config = siteConfig;
+export class LoginDialogComponent implements OnInit, OnDestroy {
+  // Replace direct reference with null-safe property
+  config: LoginConfig | null = null;
   username = "";
   password = "";
   loading = false;
   errorMessage = "";
   submitted = false;
+  private configSubscription: Subscription | null = null;
+
+  // Default error messages
+  private readonly defaultEmptyFieldsError =
+    "Please enter both username and password";
+  private readonly defaultInactiveUserError =
+    "Your account is inactive. Please contact the administrator.";
+  private readonly defaultError = "Invalid username or password";
 
   constructor(
     private authService: AuthService,
+    private siteConfigService: SiteConfigService,
     private ref: DynamicDialogRef
   ) {}
+
+  ngOnInit(): void {
+    this.loadConfig();
+  }
+
+  ngOnDestroy(): void {
+    if (this.configSubscription) {
+      this.configSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Load site configuration
+   */
+  private loadConfig(): void {
+    this.configSubscription = this.siteConfigService
+      .getConfig<LoginConfig>("login")
+      .subscribe({
+        next: (config) => {
+          this.config = config;
+          console.log("Loaded login configuration:", config);
+        },
+        error: (error) => {
+          console.error("Failed to load login configuration:", error);
+          // Keep config as null, app will use fallback values
+        },
+      });
+  }
 
   onSignIn(): void {
     this.submitted = true;
 
     if (!this.username || !this.password) {
-      this.errorMessage = this.config.auth.signIn.errors.emptyFields;
+      this.errorMessage =
+        this.config?.errors?.emptyFields || this.defaultEmptyFieldsError;
       return;
     }
 
@@ -233,10 +302,13 @@ export class LoginDialogComponent {
         this.loading = false;
         // Check for specific inactive user error message
         if (error.error?.detail && error.error.detail.includes("inactive")) {
-          this.errorMessage = this.config.auth.signIn.errors.inactiveUser;
+          this.errorMessage =
+            this.config?.errors?.inactiveUser || this.defaultInactiveUserError;
         } else {
           this.errorMessage =
-            error.error?.detail || this.config.auth.signIn.errors.defaultError;
+            error.error?.detail ||
+            this.config?.errors?.defaultError ||
+            this.defaultError;
         }
       },
     });
