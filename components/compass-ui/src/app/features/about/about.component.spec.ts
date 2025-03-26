@@ -1,5 +1,6 @@
 /// <reference types="jasmine" />
 
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AboutComponent } from "./about.component";
 
@@ -9,6 +10,7 @@ describe("AboutComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       declarations: [AboutComponent],
     }).compileComponents();
   });
