@@ -1,8 +1,17 @@
 {
+  "name": "Tech Compass",
+  "logo": {
+    "path": "assets/logo.svg",
+    "alt": "Tech Compass Logo"
+  },
+  "favicon": {
+    "svg": "assets/favicon.svg",
+    "png": "assets/favicon.png"
+  },
   "navigation": [
     {
-      "label": "Home",
-      "icon": "pi pi-home",
+      "label": "Tech Radar",
+      "icon": "pi pi-wave-pulse",
       "path": "/"
     },
     {

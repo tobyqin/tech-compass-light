@@ -1,4 +1,13 @@
 <div class="layout-wrapper">
+  <!-- Error Message Banner -->
+  <div class="error-banner" *ngIf="hasError">
+    <i class="pi pi-exclamation-triangle"></i>
+    <span>{{ errorMessage }}</span>
+    <button pButton pRipple type="button" label="Retry" icon="pi pi-refresh"
+            class="p-button-sm p-button-outlined p-button-white ml-2" 
+            (click)="retryLoadingConfigurations()"></button>
+  </div>
+
   <header class="layout-header">
     <div class="header-container">
       <div class="header-left">
@@ -6,7 +15,10 @@
           <img [src]="config.logo.path" [alt]="config.logo.alt" class="logo-icon">
           <span>{{ config.name }}</span>
         </a>
-        <p-menubar [model]="menuItems"></p-menubar>
+        <p-menubar [model]="menuItems" *ngIf="configLoaded"></p-menubar>
+        <div class="loading-menu" *ngIf="!configLoaded && !hasError">
+          <div class="p-skeleton p-skeleton-animation" style="width: 200px; height: 35px;"></div>
+        </div>
       </div>
       <div class="header-right">
         <div class="manage-content-wrapper" *ngIf="isUserLoggedIn()">
@@ -32,7 +44,7 @@
     </div>
   </main>
 
-  <footer class="layout-footer">
+  <footer class="layout-footer" *ngIf="configLoaded">
     <div class="footer-container">
       <div class="footer-content">
         <p class="about-text"> <markdown [data]="config.footer.aboutText"></markdown></p>
