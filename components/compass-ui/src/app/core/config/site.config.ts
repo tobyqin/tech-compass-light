@@ -24,7 +24,8 @@ export const siteConfig = {
       errors: {
         emptyFields: "Please enter both username and password",
         defaultError: "Authentication failed. Please try again.",
-        inactiveUser: "Your account is inactive. Please contact an administrator.",
+        inactiveUser:
+          "Your account is inactive. Please contact an administrator.",
       },
     },
   },
@@ -264,9 +265,9 @@ export const siteConfig = {
   // Navigation menu
   navigation: [
     {
-      label: "Home",
-      icon: "pi pi-home",
-      path: "/",
+      label: "Tech Radar",
+      icon: "pi pi-wave-pulse",
+      path: "/tech-radar",
     },
     {
       label: "Categories",

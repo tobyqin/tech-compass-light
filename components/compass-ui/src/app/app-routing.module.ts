@@ -1,7 +1,6 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes, TitleStrategy } from "@angular/router";
+import { Injectable, NgModule } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { Injectable } from "@angular/core";
+import { RouterModule, Routes, TitleStrategy } from "@angular/router";
 import { siteConfig } from "./core/config/site.config";
 import { AuthGuard } from "./core/guards/auth.guard";
 
@@ -27,7 +26,12 @@ const routes: Routes = [
     children: [
       {
         path: "",
-        title: "Home",
+        pathMatch: "full",
+        redirectTo: "tech-radar",
+      },
+      {
+        path: "tech-radar",
+        title: "Tech Radar",
         loadComponent: () =>
           import("./features/tech-radar/tech-radar.component").then(
             (m) => m.TechRadarComponent
