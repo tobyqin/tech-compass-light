@@ -123,11 +123,11 @@ export const siteConfig = {
 
   // Footer content
   footer: {
-    aboutText: `**Tech Compass** - Your technology solutions library, visit our [GitHub repository](https://github.com/tobyqin/tech-compass) to learn more.`,
+    aboutText: `**Tech Compass** - Your technology solutions library, visit [GitHub](https://github.com/tobyqin/tech-compass) to learn more.`,
     quickLinks: [
       { label: "Home", path: "/" },
       { label: "Solution Catalog", path: "/solutions" },
-      { label: "Submit Solution", path: "/solutions/new" },
+      { label: "Search", path: "/search" },
       { label: "About", path: "/about" },
     ],
     copyright: " 2024 Tech Compass",
@@ -277,11 +277,6 @@ export const siteConfig = {
       label: "Solutions",
       icon: "pi pi-list",
       path: "/solutions",
-    },
-    {
-      label: "Tech Radar",
-      icon: "pi pi-wave-pulse",
-      path: "/radar",
     },
     {
       label: "Useful Links",

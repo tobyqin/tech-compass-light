@@ -29,14 +29,16 @@ const routes: Routes = [
         path: "",
         title: "Home",
         loadComponent: () =>
-          import("./features/home/home.component").then((m) => m.HomeComponent),
-      },
-      {
-        path: "radar",
-        title: "Radar",
-        loadComponent: () =>
           import("./features/tech-radar/tech-radar.component").then(
             (m) => m.TechRadarComponent
+          ),
+      },
+      {
+        path: "search",
+        title: "Search",
+        loadComponent: () =>
+          import("./features/search/search.component").then(
+            (m) => m.SearchComponent
           ),
       },
       {

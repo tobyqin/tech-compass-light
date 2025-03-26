@@ -1,0 +1,153 @@
+<div class="search-container">
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>{{ config.hero.title }}</h1>
+      <p class="subtitle">{{ config.hero.subtitle }}</p>
+      <div class="search-container">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input type="text" pInputText [placeholder]="config.hero.searchPlaceholder" 
+                 [(ngModel)]="searchKeyword" 
+                 (input)="onSearch($event)" />
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="search-results" *ngIf="searchKeyword">
+    <div class="section-header">
+      <h2>Search Results</h2>
+      <p *ngIf="!loadingSearch && searchResults.length > 0">Found {{ searchResults.length }} solutions</p>
+    </div>
+
+    <div class="loading-state" *ngIf="loadingSearch">
+      <p-progressSpinner></p-progressSpinner>
+      <p>Searching solutions...</p>
+    </div>
+
+    <div class="error-state" *ngIf="searchError">
+      <p-message severity="error" [text]="searchError"></p-message>
+    </div>
+
+    <div class="results-grid" *ngIf="!loadingSearch && searchResults.length > 0">
+      <app-solution-card *ngFor="let solution of searchResults" [solution]="solution"></app-solution-card>
+    </div>
+
+    <div class="no-results" *ngIf="!loadingSearch && searchResults.length === 0">
+      <p>No solutions found for "{{ searchKeyword }}". Would you like to <a routerLink="/solutions/new">submit your own solution</a>?</p>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="intro-content">
+      <div class="intro-item" *ngFor="let item of config.intro.items">
+        <div class="icon-wrapper">
+          <i [class]="item.icon"></i>
+        </div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="recommended-section">
+    <div class="section-header">
+      <h2>Recommended Solutions</h2>
+      <p>Top-rated technology solutions for your needs</p>
+    </div>
+
+    <div class="carousel-container" *ngIf="!loading && !error">
+      <p-carousel [value]="recommendedSolutions" 
+                 [numVisible]="3" 
+                 [numScroll]="1" 
+                 [circular]="true"
+                 [autoplayInterval]="5000"
+                 [responsiveOptions]="responsiveOptions">
+        <ng-template let-solution pTemplate="item">
+          <div class="carousel-item">
+            <app-solution-card [solution]="solution"></app-solution-card>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <p-progressSpinner></p-progressSpinner>
+      <p>Loading recommended solutions...</p>
+    </div>
+
+    <div class="error-state" *ngIf="error">
+      <p-message severity="error" [text]="error"></p-message>
+    </div>
+  </section>
+
+  <section class="new-solutions-section">
+    <div class="section-header">
+      <h2>New Solutions</h2>
+      <p>Recently added technology solutions</p>
+    </div>
+
+    <div class="carousel-container" *ngIf="!loadingNew && !newSolutionsError">
+      <p-carousel [value]="newSolutions" 
+                 [numVisible]="3" 
+                 [numScroll]="1" 
+                 [circular]="true"
+                 [autoplayInterval]="5000"
+                 [responsiveOptions]="responsiveOptions">
+        <ng-template let-solution pTemplate="item">
+          <div class="carousel-item">
+            <app-solution-card [solution]="solution" [showNewBadge]="true"></app-solution-card>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+
+    <div class="loading-state" *ngIf="loadingNew">
+      <p-progressSpinner></p-progressSpinner>
+      <p>Loading new solutions...</p>
+    </div>
+
+    <div class="error-state" *ngIf="newSolutionsError">
+      <p-message severity="error" [text]="newSolutionsError"></p-message>
+    </div>
+  </section>
+
+  <section class="benefits-section">
+    <div class="benefits-content">
+      <div class="benefits-text">
+        <h2>{{ config.benefits.title }}</h2>
+        <ul class="benefits-list">
+          <li *ngFor="let item of config.benefits.items">
+            <i [class]="item.icon"></i>
+            <span>{{ item.text }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="benefits-image">
+        <img [src]="config.benefits.image" alt="Tech Compass Visualization">
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section">
+    <div class="testimonials-content">
+      <h2>{{ config.testimonials.title }}</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card" *ngFor="let item of config.testimonials.items">
+          <div class="quote-icon">
+            <i class="pi pi-comments"></i>
+          </div>
+          <p class="quote">{{ item.quote }}</p>
+          <div class="author">
+            <img [src]="item.author.avatar" [alt]="item.author.name + ' Avatar'">
+            <div class="author-info">
+              <h4>{{ item.author.name }}</h4>
+              <p>{{ item.author.title }}</p>
+              <p class="company">{{ item.author.company }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div> 
