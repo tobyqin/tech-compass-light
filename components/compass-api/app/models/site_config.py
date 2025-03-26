@@ -1,50 +1,61 @@
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
+from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
+import json
 
 from app.models import AuditModel
 
 
 class SiteConfigBase(BaseModel):
     """Base model for site configuration"""
-
-    site_name: str = Field(..., description="Name of the site")
-    site_description: str = Field(..., description="Description of the site")
-    welcome_message: str = Field(..., description="Welcome message shown on homepage")
-    contact_email: str = Field(..., description="Contact email for support")
-    features: dict = Field(
-        default_factory=dict,
-        description="Feature flags for enabling/disabling functionality",
-    )
-    custom_links: List[dict] = Field(default_factory=list, description="Custom navigation links")
-    theme: dict = Field(
-        default_factory=lambda: {
-            "primary_color": "#1890ff",
-            "secondary_color": "#52c41a",
-            "layout": "default",
-        },
-        description="Theme configuration including colors and layout",
-    )
-    meta: dict = Field(
-        default_factory=lambda: {"keywords": [], "author": "", "favicon": ""},
-        description="Meta information for SEO",
-    )
+    
+    key: str = Field(..., description="Unique key identifying the configuration type (e.g., 'home', 'footer')")
+    value: Dict[str, Any] = Field(..., description="Configuration value as JSON")
+    active: bool = Field(default=True, description="Whether this configuration is active")
+    description: Optional[str] = Field(None, description="Description of this configuration")
+    
+    @validator('value')
+    def validate_json(cls, v):
+        """Validate that value is proper JSON"""
+        # Test if it can be serialized/deserialized
+        try:
+            json_str = json.dumps(v)
+            json.loads(json_str)
+            return v
+        except Exception as e:
+            raise ValueError(f"Invalid JSON format: {str(e)}")
 
 
-class SiteConfigUpdate(SiteConfigBase):
+class SiteConfigCreate(SiteConfigBase):
+    """Model for creating a new site configuration"""
+    pass
+
+
+class SiteConfigUpdate(BaseModel):
     """Model for updating site configuration"""
-
-    site_name: Optional[str] = None
-    site_description: Optional[str] = None
-    welcome_message: Optional[str] = None
-    contact_email: Optional[str] = None
-    features: Optional[dict] = None
-    custom_links: Optional[List[dict]] = None
-    theme: Optional[dict] = None
-    meta: Optional[dict] = None
+    
+    value: Optional[Dict[str, Any]] = None
+    active: Optional[bool] = None
+    description: Optional[str] = None
+    
+    @validator('value')
+    def validate_json(cls, v):
+        if v is None:
+            return v
+        try:
+            json_str = json.dumps(v)
+            json.loads(json_str)
+            return v
+        except Exception as e:
+            raise ValueError(f"Invalid JSON format: {str(e)}")
 
 
 class SiteConfigInDB(SiteConfigBase, AuditModel):
     """Model for site configuration in database"""
+    pass
 
+
+class SiteConfigResponse(SiteConfigInDB):
+    """Response model for site configuration"""
     pass

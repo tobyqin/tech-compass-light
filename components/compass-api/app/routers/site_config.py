@@ -1,38 +1,65 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+from typing import Optional, List
 
-from app.core.auth import get_current_active_user
-from app.models.site_config import SiteConfigBase, SiteConfigUpdate
+from app.core.auth import get_current_active_user, get_current_superuser
+from app.models.site_config import SiteConfigCreate, SiteConfigUpdate, SiteConfigInDB
 from app.models.user import User
+from app.models.response import StandardResponse
 from app.services.site_config_service import SiteConfigService
 
 router = APIRouter()
 
 
-@router.get("", response_model=dict, tags=["site-config"])
-async def get_site_config():
+@router.get("", response_model=StandardResponse[List[SiteConfigInDB]], tags=["site-config"])
+async def get_all_site_configs(
+    skip: int = Query(0, ge=0, description="Number of items to skip"),
+    limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return"),
+    current_user: User = Depends(get_current_active_user)
+):
     """
-    Get the current site configuration.
+    Get all site configurations with pagination.
+    Requires authentication.
+    """
+    config_service = SiteConfigService()
+    configs = await config_service.get_all_site_configs(skip=skip, limit=limit)
+    total = await config_service.count_site_configs()
+    
+    return StandardResponse.paginated(configs, total, skip, limit)
+
+
+@router.get("/{key}", response_model=StandardResponse[List[SiteConfigInDB]], tags=["site-config"])
+async def get_site_configs_by_key(
+    key: str = Path(..., description="Configuration key"),
+    active_only: bool = Query(False, description="Filter by active status"),
+    skip: int = Query(0, ge=0, description="Number of items to skip"),
+    limit: int = Query(100, ge=1, le=100, description="Maximum number of items to return")
+):
+    """
+    Get site configurations by key.
     This endpoint is public and does not require authentication.
     """
     config_service = SiteConfigService()
-    config = await config_service.get_site_config()
+    configs = await config_service.get_site_configs_by_key(
+        key=key, active_only=active_only, skip=skip, limit=limit
+    )
+    total = await config_service.count_site_configs_by_key(key=key, active_only=active_only)
+    
+    return StandardResponse.paginated(configs, total, skip, limit)
 
-    if not config:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Site configuration not found")
 
-    return {"status": "success", "data": config}
-
-
-@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED, tags=["site-config"])
-async def create_site_config(config: SiteConfigBase, current_user: User = Depends(get_current_active_user)):
+@router.post("", response_model=StandardResponse[SiteConfigInDB], status_code=status.HTTP_201_CREATED, tags=["site-config"])
+async def create_site_config(
+    config: SiteConfigCreate,
+    current_user: User = Depends(get_current_active_user)
+):
     """
-    Create initial site configuration.
-    Requires authentication. Can only be called once when no configuration exists.
+    Create a new site configuration.
+    Requires authentication. The key is specified in the request body.
     """
     config_service = SiteConfigService()
     try:
         new_config = await config_service.create_site_config(config=config, username=current_user.username)
-        return {"status": "success", "data": new_config}
+        return StandardResponse.of(new_config)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -42,38 +69,62 @@ async def create_site_config(config: SiteConfigBase, current_user: User = Depend
         )
 
 
-@router.put("", response_model=dict, tags=["site-config"])
+@router.put("/{id}", response_model=StandardResponse[SiteConfigInDB], tags=["site-config"])
 async def update_site_config(
     config_update: SiteConfigUpdate,
-    current_user: User = Depends(get_current_active_user),
+    id: str = Path(..., description="Configuration ID"),
+    current_user: User = Depends(get_current_active_user)
 ):
     """
-    Update site configuration.
+    Update a site configuration.
     Requires authentication. Only updates the fields that are provided.
     """
     config_service = SiteConfigService()
     updated_config = await config_service.update_site_config(
-        config_update=config_update, username=current_user.username
+        config_id=id, config_update=config_update, username=current_user.username
     )
 
     if not updated_config:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Site configuration not found")
 
-    return {"status": "success", "data": updated_config}
+    return StandardResponse.of(updated_config)
 
 
-@router.post("/reset", response_model=dict, tags=["site-config"])
-async def reset_site_config(current_user: User = Depends(get_current_active_user)):
+@router.delete("/{id}", response_model=StandardResponse[dict], tags=["site-config"])
+async def delete_site_config(
+    id: str = Path(..., description="Configuration ID"),
+    current_user: User = Depends(get_current_superuser)
+):
     """
-    Reset site configuration to default values.
-    Requires authentication. This will delete the existing configuration and create a new one with defaults.
+    Delete a site configuration.
+    Requires superuser authentication.
+    """
+    config_service = SiteConfigService()
+    deleted = await config_service.delete_site_config(config_id=id)
+
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Site configuration not found")
+
+    return StandardResponse.of({"message": "Site configuration deleted successfully"})
+
+
+@router.post("/reset", response_model=StandardResponse[dict], tags=["site-config"])
+async def reset_site_configs(current_user: User = Depends(get_current_superuser)):
+    """
+    Reset all site configurations.
+    Requires superuser authentication. This will delete all existing configurations and create new ones with defaults.
     """
     config_service = SiteConfigService()
     try:
-        new_config = await config_service.reset_site_config(username=current_user.username)
-        return {"status": "success", "data": new_config}
+        await config_service.reset_site_configs(username=current_user.username)
+        return StandardResponse.of({"message": "Site configurations reset successfully"})
+    except NotImplementedError:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="Reset functionality is not implemented yet",
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error resetting site configuration: {str(e)}",
+            detail=f"Error resetting site configurations: {str(e)}",
         )
