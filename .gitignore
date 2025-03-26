@@ -24,3 +24,9 @@ package-lock.json
 # IDE
 .idea/
 .vscode/
+
+# Others
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
