@@ -1,0 +1,42 @@
+{
+  "navigation": [
+    {
+      "label": "Home",
+      "icon": "pi pi-home",
+      "path": "/"
+    },
+    {
+      "label": "Categories",
+      "icon": "pi pi-folder",
+      "path": "/categories"
+    },
+    {
+      "label": "Solutions",
+      "icon": "pi pi-list",
+      "path": "/solutions"
+    },
+    {
+      "label": "Useful Links",
+      "icon": "pi pi-link",
+      "items": [
+        {
+          "label": "Documentation",
+          "icon": "pi pi-file",
+          "url": "https://docs.techcompass.com",
+          "target": "_blank"
+        },
+        {
+          "label": "Feedback Wall",
+          "icon": "pi pi-comments",
+          "url": "https://feedback.techcompass.com",
+          "target": "_blank"
+        }
+      ]
+    },
+    {
+      "label": "About",
+      "icon": "pi pi-info-circle",
+      "path": "/about"
+    }
+  ]
+}

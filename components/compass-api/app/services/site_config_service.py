@@ -1,4 +1,6 @@
+import json
 from datetime import datetime
+from pathlib import Path
 from typing import List, Optional
 
 from bson import ObjectId
@@ -11,6 +13,8 @@ class SiteConfigService:
     def __init__(self):
         self.db = get_database()
         self.collection = self.db.site_config
+        # Path to default site configurations
+        self.default_configs_path = Path(__file__).parent / "site-config"
 
     async def get_all_site_configs(self, skip: int = 0, limit: int = 100) -> List[SiteConfigInDB]:
         """Get all site configurations with pagination"""
@@ -57,9 +61,7 @@ class SiteConfigService:
         active_config = await self.collection.find_one({"key": config.key, "value": config.value, "active": True})
 
         if active_config:
-            raise ValueError(
-                f"An active configuration with the same key and value already exists (ID: {active_config['id']})"
-            )
+            return SiteConfigInDB(**active_config)
 
         # If this config is active, deactivate all other configs with the same key
         if config.active:
@@ -118,6 +120,59 @@ class SiteConfigService:
         result = await self.collection.delete_one({"id": config_id})
         return result.deleted_count > 0
 
-    async def reset_site_configs(self, username: str) -> bool:
-        """Reset all site configurations (not implemented yet)"""
-        raise NotImplementedError("Reset functionality is not implemented yet")
+    async def reset_site_configs(self, username: str) -> List[SiteConfigInDB]:
+        """
+        Reset all site configurations by importing default configurations from files.
+
+        This will:
+        1. Load all JSON files from the site-config directory
+        2. For each file, create a new configuration with the filename as the key
+        3. If a configuration with the same key and value already exists, skip it
+        4. If a configuration with the same key but different value exists, create a new one and set it as active
+
+        Returns a list of all created/updated configurations.
+        """
+        result = []
+
+        # Check if the default configs directory exists
+        if not self.default_configs_path.exists() or not self.default_configs_path.is_dir():
+            raise FileNotFoundError(f"Default configurations directory not found: {self.default_configs_path}")
+
+        # Process each JSON file in the directory
+        for config_file in self.default_configs_path.glob("*.json"):
+            key = config_file.stem  # Use filename without extension as the key
+
+            try:
+                # Load the JSON content
+                with open(config_file, "r", encoding="utf-8") as f:
+                    value = json.load(f)
+
+                # Check if an identical active configuration already exists
+                existing_config = await self.collection.find_one({"key": key, "value": value, "active": True})
+
+                if existing_config:
+                    # Skip if identical configuration already exists and is active
+                    continue
+
+                # Create a new configuration
+                config = SiteConfigCreate(
+                    key=key,
+                    value=value,
+                    active=True,
+                    description=f"Default {key} configuration (reset on {datetime.utcnow().strftime('%Y-%m-%d')})",
+                )
+
+                # Save the new configuration
+                new_config = await self.create_site_config(config=config, username=username)
+                result.append(new_config)
+
+            except json.JSONDecodeError as e:
+                # Log the error but continue with other files
+                print(f"Error parsing JSON from {config_file}: {str(e)}")
+                continue
+            except Exception as e:
+                # Log the error but continue with other files
+                print(f"Error processing {config_file}: {str(e)}")
+                continue
+
+        return result

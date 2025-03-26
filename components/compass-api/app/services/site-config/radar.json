@@ -1,0 +1,23 @@
+{
+  "techRadar": {
+    "title": "Tech Radar",
+    "faqs": [
+      {
+        "title": "What is the Tech Radar?",
+        "content": "The Tech Radar is a list of technologies, complemented by an assessment result, called *ring assignment*. \nWe use four rings with the following semantics:\n\n* **ADOPT** — Proven technologies recommended for wide use in production, with low risk.\n\n* **TRIAL** — Technologies successfully used in projects with some limitations identified. Moderate risk.\n\n* **ASSESS** — Promising technologies worth exploring through research and prototypes. Higher risk.\n\n* **HOLD** — Technologies not recommended for new projects but can be maintained in existing ones."
+      },
+      {
+        "title": "What is the purpose?",
+        "content": "The Tech Radar helps engineering teams choose the best technologies for new projects. It's a platform for sharing knowledge and experience about technologies that we recommend using. Inspired by ThoughtWorks, it tracks important changes in software development that our teams should consider."
+      },
+      {
+        "title": "How do we maintain it?",
+        "content": "The Tech Radar is maintained by our *Principal Engineers* who lead technology discussions and ring assignments through proposals and voting. All Engineering teams can contribute by sharing their experiences and best practices."
+      },
+      {
+        "title": "How can I provide feedback?",
+        "content": "We welcome and value your feedback on the Tech Radar! Here's how you can contribute:\n\n* **Submit Ring Change Proposals** — If you believe a technology should be moved to a different ring, submit a proposal with your rationale and supporting evidence.\n\n* **Report Issues** — Found incorrect information or have concerns about a technology's placement? Let us know through our issue tracking system.\n\nYou can submit your feedback through any of these channels:\n* Create an issue in our [GitHub repository](https://github.com/your-org/tech-radar/issues)\n* Email the Principal Engineers team at *tech-radar@your-company.com*\n\nYour input helps keep the Tech Radar relevant and valuable for the entire engineering community."
+      }
+    ]
+  }
+}
