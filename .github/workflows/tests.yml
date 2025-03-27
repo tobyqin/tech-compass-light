@@ -63,7 +63,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./components/compass-ui
-        run: npm ci
+        run: npm i
 
       - name: Run tests
         working-directory: ./components/compass-ui
