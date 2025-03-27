@@ -84,7 +84,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/items/new",
+        path: "tech-radar/new",
         title: "Submit Solution",
         loadChildren: () =>
           import("./features/submit-solution/submit-solution.module").then(
