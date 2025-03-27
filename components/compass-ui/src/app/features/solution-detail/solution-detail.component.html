@@ -28,21 +28,6 @@
               <h3>Brief</h3>
               <p class="brief-text">{{ solution.brief }}</p>
             </div>
-            
-            <div class="pros-cons">
-              <div class="pros">
-                <h3>Pros</h3>
-                <ul>
-                  <li *ngFor="let pro of solution.pros">{{ pro }}</li>
-                </ul>
-              </div>
-              <div class="cons">
-                <h3>Cons</h3>
-                <ul>
-                  <li *ngFor="let con of solution.cons">{{ con }}</li>
-                </ul>
-              </div>
-            </div>
 
             <div class="description-section">
               <h3>Description</h3>
@@ -81,23 +66,6 @@
           <div class="info-item" *ngIf="solution.version">
             <label>Version</label>
             <span>{{ solution.version }}</span>
-          </div>
-        </div>
-
-
-        <div class="info-section">
-          <h3>Team Information</h3>
-          <div class="info-item">
-            <label>Department</label>
-            <span>{{ solution.department }}</span>
-          </div>
-          <div class="info-item">
-            <label>Team</label>
-            <span>{{ solution.team }}</span>
-          </div>
-          <div class="info-item">
-            <label>Team Email</label>
-            <a [href]="'mailto:' + solution.team_email">{{ solution.team_email }}</a>
           </div>
         </div>
 

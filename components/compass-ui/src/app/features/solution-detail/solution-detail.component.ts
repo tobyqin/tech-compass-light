@@ -387,9 +387,9 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
 
       const slug = solution.slug;
       if (currentUser.is_superuser) {
-        this.router.navigate(['/manage/all-solutions/edit/', slug]);
+        this.router.navigate(['/manage/all-items/edit/', slug]);
       } else if (currentUser.username === solution.maintainer_id) {
-        this.router.navigate(['/manage/my-solutions/edit/', slug]);
+        this.router.navigate(['/manage/my-items/edit/', slug]);
       }
     });
   }

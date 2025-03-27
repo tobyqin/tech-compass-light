@@ -162,7 +162,7 @@ export class EditSolutionComponent implements OnInit {
         summary: "Error",
         detail: "No solution slug provided",
       });
-      this.router.navigate(["/manage/my-solutions"]);
+      this.router.navigate(["/manage/my-items"]);
       return;
     }
 
@@ -184,7 +184,7 @@ export class EditSolutionComponent implements OnInit {
             summary: "Error",
             detail: "Failed to load solution",
           });
-          this.router.navigate(["/manage/my-solutions"]);
+          this.router.navigate(["/manage/my-items"]);
         }
       },
       error: (error: { error?: { detail: string } }) => {
@@ -193,7 +193,7 @@ export class EditSolutionComponent implements OnInit {
           summary: "Error",
           detail: error.error?.detail || "Failed to load solution",
         });
-        this.router.navigate(["/manage/my-solutions"]);
+        this.router.navigate(["/manage/my-items"]);
         this.loading = false;
       },
     });

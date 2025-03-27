@@ -46,7 +46,7 @@ class TechRadarService:
                 quadrant=category.radar_quadrant,
                 ring=status_to_ring[solution["recommend_status"]],
                 label=solution["name"],
-                link=f"/solutions/{solution.get('slug', '')}",
+                link=f"/tech-radar/items/{solution.get('slug', '')}",
                 active=True,  # Always true for approved solutions
                 moved=0,  # Always 0 as per requirements
             )

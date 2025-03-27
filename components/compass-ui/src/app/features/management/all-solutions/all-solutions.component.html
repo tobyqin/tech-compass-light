@@ -1,5 +1,5 @@
 <div class="all-solutions">
-  <h1>All Solutions</h1>
+  <h1>All Items</h1>
 
   <div class="filters-section">
     <div class="filter-row">
@@ -78,7 +78,7 @@
       <ng-template pTemplate="body" let-solution>
         <tr>
           <td>
-            <a [routerLink]="['/solutions', solution.slug]" class="solution-link">
+            <a [routerLink]="['/tech-radar/items', solution.slug]" class="solution-link">
               <span class="truncate" [title]="solution.name">{{ solution.name }}</span>
             </a>
           </td>

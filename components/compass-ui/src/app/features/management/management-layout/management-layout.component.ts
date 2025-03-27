@@ -102,9 +102,9 @@ export class ManagementLayoutComponent implements OnInit, OnDestroy {
     if (isAdmin) {
       this.sideMenuItems.push(
         {
-          label: "All Solutions",
+          label: "All Items",
           icon: "pi pi-box",
-          routerLink: "/manage/all-solutions",
+          routerLink: "/manage/all-items",
         },
         {
           label: "All Categories",
@@ -117,16 +117,6 @@ export class ManagementLayoutComponent implements OnInit, OnDestroy {
           routerLink: "/manage/all-tags",
         },
         {
-          label: "All Comments",
-          icon: "pi pi-comments",
-          routerLink: "/manage/all-comments",
-        },
-        {
-          label: "All Ratings",
-          icon: "pi pi-star",
-          routerLink: "/manage/all-ratings",
-        },
-        {
           label: "All Users",
           icon: "pi pi-users",
           routerLink: "/manage/all-users",
@@ -136,19 +126,9 @@ export class ManagementLayoutComponent implements OnInit, OnDestroy {
 
     this.sideMenuItems.push(
       {
-        label: "My Solutions",
+        label: "My Items",
         icon: "pi pi-box",
-        routerLink: "/manage/my-solutions",
-      },
-      {
-        label: "My Comments",
-        icon: "pi pi-comments",
-        routerLink: "/manage/my-comments",
-      },
-      {
-        label: "My Ratings",
-        icon: "pi pi-star",
-        routerLink: "/manage/my-ratings",
+        routerLink: "/manage/my-items",
       }
     );
   }

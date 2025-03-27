@@ -46,8 +46,8 @@ const routes: Routes = [
         data: { breadcrumb: "Dashboard" },
       },
       {
-        path: "all-solutions",
-        data: { breadcrumb: "All Solutions" },
+        path: "all-items",
+        data: { breadcrumb: "All Items" },
         canActivate: [AdminGuard],
         children: [
           {
@@ -92,8 +92,8 @@ const routes: Routes = [
         data: { breadcrumb: "All Users" },
       },
       {
-        path: "my-solutions",
-        data: { breadcrumb: "My Solutions" },
+        path: "my-items",
+        data: { breadcrumb: "My Items" },
         children: [
           {
             path: "",

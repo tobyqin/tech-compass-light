@@ -64,13 +64,13 @@ export class CategoriesComponent implements OnInit {
   }
 
   navigateToSolutions(category: Category): void {
-    this.router.navigate(['/solutions'], {
+    this.router.navigate(['/tech-radar/items'], {
       queryParams: { category: category.name }
     });
   }
 
   addSolution(category: Category): void {
-    this.router.navigate(['/solutions/new'], {
+    this.router.navigate(['/tech-radar/new'], {
       queryParams: { category: category.name }
     });
   }
