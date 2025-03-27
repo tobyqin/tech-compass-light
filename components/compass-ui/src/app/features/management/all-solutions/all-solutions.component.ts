@@ -186,7 +186,7 @@ export class AllSolutionsComponent implements OnInit {
   }
 
   viewSolution(slug: string) {
-    this.router.navigate(["/solutions", slug]);
+    this.router.navigate(["/tech-radar/items", slug]);
   }
 
   getStatusSeverity(status: string): TagSeverity {

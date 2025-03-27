@@ -93,7 +93,7 @@ export class MySolutionsComponent implements OnInit {
   }
 
   editSolution(solution: Solution) {
-    this.router.navigate(["/manage/my-solutions/edit", solution.slug], {
+    this.router.navigate(["/manage/my-items/edit", solution.slug], {
       state: { solution },
     });
   }
