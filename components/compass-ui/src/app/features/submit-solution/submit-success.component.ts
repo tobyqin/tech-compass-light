@@ -16,10 +16,10 @@ import { Component } from '@angular/core';
         </p>
         <div class="actions">
           <button pButton type="button" label="Submit Another Solution" 
-            icon="pi pi-plus" routerLink="/solutions/new">
+            icon="pi pi-plus" routerLink="/tech-radar/new">
           </button>
           <button pButton type="button" label="Back to Home" 
-            icon="pi pi-home" routerLink="/" 
+            icon="pi pi-home" routerLink="/tech-radar" 
             class="p-button-outlined">
           </button>
         </div>
