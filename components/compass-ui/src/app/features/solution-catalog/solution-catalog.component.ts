@@ -172,7 +172,7 @@ export class SolutionCatalogComponent implements OnInit, OnDestroy {
       // Handle search keyword from URL
       this.searchKeyword = params['keyword'] || '';
       
-      // Only perform search if there's a keyword, otherwise load solutions once
+      // Only perform search if there's a keyword, otherwise load data once
       if (this.searchKeyword) {
         this.performSearch(this.searchKeyword);
       } else {
@@ -180,7 +180,7 @@ export class SolutionCatalogComponent implements OnInit, OnDestroy {
         this.currentPage = 0;
         this.solutions = [];
         this.hasMore = true;
-        // Load solutions with new filters
+        // Load data with new filters
         this.loadSolutions();
       }
     });
@@ -361,7 +361,7 @@ export class SolutionCatalogComponent implements OnInit, OnDestroy {
         this.currentPage = 1;
       },
       error: () => {
-        this.error = 'Failed to load solutions. Please try again.';
+        this.error = 'Failed to load data. Please try again.';
         this.loading = false;
       }
     });

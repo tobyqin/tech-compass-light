@@ -2,7 +2,7 @@
   <div class="breadcrumb">
     <p-breadcrumb [model]="[
       { label: 'Home', routerLink: '/' },
-      { label: 'Solution Catalog', routerLink: '/solutions' },
+      { label: 'Catalog', routerLink: '/tech-radar/items' },
       { label: solution.name }
     ]"></p-breadcrumb>
   </div>
@@ -48,7 +48,7 @@
               icon="pi pi-pencil" 
               styleClass="p-button-text p-button-primary p-button-sm"
               (onClick)="navigateToEditSolution()"
-              pTooltip="Edit Solution Information">
+              pTooltip="Edit Information">
             </p-button>
           </div>
           <div class="info-item">

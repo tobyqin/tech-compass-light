@@ -57,7 +57,7 @@ export class AboutComponent implements OnInit, OnDestroy {
   private defaultAboutConfig: AboutConfig = {
     hero: {
       title: "About Tech Compass",
-      subtitle: "Your guide to technology solutions",
+      subtitle: "Your guide to technology library",
     },
     team: {
       title: "Our Sponsors",

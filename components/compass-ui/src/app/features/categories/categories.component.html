@@ -10,7 +10,7 @@
   <div class="categories-grid">
     <div class="category-card" 
          *ngFor="let category of categories"
-         [attr.aria-label]="'View solutions in ' + category.name + ' category'"
+         [attr.aria-label]="'View in ' + category.name + ' category'"
          role="button"
          tabindex="0">
       <div class="card-header">
@@ -27,11 +27,6 @@
           <span class="label">Solutions</span>
         </div>
         <div class="actions">
-          <button class="btn-add" 
-                  (click)="addSolution(category); $event.stopPropagation()">
-            <i class="pi pi-plus"></i>
-            <span>Add Solution</span>
-          </button>
           <button class="btn-view" 
                   (click)="navigateToSolutions(category)">
             <span>View All</span>

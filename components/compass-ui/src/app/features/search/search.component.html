@@ -17,12 +17,12 @@
   <section class="search-results" *ngIf="searchKeyword">
     <div class="section-header">
       <h2>Search Results</h2>
-      <p *ngIf="!loadingSearch && searchResults.length > 0">Found {{ searchResults.length }} solutions</p>
+      <p *ngIf="!loadingSearch && searchResults.length > 0">Found {{ searchResults.length }} items</p>
     </div>
 
     <div class="loading-state" *ngIf="loadingSearch">
       <p-progressSpinner></p-progressSpinner>
-      <p>Searching solutions...</p>
+      <p>Searching ...</p>
     </div>
 
     <div class="error-state" *ngIf="searchError">
@@ -34,7 +34,7 @@
     </div>
 
     <div class="no-results" *ngIf="!loadingSearch && searchResults.length === 0">
-      <p>No solutions found for "{{ searchKeyword }}". Would you like to <a routerLink="/tech-radar/new">submit your own solution</a>?</p>
+      <p>No technologies found for "{{ searchKeyword }}". </p>
     </div>
   </section>
 
@@ -52,8 +52,8 @@
 
   <section class="recommended-section">
     <div class="section-header">
-      <h2>Recommended Solutions</h2>
-      <p>Top-rated technology solutions for your needs</p>
+      <h2>Recommended</h2>
+      <p>Top-rated technology for your needs</p>
     </div>
 
     <div class="carousel-container" *ngIf="!loading && !error">
@@ -73,7 +73,7 @@
 
     <div class="loading-state" *ngIf="loading">
       <p-progressSpinner></p-progressSpinner>
-      <p>Loading recommended solutions...</p>
+      <p>Loading recommended technologies...</p>
     </div>
 
     <div class="error-state" *ngIf="error">
@@ -83,8 +83,8 @@
 
   <section class="new-solutions-section">
     <div class="section-header">
-      <h2>New Solutions</h2>
-      <p>Recently added technology solutions</p>
+      <h2>Newly Addition</h2>
+      <p>Recently added technologies</p>
     </div>
 
     <div class="carousel-container" *ngIf="!loadingNew && !newSolutionsError">
@@ -104,7 +104,7 @@
 
     <div class="loading-state" *ngIf="loadingNew">
       <p-progressSpinner></p-progressSpinner>
-      <p>Loading new solutions...</p>
+      <p>Loading new technologies...</p>
     </div>
 
     <div class="error-state" *ngIf="newSolutionsError">

@@ -10,12 +10,12 @@ import { Component } from '@angular/core';
         </div>
         <h1>Thank You!</h1>
         <p class="message">
-          Your solution has been submitted successfully and is pending review.
+          Your item has been submitted successfully and is pending review.
           We will carefully evaluate your submission and make it visible
           once approved. Please be patient during this process.
         </p>
         <div class="actions">
-          <button pButton type="button" label="Submit Another Solution" 
+          <button pButton type="button" label="Submit Another Item" 
             icon="pi pi-plus" routerLink="/tech-radar/new">
           </button>
           <button pButton type="button" label="Back to Home" 

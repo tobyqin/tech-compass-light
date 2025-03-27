@@ -29,7 +29,7 @@ export interface RatingResponse {
 export class RatingService {
   constructor(private http: HttpClient) {}
 
-  // Get ratings for a specific solution
+  // Get ratings for a specific item
   getSolutionRatings(
     slug: string,
     skip: number = 0,
@@ -73,7 +73,7 @@ export class RatingService {
     );
   }
 
-  // Add a rating to a solution
+  // Add a rating to a item
   addRating(
     slug: string, 
     score: number, 

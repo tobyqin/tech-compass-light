@@ -38,13 +38,13 @@ export class ManagementDashboardComponent implements OnInit {
   }
 
   private loadStats() {
-    // Load my solution count
+    // Load my items count
     this.solutionService.getMySolutions(0, 1).subscribe({
       next: (response) => {
         this.stats.solutions = response.total || 0;
       },
       error: (error) => {
-        console.error("Error loading solution count:", error);
+        console.error("Error loading item count:", error);
       },
     });
 
@@ -68,13 +68,13 @@ export class ManagementDashboardComponent implements OnInit {
       },
     });
 
-    // Load total solutions count
+    // Load total count
     this.solutionService.getAllSolutions(0, 1).subscribe({
       next: (response) => {
         this.stats.totalSolutions = response.total || 0;
       },
       error: (error) => {
-        console.error("Error loading total solutions count:", error);
+        console.error("Error loading total count:", error);
       },
     });
 

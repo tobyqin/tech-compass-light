@@ -57,7 +57,7 @@ const routes: Routes = [
           {
             path: "edit/:slug",
             component: EditSolutionComponent,
-            data: { breadcrumb: "Edit Solution" },
+            data: { breadcrumb: "Edit Item" },
           },
         ],
       },
@@ -102,7 +102,7 @@ const routes: Routes = [
           {
             path: "edit/:slug",
             component: EditSolutionComponent,
-            data: { breadcrumb: "Edit Solution" },
+            data: { breadcrumb: "Edit Item" },
           },
         ],
       },

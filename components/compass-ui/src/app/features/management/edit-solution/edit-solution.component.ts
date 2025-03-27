@@ -160,7 +160,7 @@ export class EditSolutionComponent implements OnInit {
       this.messageService.add({
         severity: "error",
         summary: "Error",
-        detail: "No solution slug provided",
+        detail: "No slug provided",
       });
       this.router.navigate(["/manage/my-items"]);
       return;

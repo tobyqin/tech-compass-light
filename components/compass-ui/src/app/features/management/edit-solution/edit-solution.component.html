@@ -1,5 +1,5 @@
 <div class="edit-solution">
-  <h1>Edit Solution</h1>
+  <h1>Edit Item</h1>
   
   <form [formGroup]="solutionForm" (ngSubmit)="onSubmit()" class="p-fluid">
     <div class="section-card">
@@ -8,7 +8,7 @@
       </div>
       <div class="form-row">
         <div class="form-field">
-          <label for="name">Solution Name *</label>
+          <label for="name">Name *</label>
           <input id="name" type="text" pInputText formControlName="name" />
         </div>
         <div class="form-field">
@@ -41,14 +41,14 @@
         <div class="form-field">
           <label for="brief">Brief Description * (max 200 characters)</label>
           <textarea id="brief" pInputTextarea formControlName="brief" [rows]="2" [maxlength]="200"
-            placeholder="Enter a brief description of your solution"></textarea>
+            placeholder="Enter a brief description of your technology"></textarea>
         </div>
       </div>
       <div class="form-row">
         <div class="form-field">
           <label for="description">Description *</label>
           <textarea id="description" pInputTextarea formControlName="description" [rows]="5" [autoResize]="true"
-            placeholder="Please provide a detailed description of the solution, including its main features, use cases, and any special requirements."></textarea>
+            placeholder="Please provide a detailed description of the technology, including its main features, use cases, and any special requirements."></textarea>
         </div>
       </div>
     </div>

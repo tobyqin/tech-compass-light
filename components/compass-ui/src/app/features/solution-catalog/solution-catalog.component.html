@@ -14,7 +14,7 @@
           <i class="pi pi-search"></i>
           <input type="text" pInputText [(ngModel)]="searchKeyword" 
                  (input)="onSearch($event)" 
-                 placeholder="Search solutions...">
+                 placeholder="Search ...">
         </span>
       </div>
 
@@ -102,24 +102,24 @@
 
     <div class="no-results" *ngIf="!loading && !error && solutions.length === 0">
       <i class="pi pi-info-circle"></i>
-      <h3>No Solutions Found</h3>
-      <p *ngIf="searchKeyword">No solutions match your search "{{ searchKeyword }}"</p>
+      <h3>No item found</h3>
+      <p *ngIf="searchKeyword">No items match your search "{{ searchKeyword }}"</p>
       <p *ngIf="!searchKeyword && (selectedTags.length > 0 || filters.category || filters.department || filters.recommend_status)">
-        No solutions match your selected filters
+        No items match your selected filters
       </p>
       <p *ngIf="!searchKeyword && !selectedTags.length && !filters.category && !filters.department && !filters.recommend_status">
-        No solutions available at the moment
+        No items available at the moment
       </p>
     </div>
 
     <div class="loading-more" *ngIf="loadingMore">
       <p-progressSpinner></p-progressSpinner>
-      <p>Loading more solutions...</p>
+      <p>Loading more ...</p>
     </div>
 
     <div class="loading-state" *ngIf="loading && solutions.length === 0">
       <p-progressSpinner></p-progressSpinner>
-      <p>Loading solutions...</p>
+      <p>Loading ...</p>
     </div>
 
     <div class="error-state" *ngIf="error">

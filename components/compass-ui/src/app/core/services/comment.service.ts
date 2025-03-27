@@ -52,7 +52,7 @@ export class CommentService {
     return this.http.get<CommentResponse>(url);
   }
 
-  // Get comments for a specific solution
+  // Get comments for a specific item
   getSolutionComments(
     slug: string,
     skip: number = 0,
@@ -76,7 +76,7 @@ export class CommentService {
     );
   }
 
-  // Add a comment to a solution
+  // Add a comment to a item
   addComment(
     slug: string, 
     data: { content: string; is_adopted_user: boolean }

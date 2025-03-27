@@ -127,7 +127,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load configuration first
     this.loadConfig().then(() => {
-      // Then load solutions data
+      // Then load data
       this.loadRecommendedSolutions();
       this.loadNewSolutions();
     });

@@ -85,7 +85,7 @@ const routes: Routes = [
       },
       {
         path: "tech-radar/new",
-        title: "Submit Solution",
+        title: "Submit Item",
         loadChildren: () =>
           import("./features/submit-solution/submit-solution.module").then(
             (m) => m.SubmitSolutionModule
@@ -101,7 +101,7 @@ const routes: Routes = [
       },
       {
         path: "tech-radar/items/:slug",
-        title: "Technology Item",
+        title: "Technology Detail",
         loadComponent: () =>
           import("./features/solution-detail/solution-detail.component").then(
             (m) => m.SolutionDetailComponent

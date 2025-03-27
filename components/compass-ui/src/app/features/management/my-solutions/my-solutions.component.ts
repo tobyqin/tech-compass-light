@@ -114,7 +114,7 @@ export class MySolutionsComponent implements OnInit {
         this.messageService.add({
           severity: "success",
           summary: "Success",
-          detail: "Solution deleted successfully",
+          detail: "Item deleted successfully",
         });
         this.resetAndReload();
       },
@@ -122,7 +122,7 @@ export class MySolutionsComponent implements OnInit {
         this.messageService.add({
           severity: "error",
           summary: "Error",
-          detail: "Failed to delete solution",
+          detail: "Failed to delete item",
         });
         this.loading = false;
       },
@@ -130,7 +130,7 @@ export class MySolutionsComponent implements OnInit {
   }
 
   viewSolution(slug: string) {
-    this.router.navigate(["/solutions", slug]);
+    this.router.navigate(["/tech-radar/items", slug]);
   }
 
   getStatusSeverity(status: string): TagSeverity {

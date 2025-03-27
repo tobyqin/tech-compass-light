@@ -181,7 +181,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: "error",
             summary: "Error",
-            detail: "Failed to load solution details",
+            detail: "Failed to load details",
           });
         },
       });
@@ -372,7 +372,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       const solution = this.solution$.value;
 
       if (currentUser && solution) {
-        // Check if current user is the solution maintainer or a superuser
+        // Check if current user is the maintainer or a superuser
         canEdit = currentUser.username === solution.maintainer_id || 
                   currentUser.is_superuser;
       }

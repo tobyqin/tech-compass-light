@@ -171,7 +171,7 @@ export class SubmitSolutionComponent implements OnInit {
           this.messageService.add({
             severity: "error",
             summary: "Error",
-            detail: error.error?.detail || "Failed to create solution",
+            detail: error.error?.detail || "Failed to create new item",
           });
           this.submitting = false;
         },
