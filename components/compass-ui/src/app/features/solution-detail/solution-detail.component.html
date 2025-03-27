@@ -86,34 +86,32 @@
               pTooltip="Edit Information">
             </p-button>
           </div>
+          <div class="info-item" *ngIf="solution.group">
+            <label>Group</label>
+            <span>{{ solution.group }}</span>
+          </div>
           <div class="info-item">
             <label>Category</label>
             <span>{{ solution.category }}</span>
           </div>
           <div class="info-item">
-            <label>Stage</label>
-            <p-tag [value]="solution.stage" [severity]="getStageSeverity(solution.stage)"></p-tag>
+            <label>Provider Type</label>
+            <p-tag [value]="solution.provider_type"></p-tag>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="section-header">
+            <h3>Adoption Status</h3>
           </div>
           <div class="info-item">
             <label>Recommend Status</label>
             <p-tag [value]="solution.recommend_status"
               [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
           </div>
-          <div class="info-item" *ngIf="solution.version">
-            <label>Version</label>
-            <span>{{ solution.version }}</span>
-          </div>
-          <div class="info-item" *ngIf="solution.group">
-            <label>Group</label>
-            <span>{{ solution.group }}</span>
-          </div>
-          <div class="info-item">
-            <label>Provider Type</label>
-            <p-tag [value]="solution.provider_type"></p-tag>
-          </div>
           <div class="info-item">
             <label>Adoption Complexity</label>
-            <p-tag [value]="solution.adoption_complexity" [severity]="
+            <p-tag [value]="solution.adoption_complexity.replace('_', ' ')" [severity]="
                 getAdoptionComplexitySeverity(solution.adoption_complexity)
               "></p-tag>
           </div>
@@ -137,8 +135,10 @@
           <div class="info-item">
             <label>Email</label>
             <a [href]="'mailto:' + solution.maintainer_email">{{
-              solution.maintainer_email
-              }}</a>
+              solution.maintainer_email.length > 18
+                ? solution.maintainer_email.substring(0, 18) + '...' 
+                : solution.maintainer_email
+            }}</a>
           </div>
         </div>
 

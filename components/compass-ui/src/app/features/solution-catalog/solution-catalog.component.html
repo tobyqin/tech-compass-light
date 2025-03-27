@@ -17,7 +17,7 @@
                  placeholder="Search ...">
         </span>
       </div>
-
+      
       <div class="filter-item">
         <label>Category</label>
         <p-dropdown 
@@ -32,18 +32,6 @@
           <ng-template pTemplate="item" let-option>
             <div [attr.title]="option.title">{{ option.label }}</div>
           </ng-template>
-        </p-dropdown>
-      </div>
-
-      <div class="filter-item">
-        <label>Department</label>
-        <p-dropdown 
-          [options]="departmentOptions" 
-          [(ngModel)]="filters.department"
-          (onChange)="onFilterChange()"
-          [style]="{'width':'100%'}"
-          [showClear]="true"
-          placeholder="Select Department">
         </p-dropdown>
       </div>
 
