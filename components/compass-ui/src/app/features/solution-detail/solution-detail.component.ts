@@ -12,7 +12,10 @@ import { AuthService } from "../../core/services/auth.service";
 import { Comment, CommentService } from "../../core/services/comment.service";
 import type { Rating } from "../../core/services/rating.service";
 import { RatingService } from "../../core/services/rating.service";
-import { AdoptedUser, SolutionService } from "../../core/services/solution.service";
+import {
+  AdoptedUser,
+  SolutionService,
+} from "../../core/services/solution.service";
 import { Solution } from "../../shared/interfaces/solution.interface";
 
 // PrimeNG Components
@@ -91,7 +94,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   newRating = {
     score: 0,
     comment: "",
-    is_adopted_user: false
+    is_adopted_user: false,
   };
   isLoggedIn = false;
 
@@ -164,6 +167,15 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       INDUSTRY: "success",
     };
     return severityMap[level] || "info";
+  }
+
+  getAdoptionComplexitySeverity(complexity: string): Severity {
+    const severityMap: { [key: string]: Severity } = {
+      AUTOMATED: "success",
+      EASY: "info",
+      SUPPORT_REQUIRED: "warning",
+    };
+    return severityMap[complexity] || "info";
   }
 
   private loadSolution(slug: string) {
@@ -241,7 +253,8 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
             const currentComments = this.userComments$.value;
             this.userComments$.next([...currentComments, ...response.data]);
             this.totalUserComments = response.total;
-            this.hasMoreUserComments = currentComments.length + response.data.length < response.total;
+            this.hasMoreUserComments =
+              currentComments.length + response.data.length < response.total;
             this.userCommentsPage++;
           }
         },
@@ -299,7 +312,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     this.commentService
       .addComment(slug, {
         content: this.newComment,
-        is_adopted_user: this.newCommentIsAdopted
+        is_adopted_user: this.newCommentIsAdopted,
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -368,28 +381,29 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
 
   canEditSolution(): boolean {
     let canEdit = false;
-    this.authService.currentUser$.subscribe(currentUser => {
+    this.authService.currentUser$.subscribe((currentUser) => {
       const solution = this.solution$.value;
 
       if (currentUser && solution) {
         // Check if current user is the maintainer or a superuser
-        canEdit = currentUser.username === solution.maintainer_id || 
-                  currentUser.is_superuser;
+        canEdit =
+          currentUser.username === solution.maintainer_id ||
+          currentUser.is_superuser;
       }
     });
     return canEdit;
   }
 
   navigateToEditSolution() {
-    this.authService.currentUser$.subscribe(currentUser => {
+    this.authService.currentUser$.subscribe((currentUser) => {
       const solution = this.solution$.value;
       if (!solution || !currentUser) return;
 
       const slug = solution.slug;
       if (currentUser.is_superuser) {
-        this.router.navigate(['/manage/all-items/edit/', slug]);
+        this.router.navigate(["/manage/all-items/edit/", slug]);
       } else if (currentUser.username === solution.maintainer_id) {
-        this.router.navigate(['/manage/my-items/edit/', slug]);
+        this.router.navigate(["/manage/my-items/edit/", slug]);
       }
     });
   }
@@ -435,8 +449,10 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   sendEmail(email: string) {
     const solution = this.solution$.value;
     if (!solution) return;
-    
-    const subject = encodeURIComponent(`Reach out for tech solution: ${solution.name}`);
+
+    const subject = encodeURIComponent(
+      `Reach out for tech solution: ${solution.name}`
+    );
     window.location.href = `mailto:${email}?subject=${subject}`;
   }
 }

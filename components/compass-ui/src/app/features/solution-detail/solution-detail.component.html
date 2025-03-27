@@ -1,15 +1,15 @@
 <div class="solution-detail-container" *ngIf="solution$ | async as solution">
   <div class="breadcrumb">
     <p-breadcrumb [model]="[
-      { label: 'Home', routerLink: '/' },
-      { label: 'Catalog', routerLink: '/tech-radar/items' },
-      { label: solution.name }
-    ]"></p-breadcrumb>
+        { label: 'Home', routerLink: '/' },
+        { label: 'Catalog', routerLink: '/tech-radar/items' },
+        { label: solution.name }
+      ]"></p-breadcrumb>
   </div>
 
   <div class="solution-header">
     <div class="solution-logo">
-      <img [src]="solution.logo || '/assets/default-solution-logo.svg'" [alt]="solution.name">
+      <img [src]="solution.logo || '/assets/default-solution-logo.svg'" [alt]="solution.name" />
     </div>
     <div class="solution-info">
       <h1>{{ solution.name }}</h1>
@@ -29,9 +29,47 @@
               <p class="brief-text">{{ solution.brief }}</p>
             </div>
 
+            <div *ngIf="solution.upskilling" class="upskilling-section">
+              <h3>Upskilling & Trainings</h3>
+              <markdown [data]="solution.upskilling"></markdown>
+            </div>
+
             <div class="description-section">
               <h3>Description</h3>
               <markdown [data]="solution.description"></markdown>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="How to Use">
+          <div class="how-to-use-content">
+            <div *ngIf="solution.how_to_use">
+              <markdown [data]="solution.how_to_use"></markdown>
+            </div>
+            <div *ngIf="!solution.how_to_use" class="empty-content">
+              <p>No instructions available for this item.</p>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="FAQ">
+          <div class="faq-content">
+            <div *ngIf="solution.faq">
+              <markdown [data]="solution.faq"></markdown>
+            </div>
+            <div *ngIf="!solution.faq" class="empty-content">
+              <p>No frequently asked questions available for this item.</p>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="About">
+          <div class="about-content">
+            <div *ngIf="solution.about">
+              <markdown [data]="solution.about"></markdown>
+            </div>
+            <div *ngIf="!solution.about" class="empty-content">
+              <p>No additional information available about this item.</p>
             </div>
           </div>
         </p-tabPanel>
@@ -43,11 +81,8 @@
         <div class="info-section">
           <div class="section-header">
             <h3>Basic Information</h3>
-            <p-button 
-              *ngIf="canEditSolution()" 
-              icon="pi pi-pencil" 
-              styleClass="p-button-text p-button-primary p-button-sm"
-              (onClick)="navigateToEditSolution()"
+            <p-button *ngIf="canEditSolution()" icon="pi pi-pencil"
+              styleClass="p-button-text p-button-primary p-button-sm" (onClick)="navigateToEditSolution()"
               pTooltip="Edit Information">
             </p-button>
           </div>
@@ -61,26 +96,49 @@
           </div>
           <div class="info-item">
             <label>Recommend Status</label>
-            <p-tag [value]="solution.recommend_status" [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
+            <p-tag [value]="solution.recommend_status"
+              [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
           </div>
           <div class="info-item" *ngIf="solution.version">
             <label>Version</label>
             <span>{{ solution.version }}</span>
+          </div>
+          <div class="info-item" *ngIf="solution.group">
+            <label>Group</label>
+            <span>{{ solution.group }}</span>
+          </div>
+          <div class="info-item">
+            <label>Provider Type</label>
+            <p-tag [value]="solution.provider_type"></p-tag>
+          </div>
+          <div class="info-item">
+            <label>Adoption Complexity</label>
+            <p-tag [value]="solution.adoption_complexity" [severity]="
+                getAdoptionComplexitySeverity(solution.adoption_complexity)
+              "></p-tag>
           </div>
         </div>
 
         <div class="info-section">
           <h3>Maintainer</h3>
           <div class="maintainer-avatar">
-            <img [src]="environment.apiUrl + '/users/' + solution.maintainer_id + '/avatar'" [alt]="solution.maintainer_name">
+            <img [src]="
+                environment.apiUrl +
+                '/users/' +
+                solution.maintainer_id +
+                '/avatar'
+              " [alt]="solution.maintainer_name" />
           </div>
           <div class="info-item">
             <label>Name</label>
-            <span>{{ solution.maintainer_name }} <span class="text-color-secondary">({{ solution.maintainer_id }})</span></span>
+            <span>{{ solution.maintainer_name }}
+              <span class="text-color-secondary">({{ solution.maintainer_id }})</span></span>
           </div>
           <div class="info-item">
             <label>Email</label>
-            <a [href]="'mailto:' + solution.maintainer_email">{{ solution.maintainer_email }}</a>
+            <a [href]="'mailto:' + solution.maintainer_email">{{
+              solution.maintainer_email
+              }}</a>
           </div>
         </div>
 
@@ -91,14 +149,26 @@
               <i class="pi pi-external-link"></i> Official Website
             </a>
           </div>
+          <div class="info-item" *ngIf="
+              solution.vendor_product_url && solution.provider_type === 'VENDOR'
+            ">
+            <a [href]="solution.vendor_product_url" target="_blank">
+              <i class="pi pi-shopping-cart"></i> Vendor Website
+            </a>
+          </div>
           <div class="info-item" *ngIf="solution.documentation_url">
             <a [href]="solution.documentation_url" target="_blank">
-              <i class="pi pi-file"></i> Documentation
+              <i class="pi pi-book"></i> Documentation
             </a>
           </div>
           <div class="info-item" *ngIf="solution.demo_url">
             <a [href]="solution.demo_url" target="_blank">
-              <i class="pi pi-play"></i> Demo
+              <i class="pi pi-play"></i> Product Demo
+            </a>
+          </div>
+          <div class="info-item" *ngIf="solution.support_url">
+            <a [href]="solution.support_url" target="_blank">
+              <i class="pi pi-question-circle"></i> Support Page
             </a>
           </div>
         </div>

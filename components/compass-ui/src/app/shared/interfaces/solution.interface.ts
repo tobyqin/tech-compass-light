@@ -49,6 +49,15 @@ export interface Solution {
   slug: string;
   rating: number;
   rating_count: number;
+  group?: string;
+  how_to_use?: string;
+  faq?: string;
+  about?: string;
+  support_url?: string;
+  vendor_product_url?: string;
+  upskilling?: string;
+  provider_type: "VENDOR" | "INTERNAL";
+  adoption_complexity: "AUTOMATED" | "EASY" | "SUPPORT_REQUIRED";
 }
 
 export interface SolutionResponse {
