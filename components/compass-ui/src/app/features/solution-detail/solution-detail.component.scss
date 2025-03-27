@@ -194,6 +194,25 @@
           }
         }
       }
+      
+      .how-to-use-content,
+      .faq-content,
+      .about-content {
+         h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-color);
+            font-size: 1.25rem;
+          }
+
+          ::ng-deep markdown {
+            color: var(--text-color-secondary);
+            line-height: 1.6;
+
+            p {
+              margin-top: 0;
+            }
+          }
+      }
 
       .comments-section,
       .ratings-section {
