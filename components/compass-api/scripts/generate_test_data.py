@@ -107,6 +107,18 @@ class TestDataGenerator:
         stages = ["DEVELOPING", "UAT", "PRODUCTION", "DEPRECATED", "RETIRED"]
         recommend_statuses = ["ADOPT", "TRIAL", "ASSESS", "HOLD"]
         adoption_levels = ["PILOT", "TEAM", "DEPARTMENT", "ENTERPRISE", "INDUSTRY"]
+        adoption_complexity_values = ["AUTOMATED", "EASY", "SUPPORT_REQUIRED"]
+        provider_types = ["VENDOR", "INTERNAL"]
+
+        # Generate a group name
+        groups = [
+            "Core Technologies",
+            "Integration Tools",
+            "Business Applications",
+            "Security Solutions",
+            "Dev Tools",
+            "Default",
+        ]
 
         # Define technology quadrants and their key areas
         tech_quadrants = {
@@ -190,11 +202,58 @@ class TestDataGenerator:
         ]
         tags = selected_areas + random.sample(tech_terms, k=random.randint(1, 3))
 
+        # Generate a random provider type
+        provider_type = random.choice(provider_types)
+
+        # Generate data for the new fields
+        solution_name = fake.catch_phrase()
+
+        # Generate upskilling information
+        upskilling_templates = [
+            f"To learn {solution_name}, consider the following training options:\n- Online courses at {fake.domain_name()}\n- Official certification available at {fake.url()}\n- Internal workshops run quarterly",
+            f"No formal certification exists for {solution_name}. Team members typically learn through:\n- Pair programming with experienced users\n- Documentation review\n- Hands-on projects",
+            f"Skill development path:\n1. Complete beginner tutorial at {fake.url()}\n2. Take the intermediate course\n3. Apply for advanced certification if needed",
+        ]
+
+        # Generate how_to_use instructions
+        how_to_use_templates = [
+            f"## Getting Started with {solution_name}\n\n1. Install the software from {fake.url()}\n2. Configure your settings\n3. Run the initialization script\n4. Refer to documentation for advanced usage",
+            f"### Quick Start Guide\n\n- Register for an account at {fake.url()}\n- Set up your project workspace\n- Import your existing data\n- Follow the guided tutorial for best practices",
+            "## Usage Instructions\n\nThis solution can be integrated through:\n- REST API\n- SDK for major languages\n- CLI tools\n\nRefer to examples in the documentation.",
+        ]
+
+        # Generate FAQ content
+        faq_questions = [
+            "How do I reset my password?",
+            "Can I use this solution with existing systems?",
+            "What are the system requirements?",
+            "Is there an API available?",
+            "How is data secured?",
+            "Can I customize the interface?",
+            "What support options are available?",
+            "How do I upgrade to the latest version?",
+        ]
+        faq_content = "## Frequently Asked Questions\n\n"
+        for _ in range(random.randint(3, 5)):
+            question = random.choice(faq_questions)
+            faq_content += f"### {question}\n{fake.paragraph()}\n\n"
+
+        # Generate about content
+        about_templates = [
+            f"## About {solution_name}\n\nDeveloped by {fake.company()} in {random.randint(2010, 2022)}. This solution has been deployed in over {random.randint(10, 500)} organizations worldwide.\n\nOur mission is to simplify and streamline {category_name.lower()} operations.",
+            f"## Background\n\n{solution_name} was created to address common challenges in {category_name}. It has evolved through {random.randint(2, 8)} major versions since its inception.",
+            f"## About This Tool\n\nOriginally designed for {fake.bs()}, {solution_name} has grown to support a wide range of use cases in {category_name}.",
+        ]
+
         solution_data = {
-            "name": fake.catch_phrase(),
+            "group": random.choice(groups),
+            "name": solution_name,
             "description": fake.text(max_nb_chars=200),
             "brief": fake.text(max_nb_chars=100).split(".")[0]
             + ".",  # Ensure it's a single sentence with proper ending
+            "how_to_use": random.choice(how_to_use_templates),
+            "faq": faq_content,
+            "about": random.choice(about_templates),
             "category": category_name,
             "department": fake.company_suffix(),
             "team": fake.job(),
@@ -204,8 +263,13 @@ class TestDataGenerator:
             "official_website": fake.url(),
             "documentation_url": fake.url(),
             "demo_url": fake.url(),
+            "support_url": fake.url(),
+            "vendor_product_url": fake.url() if provider_type == "VENDOR" else "",
             "version": f"{random.randint(1, 5)}.{random.randint(0, 9)}.{random.randint(0, 9)}",
+            "upskilling": random.choice(upskilling_templates),
+            "provider_type": provider_type,
             "adoption_level": random.choice(adoption_levels),
+            "adoption_complexity": random.choice(adoption_complexity_values),
             "adoption_user_count": random.randint(0, 1000),  # Generate random user count between 0 and 1000
             "tags": tags,
             "pros": [fake.sentence() for _ in range(random.randint(2, 4))],
