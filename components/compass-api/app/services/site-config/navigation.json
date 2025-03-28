@@ -5,8 +5,7 @@
     "alt": "Tech Compass Logo"
   },
   "favicon": {
-    "svg": "assets/favicon.svg",
-    "png": "assets/favicon.png"
+    "svg": "assets/favicon.svg"
   },
   "navigation": [
     {

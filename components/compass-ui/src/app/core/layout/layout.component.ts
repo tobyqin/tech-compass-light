@@ -190,18 +190,23 @@ export class LayoutComponent implements OnInit, OnDestroy {
    * Set favicon based on config
    */
   private setFavicon(favicon: { svg: string; png: string }) {
-    // Check if browser supports SVG favicons
-    const supportsSvg = document.implementation.hasFeature(
-      "http://www.w3.org/TR/SVG11/feature#Image",
-      "1.1"
-    );
-
-    const link =
-      document.querySelector('link[rel="icon"]') ||
-      document.createElement("link");
-    link.setAttribute("rel", "icon");
-    link.setAttribute("href", supportsSvg ? favicon.svg : favicon.png);
-    document.head.appendChild(link);
+    const faviconPath = favicon.svg;
+    
+    // Find existing favicon link element
+    let link = document.querySelector('link[rel="icon"]');
+    
+    // If link exists, update its href
+    if (link) {
+      link.setAttribute("type", "image/svg+xml");
+      link.setAttribute("href", faviconPath);
+    } else {
+      // Create new link element if it doesn't exist
+      link = document.createElement("link");
+      link.setAttribute("rel", "icon");
+      link.setAttribute("type", "image/svg+xml");
+      link.setAttribute("href", faviconPath);
+      document.head.appendChild(link);
+    }
   }
 
   /**
