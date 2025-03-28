@@ -14,6 +14,7 @@ class GroupBase(BaseModel):
         examples=["Frontend", "Backend", "DevOps"],
     )
     description: str = Field("", description="Group description", max_length=500)
+    order: int = Field(0, description="Order for sorting groups (lower values appear first)")
 
     @field_validator("name")
     @classmethod

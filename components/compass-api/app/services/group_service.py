@@ -53,13 +53,13 @@ class GroupService:
             return GroupInDB(**group)
         return None
 
-    async def get_groups(self, skip: int = 0, limit: int = 100, sort: str = "name") -> list[Group]:
+    async def get_groups(self, skip: int = 0, limit: int = 100, sort: str = "order") -> list[Group]:
         """Get all groups with pagination and sorting
 
         Args:
             skip: Number of records to skip
             limit: Maximum number of records to return
-            sort: Sort field (prefix with - for descending order)
+            sort: Sort field (prefix with - for descending order, default is 'order')
         """
         # Generate cache key
         cache_key = keys.hashkey(skip, limit, sort)

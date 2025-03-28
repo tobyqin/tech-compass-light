@@ -30,10 +30,10 @@ async def create_group(
 async def get_groups(
     skip: int = 0,
     limit: int = 100,
-    sort: str = Query("name", description="Sort field (prefix with - for descending order)"),
+    sort: str = Query("order", description="Sort field (prefix with - for descending order, e.g., name, order, created_at)"),
     group_service: GroupService = Depends(),
 ) -> StandardResponse[List[Group]]:
-    """Get all groups with pagination and sorting. Default sorting is by name ascending."""
+    """Get all groups with pagination and sorting. Default sorting is by order ascending."""
     groups = await group_service.get_groups(skip=skip, limit=limit, sort=sort)
     total = await group_service.count_groups()
     return StandardResponse.paginated(data=groups, total=total, skip=skip, limit=limit)
