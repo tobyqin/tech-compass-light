@@ -112,6 +112,11 @@ export class ManagementLayoutComponent implements OnInit, OnDestroy {
           routerLink: "/manage/all-categories",
         },
         {
+          label: "All Groups",
+          icon: "pi pi-th-large",
+          routerLink: "/manage/all-groups",
+        },
+        {
           label: "All Tags",
           icon: "pi pi-tags",
           routerLink: "/manage/all-tags",

@@ -1,0 +1,150 @@
+<div class="all-groups">
+  <div class="header-with-actions">
+    <h1>All Groups</h1>
+    <p-button 
+      label="Create New Group" 
+      icon="pi pi-plus" 
+      (click)="createNewGroup()"
+      styleClass="p-button-sm">
+    </p-button>
+  </div>
+
+  <div class="groups-table-container">
+    <p-table
+      #dt
+      [value]="groups"
+      [rows]="pageSize"
+      [paginator]="true"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showCurrentPageReport]="true"
+      [lazy]="true"
+      currentPageReportTemplate="{first}-{last} of {totalRecords}"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      (onPage)="onPageChange($event)">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th class="text-center" style="width: 80px;">Order</th>
+          <th class="text-center" style="width: 80px;">Usage Count</th>
+          <th>Updated By</th>
+          <th style="width: 130px;">Updated On</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-group>
+        <tr>
+          <td>
+            <span class="truncate group-name" [title]="group.name">
+              {{ group.name }}
+            </span>
+          </td>
+          <td>
+            <div class="truncate group-description" [title]="group.description || 'No description'">
+              {{ group.description || 'No description' }}
+            </div>
+          </td>
+          <td class="text-center">{{ group.order }}</td>
+          <td class="text-center">{{ group.usage_count }}</td>
+          <td>
+            <span class="truncate" [title]="group.updated_by">
+              {{ group.updated_by }}
+            </span>
+          </td>
+          <td>{{ group.updated_at | date : "yyyy-MM-dd" }}</td>
+          <td>
+            <div class="action-buttons">
+              <p-button
+                icon="pi pi-pencil"
+                (click)="editGroup(group)"
+                styleClass="p-button-text p-button-sm">
+              </p-button>
+              <p-button
+                icon="pi pi-trash"
+                (click)="confirmDelete(group)"
+                styleClass="p-button-text p-button-danger p-button-sm">
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7">
+            <div class="empty-message">
+              <i class="pi pi-inbox"></i>
+              <p>No groups found</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="loading-message">
+        <i class="pi pi-spin pi-spinner"></i>
+        <p>Loading groups...</p>
+      </div>
+    </div>
+  </div>
+
+  <p-dialog
+    [(visible)]="editDialogVisible"
+    [header]="editingGroup._id ? 'Edit Group' : 'Create Group'"
+    [modal]="true"
+    [style]="{ width: '50vw' }">
+    <div class="edit-group-form">
+      <div class="group-field">
+        <label>Name</label>
+        <input 
+          pInputText 
+          [(ngModel)]="editingGroup.name" 
+          [style]="{ width: '100%' }"
+          required
+        />
+      </div>
+      <div class="group-field">
+        <label>Description</label>
+        <textarea
+          pInputTextarea
+          [(ngModel)]="editingGroup.description"
+          [rows]="5"
+          [style]="{ width: '100%' }">
+        </textarea>
+      </div>
+      <div class="group-field">
+        <label>Order</label>
+        <p-inputNumber 
+          [(ngModel)]="editingGroup.order" 
+          [style]="{ width: '100%' }"
+          [min]="0" 
+          [showButtons]="true"
+        ></p-inputNumber>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancel"
+        (click)="editDialogVisible = false"
+        styleClass="p-button-text">
+      </p-button>
+      <p-button
+        label="Save"
+        (click)="saveGroup()"
+        [disabled]="!editingGroup.name?.trim()">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog
+    header="Confirm Deletion"
+    icon="pi pi-exclamation-triangle">
+  </p-confirmDialog>
+
+  <p-toast></p-toast>
+</div>

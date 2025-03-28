@@ -32,6 +32,7 @@ import { AllRatingsComponent } from "./all-ratings/all-ratings.component";
 import { AllUsersComponent } from "./all-users/all-users.component";
 import { AllCategoriesComponent } from "./all-categories/all-categories.component";
 import { AllTagsComponent } from "./all-tags/all-tags.component";
+import { AllGroupsComponent } from "./all-groups/all-groups.component";
 import { AdminGuard } from "../../core/guards/admin.guard";
 import { SharedModule } from "../../shared/shared.module";
 
@@ -78,6 +79,12 @@ const routes: Routes = [
         component: AllCategoriesComponent,
         canActivate: [AdminGuard],
         data: { breadcrumb: "All Categories" },
+      },
+      {
+        path: "all-groups",
+        component: AllGroupsComponent,
+        canActivate: [AdminGuard],
+        data: { breadcrumb: "All Groups" },
       },
       {
         path: "all-tags",
@@ -153,6 +160,7 @@ const routes: Routes = [
     AllRatingsComponent,
     AllUsersComponent,
     AllCategoriesComponent,
+    AllGroupsComponent,
     AllTagsComponent,
   ],
 })
