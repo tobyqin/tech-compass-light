@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MarkdownModule } from "ngx-markdown";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
@@ -86,7 +87,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient,
     private siteConfigService: SiteConfigService,
-    private groupService: GroupService
+    private groupService: GroupService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -163,9 +166,24 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       this.groupsSubscription = this.groupService.getAllGroups().subscribe({
         next: (response) => {
           this.groups = response.data;
-          if (this.groups.length > 0) {
+          
+          // Check if there's a group parameter in the URL
+          const groupParam = this.route.snapshot.queryParamMap.get('group');
+          
+          if (groupParam && this.groups.length > 0) {
+            // Find the group by name
+            const foundGroup = this.groups.find(g => g.name === groupParam);
+            if (foundGroup) {
+              this.selectedGroup = foundGroup;
+            } else {
+              // If group not found, default to first group
+              this.selectedGroup = this.groups[0];
+            }
+          } else if (this.groups.length > 0) {
+            // No group parameter, default to first group
             this.selectedGroup = this.groups[0];
           }
+          
           resolve();
         },
         error: reject,
@@ -335,6 +353,14 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    */
   selectGroup(group: Group): void {
     this.selectedGroup = group;
+    
+    // Update URL with the selected group
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { group: group.name },
+      queryParamsHandling: 'merge'
+    });
+    
     this.loadTechRadarData();
   }
 
