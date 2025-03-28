@@ -80,7 +80,7 @@ class SolutionBase(BaseModel):
     version: Optional[str] = Field(None, description="Current version")
     upskilling: Optional[str] = Field(
         default="",
-        description="Information on how to gain skills with this solution (training, certifications, etc.)",
+        description="Information on how to gain skills with this solution (training, certifications, etc.), markdown supported",
     )
     provider_type: Optional[ProviderTypeEnum] = Field(
         default="INTERNAL",

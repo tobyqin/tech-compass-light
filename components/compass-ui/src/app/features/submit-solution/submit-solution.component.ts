@@ -76,6 +76,17 @@ export class SubmitSolutionComponent implements OnInit {
     { label: "INDUSTRY", value: "INDUSTRY" },
   ];
 
+  adoptionComplexityOptions = [
+    { label: "AUTOMATED", value: "AUTOMATED" },
+    { label: "EASY", value: "EASY" },
+    { label: "SUPPORT_REQUIRED", value: "SUPPORT_REQUIRED" },
+  ];
+
+  providerTypeOptions = [
+    { label: "VENDOR", value: "VENDOR" },
+    { label: "INTERNAL", value: "INTERNAL" },
+  ];
+
   solutionForm: FormGroup;
 
   constructor(
@@ -93,6 +104,10 @@ export class SubmitSolutionComponent implements OnInit {
       name: ["", Validators.required],
       brief: ["", [Validators.required, Validators.maxLength(200)]],
       description: ["", Validators.required],
+      how_to_use: [""],
+      faq: [""],
+      about: [""],
+      upskilling: [""],
       category: ["", Validators.required],
       logo: [""],
       department: ["", Validators.required],
@@ -104,6 +119,9 @@ export class SubmitSolutionComponent implements OnInit {
       official_website: [""],
       documentation_url: [""],
       demo_url: [""],
+      support_url: [""],
+      provider_type: ["INTERNAL"],
+      vendor_product_url: [""],
       version: ["", Validators.required],
       tags: [[]],
       pros: ["", Validators.required],
@@ -111,6 +129,7 @@ export class SubmitSolutionComponent implements OnInit {
       stage: ["", Validators.required],
       recommend_status: ["", Validators.required],
       adoption_level: ["", Validators.required],
+      adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],
     });
   }
