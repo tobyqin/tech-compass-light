@@ -12,12 +12,20 @@ class TechRadarService:
         self.solutions = self.db.solutions
         self.categories = self.db.categories
 
-    async def get_tech_radar_data(self) -> TechRadarData:
+    async def get_tech_radar_data(self, group: str = None) -> TechRadarData:
         """Generate tech radar data from approved solutions.
         Only includes solutions whose categories have radar_quadrant >= 0.
+
+        Args:
+            group: Optional group name to filter solutions by group
         """
-        # Get all approved solutions
-        cursor = self.solutions.find({"review_status": "APPROVED"})
+        # Build query for approved solutions
+        query = {"review_status": "APPROVED"}
+        if group:
+            query["group"] = group
+            
+        # Get solutions matching query
+        cursor = self.solutions.find(query)
 
         # Status to ring mapping (0-based index)
         status_to_ring: Dict[RecommendStatusEnum, int] = {

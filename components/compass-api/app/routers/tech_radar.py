@@ -10,9 +10,13 @@ router = APIRouter()
 
 @router.get("/data", response_model=TechRadarData)
 async def get_tech_radar_data(
+    group: str = None,
     tech_radar_service: TechRadarService = Depends(),
 ) -> TechRadarData:
     """Get tech radar data in Zalando Tech Radar format.
+
+    Args:
+        group: Optional group name to filter solutions by group
 
     Returns a list of all approved solutions with their:
     - quadrant (from category's radar_quadrant)
@@ -21,7 +25,7 @@ async def get_tech_radar_data(
     - active (always true for approved solutions)
     - moved (always 0)
     """
-    return await tech_radar_service.get_tech_radar_data()
+    return await tech_radar_service.get_tech_radar_data(group=group)
 
 
 @router.get("/quadrants", response_model=List[Dict[str, str]])
