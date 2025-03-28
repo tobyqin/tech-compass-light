@@ -113,40 +113,83 @@ export class AllCategoriesComponent implements OnInit, OnDestroy {
     this.editDialogVisible = true;
   }
 
+  createNewCategory() {
+    this.editingCategory = { 
+      name: '',
+      description: '',
+      radar_quadrant: -1
+    };
+    this.editDialogVisible = true;
+  }
+
   saveCategory() {
-    if (!this.editingCategory._id || !this.editingCategory.name?.trim()) {
+    if (!this.editingCategory.name?.trim()) {
       return;
     }
 
     this.loading = true;
-    this.categoryService
-      .updateCategory(this.editingCategory._id, {
-        name: this.editingCategory.name,
-        description: this.editingCategory.description || "",
-        radar_quadrant: this.editingCategory.radar_quadrant ?? -1
-      })
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
+    
+    if (this.editingCategory._id) {
+      // Update existing category
+      this.categoryService
+        .updateCategory(this.editingCategory._id, {
+          name: this.editingCategory.name,
+          description: this.editingCategory.description || "",
+          radar_quadrant: this.editingCategory.radar_quadrant ?? -1
+        })
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.messageService.add({
+                severity: "success",
+                summary: "Success",
+                detail: "Category updated successfully",
+              });
+              this.editDialogVisible = false;
+              this.loadCategories();
+            }
+            this.loading = false;
+          },
+          error: (error) => {
             this.messageService.add({
-              severity: "success",
-              summary: "Success",
-              detail: "Category updated successfully",
+              severity: "error",
+              summary: "Error",
+              detail: error.error?.detail || "Failed to update category",
             });
-            this.editDialogVisible = false;
-            this.loadCategories();
-          }
-          this.loading = false;
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: "error",
-            summary: "Error",
-            detail: error.error?.detail || "Failed to update category",
-          });
-          this.loading = false;
-        },
-      });
+            this.loading = false;
+          },
+        });
+    } else {
+      // Create new category
+      this.categoryService
+        .createCategory({
+          name: this.editingCategory.name,
+          description: this.editingCategory.description || "",
+          radar_quadrant: this.editingCategory.radar_quadrant ?? -1
+        })
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.messageService.add({
+                severity: "success",
+                summary: "Success",
+                detail: "Category created successfully",
+              });
+              this.editDialogVisible = false;
+              this.loadCategories();
+            }
+            this.loading = false;
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: "error",
+              summary: "Error",
+              detail: error.error?.detail || "Failed to create category",
+            });
+            this.loading = false;
+          },
+        });
+    }
   }
 
   confirmDelete(category: Category) {

@@ -1,5 +1,13 @@
 <div class="all-categories">
-  <h1>All Categories</h1>
+  <div class="header-with-actions">
+    <h1>All Categories</h1>
+    <p-button 
+      label="Create New Category" 
+      icon="pi pi-plus" 
+      (click)="createNewCategory()"
+      styleClass="p-button-sm">
+    </p-button>
+  </div>
 
   <div class="categories-table-container">
     <p-table
@@ -87,7 +95,7 @@
 
   <p-dialog
     [(visible)]="editDialogVisible"
-    [header]="'Edit Category'"
+    [header]="editingCategory._id ? 'Edit Category' : 'Create Category'"
     [modal]="true"
     [style]="{ width: '50vw' }">
     <div class="edit-category-form">

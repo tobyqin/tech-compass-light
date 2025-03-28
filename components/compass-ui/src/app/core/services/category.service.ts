@@ -24,6 +24,12 @@ export interface CategoryResponse {
   limit: number;
 }
 
+export interface CategoryCreatePayload {
+  name: string;
+  description?: string;
+  radar_quadrant?: number;
+}
+
 export interface CategoryUpdatePayload {
   name: string;
   description?: string;
@@ -51,6 +57,10 @@ export class CategoryService {
       .set('limit', limit.toString());
 
     return this.http.get<CategoryResponse>(`${this.apiUrl}/categories/`, { params });
+  }
+
+  createCategory(payload: CategoryCreatePayload): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/categories/`, payload);
   }
 
   updateCategory(categoryId: string, payload: CategoryUpdatePayload): Observable<CategoryResponse> {
