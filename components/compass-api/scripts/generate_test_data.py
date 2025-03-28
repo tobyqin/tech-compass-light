@@ -115,8 +115,6 @@ class TestDataGenerator:
             "Core Technologies",
             "Integration Tools",
             "Business Applications",
-            "Security Solutions",
-            "Dev Tools",
             "Default",
         ]
 
