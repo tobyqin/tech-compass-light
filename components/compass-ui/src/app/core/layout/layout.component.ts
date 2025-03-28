@@ -136,7 +136,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       // Check if we have any successful response
       if (!results.navigation && !results.footer) {
         this.setErrorState(
-          "Failed to connect to server: Configuration data could not be loaded"
+          "Failed to connect to server: Configuration data could not be loaded" 
         );
         return;
       }
@@ -188,7 +188,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   /**
    * Set favicon based on config
    */
-  private setFavicon(favicon: { svg: string; png: string }) {
+  private setFavicon(favicon: { svg: string }) {
     const faviconPath = favicon.svg;
     
     // Find existing favicon link element
