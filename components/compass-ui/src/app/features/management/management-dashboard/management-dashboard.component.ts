@@ -1,15 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { SolutionService } from "../../../core/services/solution.service";
-import { CommentService } from "../../../core/services/comment.service";
-import { RatingService } from "../../../core/services/rating.service";
+import { CategoryService } from "../../../core/services/category.service";
+import { GroupService } from "../../../core/services/group.service";
 
 interface DashboardStats {
   solutions: number;
-  comments: number;
-  ratings: number;
   totalSolutions: number;
-  totalComments: number;
-  totalRatings: number;
+  totalCategories: number;
+  totalGroups: number;
 }
 
 @Component({
@@ -20,17 +18,15 @@ interface DashboardStats {
 export class ManagementDashboardComponent implements OnInit {
   stats: DashboardStats = {
     solutions: 0,
-    comments: 0,
-    ratings: 0,
     totalSolutions: 0,
-    totalComments: 0,
-    totalRatings: 0,
+    totalCategories: 0,
+    totalGroups: 0,
   };
 
   constructor(
     private solutionService: SolutionService,
-    private commentService: CommentService,
-    private ratingService: RatingService
+    private categoryService: CategoryService,
+    private groupService: GroupService
   ) {}
 
   ngOnInit() {
@@ -48,53 +44,33 @@ export class ManagementDashboardComponent implements OnInit {
       },
     });
 
-    // Load my comments count
-    this.commentService.getMyComments(0, 1).subscribe({
-      next: (response) => {
-        this.stats.comments = response.total || 0;
-      },
-      error: (error) => {
-        console.error("Error loading comments count:", error);
-      },
-    });
-
-    // Load my ratings count
-    this.ratingService.getMyRatings(0, 1).subscribe({
-      next: (response) => {
-        this.stats.ratings = response.total || 0;
-      },
-      error: (error) => {
-        console.error("Error loading ratings count:", error);
-      },
-    });
-
-    // Load total count
+    // Load total solutions count
     this.solutionService.getAllSolutions(0, 1).subscribe({
       next: (response) => {
         this.stats.totalSolutions = response.total || 0;
       },
       error: (error) => {
-        console.error("Error loading total count:", error);
+        console.error("Error loading total solutions count:", error);
       },
     });
 
-    // Load total comments count
-    this.commentService.getAllComments(0, 1).subscribe({
+    // Load total categories count
+    this.categoryService.getAllCategories(0, 1).subscribe({
       next: (response) => {
-        this.stats.totalComments = response.total || 0;
+        this.stats.totalCategories = response.total || 0;
       },
       error: (error) => {
-        console.error("Error loading total comments count:", error);
+        console.error("Error loading total categories count:", error);
       },
     });
 
-    // Load total ratings count
-    this.ratingService.getAllRatings(0, 1).subscribe({
+    // Load total groups count
+    this.groupService.getAllGroups(0, 1).subscribe({
       next: (response) => {
-        this.stats.totalRatings = response.total || 0;
+        this.stats.totalGroups = response.total || 0;
       },
       error: (error) => {
-        console.error("Error loading total ratings count:", error);
+        console.error("Error loading total groups count:", error);
       },
     });
   }
