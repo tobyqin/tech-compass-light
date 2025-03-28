@@ -23,6 +23,7 @@ import { MessagesModule } from "primeng/messages";
 import { CategoryService } from "../../../core/services/category.service";
 import { DepartmentService } from "../../../core/services/department.service";
 import { SolutionService } from "../../../core/services/solution.service";
+import { GroupService, Group } from "../../../core/services/group.service";
 import { Solution } from "../../../shared/interfaces/solution.interface";
 import { StandardResponse } from "../../../core/interfaces/standard-response.interface";
 
@@ -49,6 +50,7 @@ import { StandardResponse } from "../../../core/interfaces/standard-response.int
 export class EditSolutionComponent implements OnInit {
   categories: { name: string }[] = [];
   departments: string[] = [];
+  groups: Group[] = [];
   loading = false;
   slug!: string;
   isAdmin = false;
@@ -103,7 +105,8 @@ export class EditSolutionComponent implements OnInit {
     private departmentService: DepartmentService,
     private solutionService: SolutionService,
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private groupService: GroupService
   ) {
     this.solutionForm = this.fb.group({
       name: ["", Validators.required],
@@ -144,6 +147,7 @@ export class EditSolutionComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadDepartments();
+    this.loadGroups();
     this.checkAdminStatus();
     this.loadSolution();
   }
@@ -170,6 +174,14 @@ export class EditSolutionComponent implements OnInit {
     this.departmentService.getDepartments().subscribe((response) => {
       if (response.success) {
         this.departments = response.data;
+      }
+    });
+  }
+
+  private loadGroups() {
+    this.groupService.getAllGroups().subscribe((response) => {
+      if (response.success) {
+        this.groups = response.data;
       }
     });
   }

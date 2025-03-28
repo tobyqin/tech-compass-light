@@ -17,7 +17,7 @@
         </div>
         <div class="form-field">
           <label for="group">Group</label>
-          <input id="group" type="text" pInputText formControlName="group" />
+          <p-dropdown id="group" [options]="groups" formControlName="group" optionLabel="name" optionValue="name" [style]="{'width':'100%'}" placeholder="Select a group"></p-dropdown>
         </div>
       </div>
       <div class="form-row">

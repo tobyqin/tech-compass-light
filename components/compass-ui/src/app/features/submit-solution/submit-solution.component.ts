@@ -24,6 +24,7 @@ import { CategoryService } from "../../core/services/category.service";
 import { DepartmentService } from "../../core/services/department.service";
 import { SolutionService } from "../../core/services/solution.service";
 import { AuthService } from "../../core/services/auth.service";
+import { GroupService, Group } from "../../core/services/group.service";
 import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
 
 @Component({
@@ -50,6 +51,7 @@ import { LoginDialogComponent } from "../../core/components/login-dialog/login-d
 export class SubmitSolutionComponent implements OnInit {
   categories: { name: string }[] = [];
   departments: string[] = [];
+  groups: Group[] = [];
   submitting = false;
   isLoggedIn = false;
 
@@ -98,7 +100,8 @@ export class SubmitSolutionComponent implements OnInit {
     private solutionService: SolutionService,
     private messageService: MessageService,
     private dialogService: DialogService,
-    private authService: AuthService
+    private authService: AuthService,
+    private groupService: GroupService
   ) {
     this.solutionForm = this.fb.group({
       name: ["", Validators.required],
@@ -138,6 +141,7 @@ export class SubmitSolutionComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadDepartments();
+    this.loadGroups();
     this.authService.currentUser$.subscribe((user) => {
       this.isLoggedIn = !!user;
     });
@@ -162,6 +166,19 @@ export class SubmitSolutionComponent implements OnInit {
     this.departmentService.getDepartments().subscribe((response) => {
       if (response.success) {
         this.departments = response.data;
+      }
+    });
+  }
+
+  private loadGroups() {
+    this.groupService.getAllGroups().subscribe((response) => {
+      if (response.success) {
+        this.groups = response.data;
+        
+        // Set default group if available
+        if (this.groups.length > 0) {
+          this.solutionForm.patchValue({ group: this.groups[0].name });
+        }
       }
     });
   }
