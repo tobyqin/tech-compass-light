@@ -1,0 +1,130 @@
+.site-configuration {
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .header-with-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    color: var(--text-color);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .configs-table-container {
+    position: relative;
+    flex: 1;
+    overflow: auto;
+  }
+
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+  }
+
+  .config-value {
+    max-width: 300px;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .empty-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .loading-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--surface-card);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+  }
+
+  .edit-config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+
+    .config-field-row {
+      display: flex;
+      gap: 1rem;
+
+      .config-field {
+        flex: 1;
+
+        &:last-child {
+          flex: 0 0 100px;
+        }
+      }
+    }
+
+    .config-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 600;
+      }
+
+      .active-checkbox {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding-top: 0.5rem;
+      }
+    }
+  }
+}

@@ -45,7 +45,7 @@ class SiteConfigService:
 
     async def get_site_config_by_id(self, config_id: str) -> Optional[SiteConfigInDB]:
         """Get a site configuration by ID"""
-        config = await self.collection.find_one({"id": config_id})
+        config = await self.collection.find_one({"_id": config_id})
         if config:
             return SiteConfigInDB(**config)
         return None
@@ -83,6 +83,7 @@ class SiteConfigService:
         self, config_id: str, config_update: SiteConfigUpdate, username: str
     ) -> Optional[SiteConfigInDB]:
         """Update a site configuration"""
+        config_id = ObjectId(config_id)
         config = await self.get_site_config_by_id(config_id)
         if not config:
             return None
@@ -96,7 +97,7 @@ class SiteConfigService:
         # If we're activating this config, deactivate all others with the same key
         if update_dict.get("active"):
             await self.collection.update_many(
-                {"key": config.key, "id": {"$ne": config_id}, "active": True},
+                {"key": config.key, "_id": {"$ne": config_id}, "active": True},
                 {"$set": {"active": False, "updated_at": now, "updated_by": username}},
             )
 
@@ -104,7 +105,7 @@ class SiteConfigService:
         update_dict["updated_by"] = username
 
         result = await self.collection.find_one_and_update(
-            {"id": config_id},
+            {"_id": config_id},
             {"$set": update_dict},
             return_document=True,
         )
@@ -115,7 +116,8 @@ class SiteConfigService:
 
     async def delete_site_config(self, config_id: str) -> bool:
         """Delete a site configuration"""
-        result = await self.collection.delete_one({"id": config_id})
+        config_id = ObjectId(config_id)
+        result = await self.collection.delete_one({"_id": config_id})
         return result.deleted_count > 0
 
     async def reset_site_configs(self, username: str) -> List[SiteConfigInDB]:

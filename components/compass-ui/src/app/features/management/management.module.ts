@@ -33,6 +33,7 @@ import { AllUsersComponent } from "./all-users/all-users.component";
 import { AllCategoriesComponent } from "./all-categories/all-categories.component";
 import { AllTagsComponent } from "./all-tags/all-tags.component";
 import { AllGroupsComponent } from "./all-groups/all-groups.component";
+import { SiteConfigurationComponent } from "./site-configuration/site-configuration.component";
 import { AdminGuard } from "../../core/guards/admin.guard";
 import { SharedModule } from "../../shared/shared.module";
 
@@ -91,6 +92,12 @@ const routes: Routes = [
         component: AllTagsComponent,
         canActivate: [AdminGuard],
         data: { breadcrumb: "All Tags" },
+      },
+      {
+        path: "site-configuration",
+        component: SiteConfigurationComponent,
+        canActivate: [AdminGuard],
+        data: { breadcrumb: "Site Configuration" },
       },
       {
         path: "all-users",
@@ -162,6 +169,7 @@ const routes: Routes = [
     AllCategoriesComponent,
     AllGroupsComponent,
     AllTagsComponent,
+    SiteConfigurationComponent,
   ],
 })
 export class ManagementModule {}

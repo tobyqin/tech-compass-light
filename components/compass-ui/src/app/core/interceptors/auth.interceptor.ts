@@ -47,7 +47,8 @@ export class AuthInterceptor implements HttpInterceptor {
       url === `${this.apiUrl}/users/me` ||
       url.includes("/solutions/my/") ||
       url.includes("/comments/my/") ||
-      url.includes("/ratings/my/")
+      url.includes("/ratings/my/") ||
+      url.includes("/site-config")
     ) {
       return true;
     }
