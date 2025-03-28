@@ -171,8 +171,11 @@ export class TechRadarComponent implements OnInit, OnDestroy {
           const groupParam = this.route.snapshot.queryParamMap.get('group');
           
           if (groupParam && this.groups.length > 0) {
+            // Convert hyphens back to spaces for matching
+            const normalizedGroupParam = groupParam.replace(/-/g, ' ');
+            
             // Find the group by name
-            const foundGroup = this.groups.find(g => g.name === groupParam);
+            const foundGroup = this.groups.find(g => g.name === normalizedGroupParam);
             if (foundGroup) {
               this.selectedGroup = foundGroup;
             } else {
@@ -354,10 +357,12 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   selectGroup(group: Group): void {
     this.selectedGroup = group;
     
-    // Update URL with the selected group
+    // Update URL with the selected group, replacing spaces with hyphens
+    const urlFriendlyGroupName = group.name.replace(/ /g, '-');
+    
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { group: group.name },
+      queryParams: { group: urlFriendlyGroupName },
       queryParamsHandling: 'merge'
     });
     
