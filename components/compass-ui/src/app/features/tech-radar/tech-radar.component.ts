@@ -3,8 +3,11 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { MarkdownModule } from "ngx-markdown";
 import { BreadcrumbModule } from "primeng/breadcrumb";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
 import { Subscription } from "rxjs";
 import { SiteConfigService } from "../../core/services/site-config.service";
+import { GroupService, Group } from "../../core/services/group.service";
 import { environment } from "../../../environments/environment";
 
 // External libraries
@@ -46,7 +49,7 @@ interface RadarConfig {
 @Component({
   selector: "tc-tech-radar",
   standalone: true,
-  imports: [CommonModule, BreadcrumbModule, MarkdownModule],
+  imports: [CommonModule, BreadcrumbModule, MarkdownModule, ButtonModule, TagModule],
   templateUrl: "./tech-radar.component.html",
   styleUrls: ["./tech-radar.component.scss"],
 })
@@ -67,9 +70,14 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   private quadrantsSubscription: Subscription | null = null;
   private ringsSubscription: Subscription | null = null;
   private configSubscription: Subscription | null = null;
+  private groupsSubscription: Subscription | null = null;
   private scriptsLoaded = false;
   private quadrants: Quadrant[] = [];
   private rings: Ring[] = [];
+  
+  // Group related properties
+  groups: Group[] = [];
+  selectedGroup: Group | null = null;
 
   // Initialize with default values that will be overridden by config
   faqs: Array<{ title: string; content: string }> = [];
@@ -77,7 +85,8 @@ export class TechRadarComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private siteConfigService: SiteConfigService
+    private siteConfigService: SiteConfigService,
+    private groupService: GroupService
   ) {}
 
   ngOnInit() {
@@ -147,6 +156,24 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Load groups data from API
+   */
+  private loadGroups(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.groupsSubscription = this.groupService.getAllGroups().subscribe({
+        next: (response) => {
+          this.groups = response.data;
+          if (this.groups.length > 0) {
+            this.selectedGroup = this.groups[0];
+          }
+          resolve();
+        },
+        error: reject,
+      });
+    });
+  }
+
+  /**
    * Initialize radar visualization:
    * 1. Load required scripts
    * 2. Fetch and display data
@@ -155,6 +182,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     this.loadScripts()
       .then(() => this.loadQuadrants())
       .then(() => this.loadRings())
+      .then(() => this.loadGroups())
       .then(() => this.loadTechRadarData());
   }
 
@@ -205,8 +233,12 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const url = this.selectedGroup 
+      ? `${environment.apiUrl}/tech-radar/data?group=${this.selectedGroup.name}` 
+      : `${environment.apiUrl}/tech-radar/data`;
+
     this.dataSubscription = this.http
-      .get<TechRadarData>(`${environment.apiUrl}/tech-radar/data`)
+      .get<TechRadarData>(url)
       .subscribe({
         next: (data) => {
           if (this.isValidData(data)) {
@@ -298,6 +330,15 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Select a group and reload the radar data
+   * @param group Selected group
+   */
+  selectGroup(group: Group): void {
+    this.selectedGroup = group;
+    this.loadTechRadarData();
+  }
+
+  /**
    * Clean component resources
    */
   private cleanup(): void {
@@ -312,6 +353,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     }
     if (this.configSubscription) {
       this.configSubscription.unsubscribe();
+    }
+    if (this.groupsSubscription) {
+      this.groupsSubscription.unsubscribe();
     }
     this.removeScripts();
   }

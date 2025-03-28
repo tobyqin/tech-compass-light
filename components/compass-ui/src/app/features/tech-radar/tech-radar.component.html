@@ -1,4 +1,18 @@
 <div class="tech-radar-container">  
+  <div class="group-selector">
+    <h3>Groups</h3>
+    <div class="group-tags">
+      <p-button 
+        *ngFor="let group of groups" 
+        [label]="group.name + ' (' + group.usage_count + ')'" 
+        [outlined]="selectedGroup?._id !== group._id"
+        [severity]="selectedGroup?._id === group._id ? 'primary' : 'secondary'"
+        (onClick)="selectGroup(group)"
+        styleClass="group-button"
+        [size]="'small'"
+      ></p-button>
+    </div>
+  </div>
 
   <div class="content">
     <div class="radar-container">

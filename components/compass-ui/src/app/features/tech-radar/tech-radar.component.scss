@@ -1,4 +1,54 @@
 .tech-radar-container {
+  
+  .group-selector {
+    padding: 1rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    
+    h3 {
+      margin-top: 0;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+    
+    .group-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      
+      ::ng-deep .group-button {
+        margin: 0.25rem;
+        border-radius: var(--border-radius);
+        
+        .p-button {
+          font-size: 0.875rem;          
+          &.p-button-outlined.p-button-secondary {
+            color: var(--text-color-secondary);
+            border-color: var(--surface-border);
+            
+            &:hover {
+              background: var(--surface-200);
+              color: var(--text-color-secondary);
+              border-color: var(--surface-border);
+            }
+          }
+          
+          &.p-button-primary:not(.p-button-outlined) {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--primary-color-text);
+            
+            &:hover {
+              background: var(--primary-600);
+              border-color: var(--primary-600);
+            }
+          }
+        }
+      }
+    }
+  }
   .breadcrumb {
     margin-bottom: 1.5rem;
   }
