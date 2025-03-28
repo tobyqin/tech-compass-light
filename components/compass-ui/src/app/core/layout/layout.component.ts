@@ -23,7 +23,6 @@ interface NavigationConfig {
   };
   favicon: {
     svg: string;
-    png: string;
   };
   navigation: NavigationItem[];
 }
