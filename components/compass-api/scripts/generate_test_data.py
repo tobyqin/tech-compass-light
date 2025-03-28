@@ -249,8 +249,7 @@ class TestDataGenerator:
             "group": random.choice(groups),
             "name": solution_name,
             "description": fake.text(max_nb_chars=200),
-            "brief": fake.text(max_nb_chars=100).split(".")[0]
-            + ".",  # Ensure it's a single sentence with proper ending
+            "brief": fake.text(max_nb_chars=100).split(".")[0] + ".",
             "how_to_use": random.choice(how_to_use_templates),
             "faq": faq_content,
             "about": random.choice(about_templates),
@@ -258,6 +257,7 @@ class TestDataGenerator:
             "department": fake.company_suffix(),
             "team": fake.job(),
             "team_email": fake.company_email(),
+            "maintainer_id": fake.user_name().lower(),  # Generate lowercase username
             "maintainer_name": fake.name(),
             "maintainer_email": fake.email(),
             "official_website": fake.url(),
@@ -270,7 +270,7 @@ class TestDataGenerator:
             "provider_type": provider_type,
             "adoption_level": random.choice(adoption_levels),
             "adoption_complexity": random.choice(adoption_complexity_values),
-            "adoption_user_count": random.randint(0, 1000),  # Generate random user count between 0 and 1000
+            "adoption_user_count": random.randint(0, 1000),
             "tags": tags,
             "pros": [fake.sentence() for _ in range(random.randint(2, 4))],
             "cons": [fake.sentence() for _ in range(random.randint(1, 3))],
