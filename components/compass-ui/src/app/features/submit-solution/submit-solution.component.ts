@@ -109,6 +109,7 @@ export class SubmitSolutionComponent implements OnInit {
       about: [""],
       upskilling: [""],
       category: ["", Validators.required],
+      group: ["Default"],
       logo: [""],
       department: ["", Validators.required],
       team: ["", Validators.required],

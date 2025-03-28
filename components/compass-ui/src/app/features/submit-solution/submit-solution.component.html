@@ -19,24 +19,20 @@
         </div>
         <div class="form-row">
           <div class="form-field">
-            <label for="name">Name *</label>
-            <input id="name" type="text" pInputText formControlName="name" />
+            <label for="group">Group</label>
+            <input id="group" type="text" pInputText formControlName="group" />
           </div>
           <div class="form-field">
             <label for="category">Category *</label>
             <p-dropdown id="category" [options]="categories" formControlName="category" optionLabel="name" optionValue="name" [style]="{'width':'100%'}" placeholder="Select a category"></p-dropdown>
           </div>
           <div class="form-field">
-            <label for="logo">Logo URL</label>
-            <input id="logo" type="text" pInputText formControlName="logo" placeholder="Enter logo path or URL" />
+            <label for="name">Name *</label>
+            <input id="name" type="text" pInputText formControlName="name" />
           </div>
         </div>
         <div class="form-row">
-          <div class="form-field one-third">
-            <label for="version">Version *</label>
-            <input id="version" type="text" pInputText formControlName="version" />
-          </div>
-          <div class="form-field two-thirds">
+          <div class="form-field">
             <label for="tags">Tags</label>
             <p-chips 
               id="tags" 
@@ -46,6 +42,14 @@
               [separator]="','"
               [allowDuplicate]="false">
             </p-chips>
+          </div>
+          <div class="form-field">
+            <label for="version">Version *</label>
+            <input id="version" type="text" pInputText formControlName="version" />
+          </div>
+          <div class="form-field">
+            <label for="logo">Logo URL</label>
+            <input id="logo" type="text" pInputText formControlName="logo" placeholder="Enter logo path or URL" />
           </div>
         </div>
         <div class="form-row">
