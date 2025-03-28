@@ -42,7 +42,7 @@ ProviderTypeEnum = Literal[
     "INTERNAL",  # Solution developed internally
 ]
 
-# Review status values
+# Review status values - only superusers can change it
 ReviewStatusEnum = Literal[
     "PENDING",  # Awaiting review
     "APPROVED",  # Approved by admin
@@ -55,15 +55,15 @@ class SolutionBase(BaseModel):
 
     group: str = Field(default="Default", description="Group identifier for organizing solutions")
     name: str = Field(..., min_length=1, description="Solution name")
-    description: str = Field(..., description="Detailed description")
+    description: str = Field(..., description="Detailed description, markdown supported")
     brief: str = Field(
         ...,
         max_length=200,
         description="Brief description of the solution (max 200 chars)",
     )
-    how_to_use: Optional[str] = Field("", description="Instructions on how to use the solution")
-    faq: Optional[str] = Field("", description="Frequently asked questions about the solution")
-    about: Optional[str] = Field("", description="Additional information about the solution")
+    how_to_use: Optional[str] = Field("", description="Instructions on how to use the solution, markdown supported")
+    faq: Optional[str] = Field("", description="Frequently asked questions about the solution, markdown supported")
+    about: Optional[str] = Field("", description="Additional information about the solution, markdown supported")
     logo: Optional[str] = Field("", description="Logo URL or path")
     category: Optional[str] = Field(None, description="Primary category")
     department: str = Field(..., description="Department name")
@@ -76,7 +76,7 @@ class SolutionBase(BaseModel):
     documentation_url: Optional[str] = Field(None, description="Documentation URL")
     demo_url: Optional[str] = Field(None, description="Demo/POC URL")
     support_url: Optional[str] = Field(None, description="Support page URL")
-    vendor_product_url: Optional[str] = Field(None, description="Vendor product information URL")
+    vendor_product_url: Optional[str] = Field(None, description="Vendor product website URL")
     version: Optional[str] = Field(None, description="Current version")
     upskilling: Optional[str] = Field(
         default="",
