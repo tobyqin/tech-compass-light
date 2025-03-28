@@ -30,9 +30,8 @@ class SiteConfigService:
         self, key: str, active: bool = False, skip: int = 0, limit: int = 100
     ) -> List[SiteConfigInDB]:
         """Get site configurations by key"""
-        query = {"key": key}
-        if active:
-            query["active"] = True
+        query = {"key": key, "active": active}
+        # Explicitly include active status in the query regardless of its value
 
         cursor = self.collection.find(query).skip(skip).limit(limit)
         configs = await cursor.to_list(length=limit)
@@ -40,9 +39,8 @@ class SiteConfigService:
 
     async def count_site_configs_by_key(self, key: str, active: bool = False) -> int:
         """Count site configurations by key"""
-        query = {"key": key}
-        if active:
-            query["active"] = True
+        query = {"key": key, "active": active}
+        # Explicitly include active status in the query regardless of its value
         return await self.collection.count_documents(query)
 
     async def get_site_config_by_id(self, config_id: str) -> Optional[SiteConfigInDB]:
