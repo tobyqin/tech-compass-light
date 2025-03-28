@@ -12,7 +12,16 @@
       <img [src]="solution.logo || '/assets/default-solution-logo.svg'" [alt]="solution.name" />
     </div>
     <div class="solution-info">
-      <h1>{{ solution.name }}</h1>
+      <div class="title-row">
+        <h1>{{ solution.name }}</h1>
+        <p-button 
+          label="Get It" 
+          icon="pi pi-download" 
+          (click)="activateHowToUseTab()" 
+          severity="success"
+          styleClass="p-button-raised">
+        </p-button>
+      </div>
       <div class="tags">
         <p-tag *ngFor="let tag of solution.tags" [value]="tag" severity="contrast"></p-tag>
       </div>

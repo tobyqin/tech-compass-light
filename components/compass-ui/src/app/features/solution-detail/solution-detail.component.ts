@@ -89,6 +89,13 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   totalUserComments = 0;
   totalRatings = 0;
   activeTab = 0;
+
+  /**
+   * Activates the How to Use tab
+   */
+  activateHowToUseTab(): void {
+    this.activeTab = 1; // Index 1 corresponds to the How to Use tab
+  }
   newComment = "";
   newCommentIsAdopted = false;
   newRating = {
