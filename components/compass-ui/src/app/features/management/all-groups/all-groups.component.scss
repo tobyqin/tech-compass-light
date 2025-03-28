@@ -20,8 +20,6 @@
     background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
-    padding: 1rem;
-    margin-bottom: 1rem;
   }
 
   .truncate {
@@ -84,6 +82,41 @@
 
   .text-center {
     text-align: center;
+  }
+
+  ::ng-deep {
+    .p-datatable {
+      height: 100%;
+
+      .p-datatable-wrapper {
+        max-height: calc(100vh - 14rem);
+      }
+
+      .p-datatable-thead > tr > th {
+        background: var(--surface-ground);
+        color: var(--text-color);
+        font-weight: 600;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      .p-datatable-tbody > tr > td {
+        padding: 1rem;
+        color: var(--text-color);
+      }
+
+      &.p-datatable-hoverable-rows {
+        .p-datatable-tbody > tr:not(.p-highlight):hover {
+          background: var(--surface-ground);
+        }
+      }
+    }
+
+    td {
+      vertical-align: middle;
+    }
   }
 }
 
