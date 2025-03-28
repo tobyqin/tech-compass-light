@@ -114,6 +114,13 @@
     grid-template-columns: 1fr 300px;
     gap: 2rem;
     align-items: start;
+    
+    ::ng-deep markdown {
+      img {
+        max-width: 98%;
+        height: auto;
+      }
+    }
     opacity: 0;
     animation: fadeInScale 0.3s cubic-bezier(0.2, 0, 0.2, 1) 0.2s forwards;
 
