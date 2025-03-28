@@ -159,3 +159,27 @@ class GroupService:
         group_dict = group.model_dump()
         usage_count = await self.get_group_usage_count(group.name)
         return Group(**group_dict, usage_count=usage_count)
+        
+    async def get_or_create_group(self, name: str, username: Optional[str] = None) -> GroupInDB:
+        """Get a group by name or create it if it doesn't exist
+        
+        Args:
+            name: The group name to get or create
+            username: The username performing the operation
+            
+        Returns:
+            The existing or newly created group
+        """
+        # Trim the name first
+        name = name.strip()
+        
+        # Check if group already exists (exact match)
+        existing_group = await self.get_group_by_name(name)
+        if existing_group:
+            return existing_group
+            
+        # Create new group if it doesn't exist
+        from app.models.group import GroupCreate
+        
+        group_create = GroupCreate(name=name, description=f"Group for {name}")
+        return await self.create_group(group_create, username)

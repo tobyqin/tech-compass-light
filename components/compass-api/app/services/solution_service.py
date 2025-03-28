@@ -10,6 +10,7 @@ from app.core.database import get_database
 from app.models.history import ChangeType
 from app.models.solution import Solution, SolutionCreate, SolutionInDB, SolutionUpdate
 from app.services.category_service import CategoryService
+from app.services.group_service import GroupService
 from app.services.history_service import HistoryService
 from app.services.rating_service import RatingService
 from app.services.tag_service import TagService
@@ -34,6 +35,7 @@ class SolutionService:
         self.db = get_database()
         self.collection = self.db.solutions
         self.category_service = CategoryService()
+        self.group_service = GroupService()
         self.tag_service = TagService()
         self.rating_service = RatingService()
         self.history_service = HistoryService()
@@ -61,6 +63,19 @@ class SolutionService:
         """
         category = await self.category_service.get_or_create_category(category_name, username)
         return category.name
+        
+    async def _process_group(self, group_name: str, username: Optional[str] = None) -> str:
+        """Process group creation/update
+
+        Args:
+            group_name: The group name to process
+            username: The username performing the operation
+
+        Returns:
+            The processed group name
+        """
+        group = await self.group_service.get_or_create_group(group_name, username)
+        return group.name
 
     async def _process_tags(self, tags: List[str], username: Optional[str] = None) -> List[str]:
         """Process tags creation/update
@@ -102,6 +117,10 @@ class SolutionService:
         # Handle category update
         if "category" in update_dict:
             update_dict["category"] = await self._process_category(update_dict["category"], username)
+            
+        # Handle group update
+        if "group" in update_dict:
+            update_dict["group"] = await self._process_group(update_dict["group"], username)
 
         # Handle tags update
         if "tags" in update_dict:
