@@ -82,6 +82,17 @@ export class EditSolutionComponent implements OnInit {
     { label: "INDUSTRY", value: "INDUSTRY" },
   ];
 
+  adoptionComplexityOptions = [
+    { label: "AUTOMATED", value: "AUTOMATED" },
+    { label: "EASY", value: "EASY" },
+    { label: "SUPPORT_REQUIRED", value: "SUPPORT_REQUIRED" },
+  ];
+
+  providerTypeOptions = [
+    { label: "VENDOR", value: "VENDOR" },
+    { label: "INTERNAL", value: "INTERNAL" },
+  ];
+
   solutionForm: FormGroup;
 
   constructor(
@@ -98,7 +109,12 @@ export class EditSolutionComponent implements OnInit {
       name: ["", Validators.required],
       brief: ["", [Validators.required, Validators.maxLength(200)]],
       description: ["", Validators.required],
+      how_to_use: [""],
+      faq: [""],
+      about: [""],
+      upskilling: [""],
       category: ["", Validators.required],
+      group: ["Default"],
       logo: [""],
       department: ["", Validators.required],
       team: ["", Validators.required],
@@ -109,6 +125,9 @@ export class EditSolutionComponent implements OnInit {
       official_website: [""],
       documentation_url: [""],
       demo_url: [""],
+      support_url: [""],
+      vendor_product_url: [""],
+      provider_type: ["INTERNAL"],
       version: ["", Validators.required],
       tags: [[]],
       pros: ["", Validators.required],
@@ -117,6 +136,7 @@ export class EditSolutionComponent implements OnInit {
       recommend_status: [{ value: "", disabled: true }],
       review_status: [{ value: "", disabled: true }],
       adoption_level: ["", Validators.required],
+      adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],
     });
   }

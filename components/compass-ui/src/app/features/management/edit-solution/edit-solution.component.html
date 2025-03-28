@@ -16,8 +16,8 @@
           <p-dropdown id="category" [options]="categories" formControlName="category" optionLabel="name" optionValue="name" [style]="{'width':'100%'}" placeholder="Select a category"></p-dropdown>
         </div>
         <div class="form-field">
-          <label for="logo">Logo URL</label>
-          <input id="logo" type="text" pInputText formControlName="logo" placeholder="Enter logo path or URL" />
+          <label for="group">Group</label>
+          <input id="group" type="text" pInputText formControlName="group" />
         </div>
       </div>
       <div class="form-row">
@@ -25,7 +25,13 @@
           <label for="version">Version *</label>
           <input id="version" type="text" pInputText formControlName="version" />
         </div>
-        <div class="form-field two-thirds">
+        <div class="form-field">
+          <label for="logo">Logo URL</label>
+          <input id="logo" type="text" pInputText formControlName="logo" placeholder="Enter logo path or URL" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
           <label for="tags">Tags</label>
           <p-chips 
             id="tags" 
@@ -49,6 +55,34 @@
           <label for="description">Description *</label>
           <textarea id="description" pInputTextarea formControlName="description" [rows]="5" [autoResize]="true"
             placeholder="Please provide a detailed description of the technology, including its main features, use cases, and any special requirements."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="how_to_use">How to Use</label>
+          <textarea id="how_to_use" pInputTextarea formControlName="how_to_use" [rows]="4" [autoResize]="true"
+            placeholder="Instructions on how to use the solution (markdown supported)"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="faq">FAQ</label>
+          <textarea id="faq" pInputTextarea formControlName="faq" [rows]="4" [autoResize]="true"
+            placeholder="Frequently asked questions about the solution (markdown supported)"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="about">About</label>
+          <textarea id="about" pInputTextarea formControlName="about" [rows]="4" [autoResize]="true"
+            placeholder="Additional information about the solution (markdown supported)"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="upskilling">Upskilling</label>
+          <textarea id="upskilling" pInputTextarea formControlName="upskilling" [rows]="4" [autoResize]="true"
+            placeholder="Information on how to gain skills with this solution (training, certifications, etc., markdown supported)"></textarea>
         </div>
       </div>
     </div>
@@ -105,6 +139,20 @@
           <input id="demo_url" type="url" pInputText formControlName="demo_url" placeholder="https://" />
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="support_url">Support Page URL</label>
+          <input id="support_url" type="url" pInputText formControlName="support_url" placeholder="https://" />
+        </div>
+        <div class="form-field">
+          <label for="provider_type">Product Type</label>
+          <p-dropdown id="provider_type" [options]="providerTypeOptions" formControlName="provider_type" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select product type"></p-dropdown>
+        </div>
+        <div class="form-field">
+          <label for="vendor_product_url">Vendor Product URL</label>
+          <input id="vendor_product_url" type="url" pInputText formControlName="vendor_product_url" placeholder="https://" />
+        </div>
+      </div>
     </div>
 
     <div class="section-card">
@@ -148,6 +196,10 @@
         </div>
       </div>
       <div class="form-row">
+        <div class="form-field">
+          <label for="adoption_complexity">Adoption Complexity *</label>
+          <p-dropdown id="adoption_complexity" [options]="adoptionComplexityOptions" formControlName="adoption_complexity" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select adoption complexity"></p-dropdown>
+        </div>
         <div class="form-field">
           <label for="adoption_level">Adoption Level *</label>
           <p-dropdown id="adoption_level" [options]="adoptionLevelOptions" formControlName="adoption_level" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select adoption level"></p-dropdown>
@@ -193,4 +245,4 @@
       </div>
     </div>
   </form>
-</div> 
+</div>
