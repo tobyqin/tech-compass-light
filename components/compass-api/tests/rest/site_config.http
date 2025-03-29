@@ -1,87 +1,62 @@
-@baseUrl = http://127.0.0.1:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoyMDUzMjI2OTczfQ.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+@userToken = ''
 
-### Get site configuration (public endpoint)
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
+
+### Login as regular user (create a test user first)
+# @name userLogin 
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=testuser&password=testpass123
+
+### Store user token
+@userToken = {{userLogin.response.body.access_token}}
+
+### Get all site configs
 GET {{baseUrl}}/site-config
-Accept: application/json
+Authorization: Bearer {{adminToken}}
 
-### Create site configuration (requires authentication)
+### Get site configs by key (public endpoint)
+GET {{baseUrl}}/site-config/site.name
+
+### Get active site configs by key
+GET {{baseUrl}}/site-config/site.logo?active=true
+
+### Create new site config (requires authentication)
 POST {{baseUrl}}/site-config
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 {
-    "site_name": "Tech Compass V1",
-    "site_description": "Navigate your technology landscape",
-    "welcome_message": "Welcome to Tech Compass!",
-    "contact_email": "support@techcompass.com",
-    "features": {
-      "ratings_enabled": true,
-      "comments_enabled": true,
-      "tags_enabled": true
-    },
-    "custom_links": [],
-    "theme": {
-      "primary_color": "#1890ff",
-      "secondary_color": "#52c41a",
-      "layout": "default"
-    },
-    "meta": {
-    }
-  }
-
-### Update site configuration (requires authentication)
-PUT {{baseUrl}}/site-config
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "site_name": "Tech Compass Updated"
+  "key": "site.description",
+  "value": "Tech Compass Light - Technology Decision Management Platform",
+  "active": true
 }
 
-### Reset site configuration to defaults (requires authentication)
+### Update site config
+PUT {{baseUrl}}/site-config/64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "value": "Updated configuration value",
+  "active": true
+}
+
+### Delete site config (superuser only)
+DELETE {{baseUrl}}/site-config/64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
+
+### Reset all site configs to defaults (superuser only)
 POST {{baseUrl}}/site-config/reset
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-### Try to update config without authentication (should fail with 401)
-PUT {{baseUrl}}/site-config
-Content-Type: application/json
-
-{
-    "site_name": "Unauthorized Update"
-}
-
-### Example responses:
-
-# Get site config response
-# {
-#   "status": "success",
-#   "data": {
-#     "_id": "67972abebd4be877a5173d1d",
-#     "created_at": "2025-01-27T06:42:06.378000",
-#     "created_by": null,
-#     "updated_at": "2025-01-27T06:42:06.378000",
-#     "updated_by": "test",
-#     "site_name": "Tech Compass",
-#     "site_description": "Navigate your technology landscape",
-#     "welcome_message": "Welcome to Tech Compass",
-#     "contact_email": "support@techcompass.com",
-#     "features": {
-#       "ratings_enabled": true,
-#       "comments_enabled": true,
-#       "tags_enabled": true
-#     },
-#     "custom_links": [],
-#     "theme": {
-#       "primary_color": "#1890ff",
-#       "secondary_color": "#52c41a",
-#       "layout": "default"
-#     },
-#     "meta": {
-#       "keywords": [],
-#       "author": "",
-#       "favicon": ""
-#     }
-#   }
-# }
+Authorization: Bearer {{adminToken}}

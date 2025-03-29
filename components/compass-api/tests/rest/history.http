@@ -1,0 +1,62 @@
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+@userToken = ''
+
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
+
+### Get all history records
+GET {{baseUrl}}/history
+Authorization: Bearer {{adminToken}}
+
+### Filter history by object type
+GET {{baseUrl}}/history?object_type=solution
+Authorization: Bearer {{adminToken}}
+
+### Filter history by object ID
+GET {{baseUrl}}/history?object_id=64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
+
+### Filter history by username (who made the changes)
+GET {{baseUrl}}/history?username=admin
+Authorization: Bearer {{adminToken}}
+
+### Filter history by change type
+GET {{baseUrl}}/history?change_type=create
+Authorization: Bearer {{adminToken}}
+
+### Complex filter with pagination
+GET {{baseUrl}}/history?object_type=solution&change_type=update&skip=0&limit=10
+Authorization: Bearer {{adminToken}}
+
+### Example response:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "id": "64a8c4d5e6f7g8h9i0j1k2l3",
+#       "object_type": "solution",
+#       "object_id": "64a7b3c9d2e1f0a5b6c7d8e9",
+#       "object_name": "Example Solution",
+#       "change_type": "update",
+#       "change_date": "2024-03-15T14:30:45.123Z",
+#       "username": "admin",
+#       "changes": {
+#         "description": {
+#           "old": "Old description",
+#           "new": "Updated description"
+#         }
+#       }
+#     }
+#   ],
+#   "total": 1,
+#   "skip": 0,
+#   "limit": 10
+# } 

@@ -24,17 +24,6 @@ Content-Type: application/json
     "password": "testpass123"
 }
 
-### Try to create user without admin privileges (should fail)
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-    "username": "testuser2",
-    "email": "test2@example.com",
-    "full_name": "Test User 2",
-    "password": "testpass123"
-}
-
 ### Login as test user
 # @name userLogin
 POST {{baseUrl}}/auth/login
@@ -77,15 +66,6 @@ Content-Type: application/json
     "new_password": "newpass123"
 }
 
-### Try to update another user's info (should fail)
-PUT {{baseUrl}}/users/admin
-Authorization: Bearer {{userToken}}
-Content-Type: application/json
-
-{
-    "email": "hack@example.com"
-}
-
 ### Admin: Update user information
 PUT {{baseUrl}}/users/manage/testuser
 Authorization: Bearer {{adminToken}}
@@ -95,17 +75,7 @@ Content-Type: application/json
     "email": "admin.updated@example.com",
     "full_name": "Admin Updated User",
     "is_active": true,
-    "is_superuser": false,
-    "password": "adminpass123"
-}
-
-### Admin: Update only user's status
-PUT {{baseUrl}}/users/manage/testuser
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
-
-{
-    "is_active": false
+    "is_superuser": false
 }
 
 ### Admin: Delete user

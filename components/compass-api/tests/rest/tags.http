@@ -1,6 +1,53 @@
-@baseUrl = http://127.0.0.1:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoyMDUzMjI2OTczfQ.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MjA1MzIyNjk3M30.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+@userToken = ''
+
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
+
+### Get all tags
+GET {{baseUrl}}/tags
+Authorization: Bearer {{adminToken}}
+
+### Get tag by name
+GET {{baseUrl}}/tags/test-tag
+Authorization: Bearer {{adminToken}}
+
+### Create a new tag
+POST {{baseUrl}}/tags
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "test-tag",
+  "description": "A tag for testing",
+  "color": "#FF5733"
+}
+
+### Update tag
+PUT {{baseUrl}}/tags/test-tag
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "description": "Updated description",
+  "color": "#33FF57"
+}
+
+### Delete tag
+DELETE {{baseUrl}}/tags/test-tag
+Authorization: Bearer {{adminToken}}
+
+### Search tags
+GET {{baseUrl}}/tags/search?q=test
+Authorization: Bearer {{adminToken}}
 
 ### Get all tags (no auth required)
 GET {{baseUrl}}/tags
@@ -17,7 +64,7 @@ Content-Type: application/json
 ### Try to create tag as non-superuser (should fail)
 POST {{baseUrl}}/tags
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "name": "Python",
@@ -46,7 +93,7 @@ Authorization: Bearer {{adminToken}}
 ### Try to update tag as non-superuser (should fail)
 PUT {{baseUrl}}/tags/65ae1234b5c3e1234567890a
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "description": "Updated description for Python ecosystem"
@@ -73,7 +120,7 @@ Authorization: Bearer {{adminToken}}
 
 ### Try to delete tag as non-superuser (should fail)
 DELETE {{baseUrl}}/tags/65ae1234b5c3e1234567890a
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Delete tag as superuser
 DELETE {{baseUrl}}/tags/65ae1234b5c3e1234567890a
@@ -88,12 +135,12 @@ Content-Type: application/json
 ### Add tag to solution (requires auth)
 POST {{baseUrl}}/tags/solution/my-solution/tag/python
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Remove tag from solution (requires auth)
 DELETE {{baseUrl}}/tags/solution/my-solution/tag/python
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Test error cases
 
@@ -142,12 +189,12 @@ Content-Type: application/json
 ### Try to add non-existent tag to solution
 POST {{baseUrl}}/tags/solution/my-solution/tag/non-existent-tag
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Try to remove non-existent tag from solution
 DELETE {{baseUrl}}/tags/solution/my-solution/tag/non-existent-tag
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Example responses:
 

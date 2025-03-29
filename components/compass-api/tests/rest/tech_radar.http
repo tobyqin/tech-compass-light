@@ -1,8 +1,22 @@
-@baseUrl = http://127.0.0.1:8000/api/tech-radar
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoyMDUzMjI2OTczfQ.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
 
 ### Get Tech Radar Data
-GET {{baseUrl}}/data
+GET {{baseUrl}}/tech-radar/data
+Content-Type: application/json
+
+### Get Tech Radar Data for specific group
+GET {{baseUrl}}/tech-radar/data?group=Team+A
 Content-Type: application/json
 
 ### Example Response:
@@ -20,7 +34,7 @@ Content-Type: application/json
 # }
 
 ### Get Radar Quadrants
-GET {{baseUrl}}/quadrants
+GET {{baseUrl}}/tech-radar/quadrants
 Content-Type: application/json
 
 ### Example Response:
@@ -40,7 +54,7 @@ Content-Type: application/json
 # ]
 
 ### Get Radar Rings
-GET {{baseUrl}}/rings
+GET {{baseUrl}}/tech-radar/rings
 Content-Type: application/json
 
 ### Example Response:

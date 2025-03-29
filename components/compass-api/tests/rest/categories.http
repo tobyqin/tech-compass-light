@@ -1,10 +1,52 @@
-@baseUrl = http://127.0.0.1:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoyMDUzMjI2OTczfQ.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MjA1MzIyNjk3M30.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+@userToken = ''
 
-### Get all categories (no auth required)
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
+
+### Get all categories
 GET {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
+
+### Get category by ID
+GET {{baseUrl}}/categories/64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
+
+### Create new category (admin only)
+POST {{baseUrl}}/categories
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
+
+{
+  "name": "Test Category",
+  "description": "A category for testing",
+  "radar_quadrant": 0,
+  "order": 1
+}
+
+### Update category (admin only)
+PUT {{baseUrl}}/categories/64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Category",
+  "description": "Updated description",
+  "radar_quadrant": 1,
+  "order": 2
+}
+
+### Delete category (admin only)
+DELETE {{baseUrl}}/categories/64a7b3c9d2e1f0a5b6c7d8e9
+Authorization: Bearer {{adminToken}}
 
 ### Get all categories with pagination and sorting
 GET {{baseUrl}}/categories?skip=0&limit=5&sort=name
@@ -17,18 +59,7 @@ Content-Type: application/json
 ### Try to create category as non-superuser (should fail)
 POST {{baseUrl}}/categories
 Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "name": "Infrastructure",
-    "description": "Infrastructure and platform solutions",
-    "radar_quadrant": "PLATFORMS"
-}
-
-### Create category as superuser
-POST {{baseUrl}}/categories
-Content-Type: application/json
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{userToken}}
 
 {
     "name": "Infrastructure",
@@ -39,17 +70,7 @@ Authorization: Bearer {{adminToken}}
 ### Try to update category as non-superuser (should fail)
 PUT {{baseUrl}}/categories/infrastructure
 Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-    "description": "Updated description for infrastructure category",
-    "radar_quadrant": "TOOLS"
-}
-
-### Update category as superuser
-PUT {{baseUrl}}/categories/infrastructure
-Content-Type: application/json
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{userToken}}
 
 {
     "description": "Updated description for infrastructure category",
@@ -58,11 +79,7 @@ Authorization: Bearer {{adminToken}}
 
 ### Try to delete category as non-superuser (should fail)
 DELETE {{baseUrl}}/categories/infrastructure
-Authorization: Bearer {{token}}
-
-### Delete category as superuser
-DELETE {{baseUrl}}/categories/infrastructure
-Authorization: Bearer {{adminToken}}
+Authorization: Bearer {{userToken}}
 
 ### Test error cases
 

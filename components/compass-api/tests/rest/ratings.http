@@ -1,5 +1,44 @@
-@baseUrl = http://127.0.0.1:8000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoyMDUzMjI2OTczfQ.cMGhHbnYwkuPxmbcJezfYsflyLX-NFsAErPbIxD5qC0
+@baseUrl = http://localhost:8000/api
+@adminToken = ''
+@userToken = ''
+
+### Login as admin
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=admin123
+
+### Store admin token
+@adminToken = {{login.response.body.access_token}}
+
+### Get ratings for a solution
+GET {{baseUrl}}/ratings/solution/example-solution
+Authorization: Bearer {{adminToken}}
+
+### Get aggregate ratings for a solution
+GET {{baseUrl}}/ratings/solution/example-solution/aggregate
+Authorization: Bearer {{adminToken}}
+
+### Create/Update a rating
+POST {{baseUrl}}/ratings
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "object_type": "solution",
+  "object_id": "example-solution",
+  "rating": 4,
+  "adoption_status": "CURRENT_USER"
+}
+
+### Delete a rating
+DELETE {{baseUrl}}/ratings/solution/example-solution/user/admin
+Authorization: Bearer {{adminToken}}
+
+### Get my ratings
+GET {{baseUrl}}/ratings/my
+Authorization: Bearer {{adminToken}}
 
 ### Get all ratings (with pagination and sorting)
 GET {{baseUrl}}/ratings?page=1&page_size=10&sort=-created_at
@@ -12,7 +51,7 @@ Content-Type: application/json
 ### Get current user's rating for a solution
 GET {{baseUrl}}/ratings/solution/my-solution/me
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Get rating summary for a solution
 GET {{baseUrl}}/ratings/solution/my-solution/summary
@@ -21,7 +60,7 @@ Content-Type: application/json
 ### Create new rating for a solution (requires auth)
 POST {{baseUrl}}/ratings/solution/my-solution
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 5,
@@ -31,7 +70,7 @@ Authorization: Bearer {{token}}
 ### Update existing rating for a solution (requires auth)
 POST {{baseUrl}}/ratings/solution/my-solution
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 4,
@@ -43,7 +82,7 @@ Authorization: Bearer {{token}}
 ### Try to rate non-existent solution (should fail with 404)
 POST {{baseUrl}}/ratings/solution/non-existent-solution
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 5,
@@ -53,7 +92,7 @@ Authorization: Bearer {{token}}
 ### Try to create rating with invalid score (should fail with 400)
 POST {{baseUrl}}/ratings/solution/my-solution
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 6,
@@ -149,27 +188,27 @@ Content-Type: application/json
 ### Get my ratings (default sort by created_at desc)
 GET {{baseUrl}}/ratings/my/
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Get my ratings with custom pagination
 GET {{baseUrl}}/ratings/my/?skip=10&limit=5
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Get my ratings sorted by updated_at ascending
 GET {{baseUrl}}/ratings/my/?sort=updated_at
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Get my ratings sorted by score descending
 GET {{baseUrl}}/ratings/my/?sort=-score
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Get my ratings sorted by created_at ascending
 GET {{baseUrl}}/ratings/my/?sort=created_at
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Try to get my ratings without auth token (should fail)
 GET {{baseUrl}}/ratings/my/
@@ -178,7 +217,7 @@ Content-Type: application/json
 ### Try to get my ratings with invalid sort field (should fail)
 GET {{baseUrl}}/ratings/my/?sort=invalid_field
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Example responses for my ratings:
 
@@ -215,7 +254,7 @@ Authorization: Bearer {{token}}
 ### Update rating by ID
 PUT {{baseUrl}}/ratings/65b7c8d9e0f1a2b3c4d5e6f7
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 4,
@@ -225,7 +264,7 @@ Authorization: Bearer {{token}}
 ### Delete rating by ID
 DELETE {{baseUrl}}/ratings/65b7c8d9e0f1a2b3c4d5e6f7
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Try to update rating without auth (should fail with 401)
 PUT {{baseUrl}}/ratings/65b7c8d9e0f1a2b3c4d5e6f7
@@ -243,7 +282,7 @@ Content-Type: application/json
 ### Try to update non-existent rating (should fail with 404)
 PUT {{baseUrl}}/ratings/000000000000000000000000
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 4,
@@ -253,12 +292,12 @@ Authorization: Bearer {{token}}
 ### Try to delete non-existent rating (should fail with 404)
 DELETE {{baseUrl}}/ratings/000000000000000000000000
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 ### Try to update rating with invalid score (should fail with 400)
 PUT {{baseUrl}}/ratings/65b7c8d9e0f1a2b3c4d5e6f7
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{userToken}}
 
 {
     "score": 6,
