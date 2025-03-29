@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 
+from bson.objectid import ObjectId
 from pymongo import DESCENDING
 
 from app.core.database import get_database
@@ -77,9 +78,38 @@ class HistoryService:
         cursor = cursor.skip(query.skip).limit(query.limit)
 
         # Convert to HistoryRecord objects
-        records = [HistoryRecord(**record) async for record in cursor]
+        records = []
+        async for record in cursor:
+            # Convert _id from ObjectId to string
+            if "_id" in record and isinstance(record["_id"], ObjectId):
+                record["_id"] = str(record["_id"])
+
+            # Recursively convert any nested ObjectId fields to strings
+            self._convert_objectids(record)
+
+            records.append(HistoryRecord(**record))
 
         return records, total
+
+    def _convert_objectids(self, data):
+        """
+        Recursively convert all ObjectId instances to strings in a dict or list
+
+        Args:
+            data: The data structure to process (dict or list)
+        """
+        if isinstance(data, dict):
+            for key, value in list(data.items()):
+                if isinstance(value, ObjectId):
+                    data[key] = str(value)
+                elif isinstance(value, (dict, list)):
+                    self._convert_objectids(value)
+        elif isinstance(data, list):
+            for i, item in enumerate(data):
+                if isinstance(item, ObjectId):
+                    data[i] = str(item)
+                elif isinstance(item, (dict, list)):
+                    self._convert_objectids(item)
 
     async def get_object_history(
         self, object_type: str, object_id: str, skip: int = 0, limit: int = 20
@@ -136,5 +166,4 @@ class HistoryService:
             old_values=old_values,
             change_summary=change_summary,
         )
-
         return await self.create_history_record(record)
