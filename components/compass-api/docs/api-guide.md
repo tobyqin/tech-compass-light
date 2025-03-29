@@ -1,11 +1,27 @@
-# Tech Solutions API Guide
+# Tech Compass API Guide
 
-This document provides a comprehensive guide to the Tech Solutions API endpoints.
+This document provides a comprehensive guide to the Tech Compass API endpoints.
 
 ## Base URL
 
 ```
 http://localhost:8000/api
+```
+
+## Response Format
+
+Most endpoints return responses in the following standardized format:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data here
+  },
+  "total": 0, // For paginated responses
+  "skip": 0, // For paginated responses
+  "limit": 0 // For paginated responses
+}
 ```
 
 ## Authentication
@@ -18,13 +34,10 @@ POST /auth/login
 
 Authenticate a user and receive an access token.
 
-**Request Body:**
+**Request Body (Form):**
 
-```json
-{
-  "username": "string",
-  "password": "string"
-}
+```
+username=string&password=string
 ```
 
 **Response:**
@@ -44,58 +57,121 @@ Include the access token in the Authorization header for protected endpoints:
 Authorization: Bearer {access_token}
 ```
 
-## Solutions
+## Users
 
-### Search Solutions
+### Get Current User
 
 ```http
-GET /api/solutions/search
+GET /users/me
 ```
 
-Search solutions using text similarity across multiple fields.
+Get information about the current authenticated user.
+
+### Get User by Username
+
+```http
+GET /users/{username}
+```
+
+Get information about a specific user by username.
+
+### List Users
+
+```http
+GET /users
+```
+
+Get a paginated list of all users.
 
 **Query Parameters:**
 
-- `keyword` (string, required): Search keyword
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 10): Maximum items to return
 
-**Response:**
+### Create User
+
+```http
+POST /users
+```
+
+Create a new user (admin only).
+
+**Request Body:**
 
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "_id": "956fDdc25eFF7aDcEc5cb5AE",
-      "created_at": "2025-02-04T03:55:44.626Z",
-      "created_by": "string",
-      "updated_at": "2025-02-04T03:55:44.626Z",
-      "updated_by": "string",
-      "name": "string",
-      "description": "string",
-      "brief": "string",
-      "logo": "",
-      "category": "string",
-      "department": "string",
-      "team": "string",
-      "team_email": "string",
-      "maintainer_id": "string",
-      "maintainer_name": "string",
-      "maintainer_email": "string",
-      "official_website": "string",
-      "documentation_url": "string",
-      "demo_url": "string",
-      "version": "string",
-      ...
-    }
-  ],
-  "detail": "string",
-  "total": 0,
-  "skip": 0,
-  "limit": 0
+  "username": "string",
+  "email": "string",
+  "full_name": "string",
+  "password": "string",
+  "is_active": true,
+  "is_superuser": false
 }
 ```
 
-Results are sorted by relevance score, with higher weights given to matches in more important fields.
+### Update User's Own Information
+
+```http
+PUT /users/{username}
+```
+
+Update the current user's own information.
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "full_name": "string"
+}
+```
+
+### Update User Password
+
+```http
+PUT /users/{username}/password
+```
+
+Update the current user's password.
+
+**Request Body:**
+
+```json
+{
+  "current_password": "string",
+  "new_password": "string"
+}
+```
+
+### Admin: Update User
+
+```http
+PUT /users/manage/{username}
+```
+
+Admin can update any user's information.
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "full_name": "string",
+  "is_active": true,
+  "is_superuser": false,
+  "password": "string"
+}
+```
+
+### Admin: Delete User
+
+```http
+DELETE /users/manage/{username}
+```
+
+Delete a user (admin only).
+
+## Solutions
 
 ### List Solutions
 
@@ -107,15 +183,44 @@ Get a paginated list of solutions with optional filtering.
 
 **Query Parameters:**
 
-- `page` (integer, default: 1): Page number
-- `limit` (integer, default: 10): Items per page
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 10): Maximum items to return
 - `category` (string, optional): Filter by category
 - `department` (string, optional): Filter by department
 - `team` (string, optional): Filter by team
 - `recommend_status` (string, optional): Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD)
 - `stage` (string, optional): Filter by stage (DEVELOPING/UAT/PRODUCTION/DEPRECATED/RETIRED)
+- `review_status` (string, optional): Filter by review status (PENDING/APPROVED/REJECTED)
+- `tags` (string, optional): Filter by tags (comma-separated)
+- `sort` (string, default: "name"): Sort field (prefix with - for descending order)
 
-### Get Solution
+### Get My Solutions
+
+```http
+GET /solutions/my
+```
+
+Get solutions created by or maintained by the current user.
+
+**Query Parameters:**
+
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 10): Maximum items to return
+- `sort` (string, default: "name"): Sort field (prefix with - for descending order)
+
+### Search Solutions
+
+```http
+GET /solutions/search
+```
+
+Search solutions by keyword across multiple fields.
+
+**Query Parameters:**
+
+- `keyword` (string, required): Search keyword
+
+### Get Solution by Slug
 
 ```http
 GET /solutions/{slug}
@@ -135,19 +240,20 @@ Create a new solution. Requires authentication.
 
 ```json
 {
-  "name": "string (required)",
-  "description": "string (required)",
-  "brief": "string (required, max 200 chars)",
+  "name": "string",
+  "brief": "string",
+  "description": "string",
   "category": "string",
-  "department": "string (required)",
-  "team": "string (required)",
+  "department": "string",
+  "team": "string",
+  "maintainer": "string",
+  "pros": ["string"],
+  "cons": ["string"],
   "recommend_status": "string",
   "stage": "string",
-  "maintainer_id": "string",
-  "maintainer_name": "string",
-  "maintainer_email": "string",
-  "adoption_level": "string (PILOT/TEAM/DEPARTMENT/ENTERPRISE/INDUSTRY)",
-  "adoption_user_count": "integer (>= 0)",
+  "review_status": "string",
+  "docs_url": "string",
+  "source_code_url": "string",
   "tags": ["string"]
 }
 ```
@@ -160,72 +266,37 @@ PUT /solutions/{slug}
 
 Update an existing solution. Requires authentication.
 
-## Tags
-
-### List Tags
+### Delete Solution
 
 ```http
-GET /tags
+DELETE /solutions/{slug}
 ```
 
-Get a list of all tags.
+Delete a solution. Creator, maintainer, or admin only.
 
-### Create Tag
+### Check Solution Name Exists
 
 ```http
-POST /tags
+GET /solutions/check-name/{name}
 ```
 
-Create a new tag. Requires authentication.
+Check if a solution name already exists.
 
-**Request Body:**
-
-```json
-{
-  "name": "string",
-  "description": "string"
-}
-```
-
-### Update Tag
+### Get Solution History
 
 ```http
-PUT /tags/{name}
+GET /solutions/{slug}/history
 ```
 
-Update a tag. Requires authentication. Will also update the tag name in all solutions using it.
+Get the change history for a specific solution.
 
-### Delete Tag
+### Get Departments
 
 ```http
-DELETE /tags/{name}
+GET /solutions/departments
 ```
 
-Delete a tag. Requires authentication. Cannot delete tags that are in use by solutions.
-
-### Get Solution Tags
-
-```http
-GET /tags/solution/{solution_slug}
-```
-
-Get all tags for a specific solution.
-
-### Add Tag to Solution
-
-```http
-POST /tags/solution/{solution_slug}/tag/{tag_name}
-```
-
-Add a tag to a solution. Creates the tag if it doesn't exist.
-
-### Remove Tag from Solution
-
-```http
-DELETE /tags/solution/{solution_slug}/tag/{tag_name}
-```
-
-Remove a tag from a solution.
+Get a list of all unique department names from solutions.
 
 ## Categories
 
@@ -237,172 +308,412 @@ GET /categories
 
 Get a list of all categories.
 
+**Query Parameters:**
+
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 100): Maximum items to return
+- `sort` (string, optional): Sort field (prefix with - for descending order)
+
+### Get Category
+
+```http
+GET /categories/{category_id}
+```
+
+Get a specific category by ID.
+
 ### Create Category
 
 ```http
 POST /categories
 ```
 
-Create a new category. Requires authentication.
+Create a new category (admin only).
 
 **Request Body:**
 
 ```json
 {
   "name": "string",
-  "description": "string"
+  "description": "string",
+  "radar_quadrant": 0,
+  "order": 0
 }
 ```
 
 ### Update Category
 
 ```http
-PUT /categories/{name}
+PUT /categories/{category_id}
 ```
 
-Update a category. Requires authentication.
+Update a category (admin only).
 
 ### Delete Category
 
 ```http
-DELETE /categories/{name}
+DELETE /categories/{category_id}
 ```
 
-Delete a category. Requires authentication. Cannot delete categories that are in use by solutions.
+Delete a category (admin only). Category must not be in use by any solutions.
 
-## Ratings
+## Tags
 
-### Get Solution Ratings
+### List Tags
 
 ```http
-GET /ratings/solution/{solution_slug}
+GET /tags
 ```
 
-Get all ratings for a solution.
+Get a list of all tags.
 
 **Query Parameters:**
 
-- `page` (integer, default: 1): Page number
-- `page_size` (integer, default: 20): Items per page
-- `sort_by` (string, default: "created_at"): Field to sort by
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 100): Maximum items to return
 
-### Get User Rating
-
-```http
-GET /ratings/solution/{solution_slug}/me
-```
-
-Get the current user's rating for a solution. Requires authentication.
-
-### Create/Update Rating
+### Get Tag
 
 ```http
-POST /ratings/solution/{solution_slug}
+GET /tags/{tag_name}
 ```
 
-Create or update a rating for a solution. Requires authentication.
+Get a specific tag by name.
+
+### Create Tag
+
+```http
+POST /tags
+```
+
+Create a new tag (admin only).
 
 **Request Body:**
 
 ```json
 {
-  "score": "integer (1-5)",
-  "comment": "string (optional)"
+  "name": "string",
+  "description": "string",
+  "color": "string"
 }
 ```
 
-### Get Rating Summary
+### Update Tag
 
 ```http
-GET /ratings/solution/{solution_slug}/summary
+PUT /tags/{tag_name}
 ```
 
-Get rating summary statistics for a solution.
+Update a tag (admin only).
 
-## Comments
-
-### Get Solution Comments
+### Delete Tag
 
 ```http
-GET /comments/solution/{solution_slug}
+DELETE /tags/{tag_name}
 ```
 
-Get all comments for a solution.
+Delete a tag (admin only).
+
+### Search Tags
+
+```http
+GET /tags/search
+```
+
+Search for tags.
 
 **Query Parameters:**
 
-- `page` (integer, default: 1): Page number
-- `page_size` (integer, default: 20): Items per page
-- `sort_by` (string, default: "created_at"): Field to sort by (comments are sorted by created_at desc by default)
+- `q` (string, required): Search query
+
+## Comments
+
+### Get Comments for a Solution
+
+```http
+GET /comments/solution/{solution_id}
+```
+
+Get all comments for a specific solution.
 
 ### Create Comment
 
 ```http
-POST /comments/solution/{solution_slug}
+POST /comments
 ```
 
-Create a new comment for a solution. Requires authentication.
+Create a new comment.
 
 **Request Body:**
 
 ```json
 {
-  "content": "string (1-1000 characters)"
+  "object_type": "string",
+  "object_id": "string",
+  "content": "string",
+  "adoption_status": "string",
+  "parent_id": "string"
 }
 ```
 
 ### Update Comment
 
 ```http
-PUT /comments/solution/{solution_slug}/comment/{comment_id}
+PUT /comments/{comment_id}
 ```
 
-Update a comment. Requires authentication. Only the comment author can update it.
+Update a comment. Only the comment author can update it.
 
 **Request Body:**
 
 ```json
 {
-  "content": "string (1-1000 characters)"
+  "content": "string"
 }
 ```
 
 ### Delete Comment
 
 ```http
-DELETE /comments/solution/{solution_slug}/comment/{comment_id}
+DELETE /comments/{comment_id}
 ```
 
-Delete a comment. Requires authentication. Only the comment author can delete it.
+Delete a comment. Only the comment author or admin can delete it.
 
-## Response Format
+### Get Comment Statistics
 
-Most endpoints return responses in the following format:
+```http
+GET /comments/stats/solution/{solution_id}
+```
 
-**Success Response:**
+Get comment statistics for a solution.
+
+## Ratings
+
+### Get Ratings for a Solution
+
+```http
+GET /ratings/solution/{solution_id}
+```
+
+Get all ratings for a specific solution.
+
+### Get Aggregate Ratings
+
+```http
+GET /ratings/solution/{solution_id}/aggregate
+```
+
+Get aggregate rating statistics for a solution.
+
+### Create/Update Rating
+
+```http
+POST /ratings
+```
+
+Create or update a rating.
+
+**Request Body:**
 
 ```json
 {
-  "status": "success",
-  "data": {
-    // Response data
-  },
-  "meta": {
-    // Pagination metadata (if applicable)
-    "page": 1,
-    "page_size": 20,
-    "total": 100
-  }
+  "object_type": "string",
+  "object_id": "string",
+  "rating": 0,
+  "adoption_status": "string"
 }
 ```
 
-**Error Response:**
+### Delete Rating
+
+```http
+DELETE /ratings/solution/{solution_id}/user/{username}
+```
+
+Delete a rating.
+
+### Get My Ratings
+
+```http
+GET /ratings/my
+```
+
+Get all ratings by the current user.
+
+## Groups
+
+### List Groups
+
+```http
+GET /groups
+```
+
+Get a list of all groups.
+
+**Query Parameters:**
+
+- `skip` (integer, default: 0): Number of items to skip
+- `limit` (integer, default: 100): Maximum items to return
+- `sort` (string, default: "order"): Sort field (prefix with - for descending order)
+
+### Get Group
+
+```http
+GET /groups/{group_id}
+```
+
+Get a specific group by ID.
+
+### Create Group
+
+```http
+POST /groups
+```
+
+Create a new group (admin only).
+
+**Request Body:**
 
 ```json
 {
-  "detail": "Error message"
+  "name": "string",
+  "description": "string",
+  "order": 0
 }
 ```
+
+### Update Group
+
+```http
+PUT /groups/{group_id}
+```
+
+Update a group (admin only).
+
+### Delete Group
+
+```http
+DELETE /groups/{group_id}
+```
+
+Delete a group (admin only).
+
+## Tech Radar
+
+### Get Tech Radar Data
+
+```http
+GET /tech-radar/data
+```
+
+Get tech radar data in Zalando Tech Radar format.
+
+**Query Parameters:**
+
+- `group` (string, optional): Filter solutions by group
+
+### Get Radar Quadrants
+
+```http
+GET /tech-radar/quadrants
+```
+
+Get radar quadrants ordered by their radar_quadrant value.
+
+### Get Radar Rings
+
+```http
+GET /tech-radar/rings
+```
+
+Get radar rings in order (ADOPT, TRIAL, ASSESS, HOLD).
+
+## Site Configuration
+
+### Get All Site Configs
+
+```http
+GET /site-config
+```
+
+Get all site configurations. Requires authentication.
+
+### Get Site Config by Key
+
+```http
+GET /site-config/{key}
+```
+
+Get site configurations by key. Public endpoint.
+
+**Query Parameters:**
+
+- `active` (boolean, default: false): Filter by active status
+
+### Create Site Config
+
+```http
+POST /site-config
+```
+
+Create a new site configuration. Requires authentication.
+
+**Request Body:**
+
+```json
+{
+  "key": "string",
+  "value": "string",
+  "active": true
+}
+```
+
+### Update Site Config
+
+```http
+PUT /site-config/{id}
+```
+
+Update a site configuration. Requires authentication.
+
+### Delete Site Config
+
+```http
+DELETE /site-config/{id}
+```
+
+Delete a site configuration (admin only).
+
+### Reset Site Configs
+
+```http
+POST /site-config/reset
+```
+
+Reset all site configurations to defaults (admin only).
+
+## History
+
+### Get History Records
+
+```http
+GET /history
+```
+
+Get history records with optional filtering.
+
+**Query Parameters:**
+
+- `object_type` (string, optional): Filter by object type (e.g., 'solution', 'category')
+- `object_id` (string, optional): Filter by object ID
+- `object_name` (string, optional): Filter by object name (case-insensitive, partial match)
+- `change_type` (string, optional): Filter by change type (create/update/delete)
+- `username` (string, optional): Filter by username who made the change
+- `start_date` (string, optional): Filter changes after this date (ISO format)
+- `end_date` (string, optional): Filter changes before this date (ISO format)
+- `skip` (integer, default: 0): Number of records to skip
+- `limit` (integer, default: 20): Maximum records to return
 
 ## HTTP Status Codes
 
@@ -414,87 +725,3 @@ Most endpoints return responses in the following format:
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Resource not found
 - `500 Internal Server Error`: Server error
-
-## Site Configuration
-
-### Get Site Config
-
-```http
-GET /site-config
-```
-
-Get the current site configuration. This endpoint is public and does not require authentication.
-
-### Create Site Config
-
-```http
-POST /site-config
-```
-
-Create initial site configuration. Requires authentication. Can only be called once when no configuration exists.
-
-**Request Body:**
-
-```json
-{
-  "site_name": "string",
-  "site_description": "string",
-  "welcome_message": "string",
-  "contact_email": "string",
-  "features": {
-    "ratings_enabled": true,
-    "comments_enabled": true,
-    "tags_enabled": true
-  },
-  "custom_links": [
-    {
-      "title": "string",
-      "url": "string",
-      "icon": "string"
-    }
-  ],
-  "theme": {
-    "primary_color": "#1890ff",
-    "secondary_color": "#52c41a",
-    "layout": "default"
-  },
-  "meta": {
-    "keywords": ["string"],
-    "author": "string",
-    "favicon": "string"
-  }
-}
-```
-
-### Update Site Config
-
-```http
-PUT /site-config
-```
-
-Update site configuration. Requires authentication. Only updates the fields that are provided.
-
-**Request Body:**
-
-```json
-{
-  "site_name": "string",
-  "site_description": "string",
-  "welcome_message": "string",
-  "contact_email": "string",
-  "features": {},
-  "custom_links": [],
-  "theme": {},
-  "meta": {}
-}
-```
-
-All fields are optional. Only include the fields you want to update.
-
-### Reset Site Config
-
-```http
-POST /site-config/reset
-```
-
-Reset site configuration to default values. Requires authentication.
