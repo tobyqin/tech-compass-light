@@ -1,4 +1,4 @@
-# Tech Compass (TC)
+# Tech Compass (Light Version)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
@@ -95,7 +95,7 @@ The project follows a microservices architecture with the following components:
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/tobyqin/tech-compass.git
+git clone https://github.com/tobyqin/tech-compass-light.git
 cd tech-compass
 ```
 
@@ -162,7 +162,7 @@ We welcome contributions! Please search existing issues before creating new ones
 ## 📫 Contact
 
 - **Project Lead**: Toby Qin
-- **Issue Tracker**: [GitHub Issues](https://github.com/tobyqin/tech-compass/issues)
+- **Issue Tracker**: [GitHub Issues](https://github.com/tobyqin/tech-compass-light/issues)
 
 ## 📄 License
 
