@@ -1,81 +1,49 @@
-import asyncio
+import os
+from datetime import timedelta
+
 import pytest
-from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.testclient import TestClient
-from main import app
+
+# Import app dependencies
 from app.core.config import settings
-from app.core.security import get_password_hash, create_access_token
-from datetime import datetime, timedelta
-from bson import ObjectId
-from app.models.user import User
+from app.core.security import create_access_token
+from main import app
 
-# Set JWT settings for testing
-settings.JWT_SECRET_KEY = "test_secret_key"
-settings.JWT_ALGORITHM = "HS256"
-settings.ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# Set all test environment variables in one place
+os.environ["DATABASE_NAME"] = "tc-test"
+os.environ["JWT_SECRET_KEY"] = "test_secret_key_for_testing_only"
+os.environ["AUTH_SERVER_ENABLED"] = "false"
+os.environ["DEFAULT_ADMIN_USERNAME"] = "admin"
+os.environ["DEFAULT_ADMIN_PASSWORD"] = "admin123"
+os.environ["DEFAULT_ADMIN_EMAIL"] = "admin@techcompass.com"
+os.environ["DEFAULT_ADMIN_FULLNAME"] = "System Admin"
 
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create an instance of the default event loop for the test session."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+# Override settings directly for the current process
+settings.DATABASE_NAME = "tc-test"
+settings.JWT_SECRET_KEY = "test_secret_key_for_testing_only"
+settings.AUTH_SERVER_ENABLED = False
+# These should already be set from .env, but we ensure they're set here for tests
+settings.DEFAULT_ADMIN_USERNAME = "admin"
+settings.DEFAULT_ADMIN_PASSWORD = "admin123"
+settings.DEFAULT_ADMIN_EMAIL = "admin@techcompass.com"
+settings.DEFAULT_ADMIN_FULLNAME = "System Admin"
 
-@pytest.fixture(scope="session")
-def test_client():
-    """Create a test client for the FastAPI app."""
-    with TestClient(app) as client:
-        yield client
 
-@pytest.fixture(scope="session")
-async def test_db():
-    """Create a test database and handle cleanup."""
-    test_settings = settings.model_copy()
-    test_settings.DATABASE_NAME = "tc_test"
-    
-    client = AsyncIOMotorClient(test_settings.MONGODB_URL)
-    db = client[test_settings.DATABASE_NAME]
-    
-    # Clear test database before tests
-    await db.users.delete_many({})
-    await db.categories.delete_many({})
-    await db.tags.delete_many({})
-    await db.solutions.delete_many({})
-    
-    yield db
-    
-    # Clear test database after tests
-    await db.users.delete_many({})
-    await db.categories.delete_many({})
-    await db.tags.delete_many({})
-    await db.solutions.delete_many({})
-    
-    client.close()
+@pytest.fixture(scope="module")
+def client():
+    """Return a test client for the FastAPI app."""
+    with TestClient(app) as c:
+        yield c
 
-@pytest.fixture(scope="session")
-async def test_user(test_db):
-    """Create a test user."""
-    user_data = {
-        "_id": ObjectId(),
-        "username": "testuser",
-        "email": "test@example.com",
-        "full_name": "Test User",
-        "hashed_password": get_password_hash("testpass123"),
-        "is_active": True,
-        "is_superuser": False,
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
-    }
-    
-    await test_db.users.insert_one(user_data)
-    user = User(**user_data)
-    return user
 
-@pytest.fixture(scope="session")
-def auth_headers(test_user):
-    """Create authentication headers with JWT token."""
-    access_token = create_access_token(
-        data={"sub": test_user.username},
-        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    return {"Authorization": f"Bearer {access_token}"}
+@pytest.fixture(scope="function")
+def admin_token():
+    """Generate a JWT token for the admin user."""
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    return create_access_token(data={"sub": settings.DEFAULT_ADMIN_USERNAME}, expires_delta=access_token_expires)
+
+
+@pytest.fixture(scope="function")
+def admin_headers(admin_token):
+    """Return headers with admin authentication token."""
+    return {"Authorization": f"Bearer {admin_token}"}

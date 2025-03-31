@@ -42,25 +42,69 @@ tests/
 ├── test_solutions.py     # Solution endpoint tests
 ├── test_categories.py    # Category endpoint tests
 ...
+├── run_tests.sh          # General test runner script
+└── run_auth_tests.sh     # Legacy script to run auth API tests
 ```
 
-### Test Fixtures
+### Test Configuration
 
-The `conftest.py` file should contain:
+The `conftest.py` file contains:
 
-1. **Database Setup/Teardown**: Fixtures to initialize and reset the test database
-2. **Test Client**: FastAPI TestClient setup
-3. **Authentication**: Fixtures for authenticated test requests
-4. **Test Data**: Common test data used across multiple tests
+1. **Environment Variables**: All test environment variables are set in this file
+2. **Settings Override**: Direct overrides of app settings for testing
+3. **Test Fixtures**: Common fixtures for database setup/teardown, test clients, and authentication
+4. **Helper Functions**: Utility functions for testing
+
+## Running Tests
+
+### Using the General Test Runner
+
+The `run_tests.sh` script provides a flexible way to run tests:
+
+```bash
+# Run all tests
+./tests/run_tests.sh
+
+# Run with coverage report for all modules
+./tests/run_tests.sh --coverage
+
+# Run tests for a specific module
+./tests/run_tests.sh --module auth
+
+# Run tests for a specific module with coverage
+./tests/run_tests.sh --module auth --coverage
+```
+
+### Using pytest directly
+
+You can also use pytest commands directly:
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run with coverage report
+python -m pytest tests/ --cov=app
+
+# Run specific test file
+python -m pytest tests/test_auth.py
+
+# Run specific test
+python -m pytest tests/test_auth.py::TestAuthEndpoints::test_login_admin_success
+```
 
 ## Testing Specific API Endpoints
 
 ### Authentication Endpoints
 
-- Test user login with valid/invalid credentials
-- Test token validation
-- Test user registration
-- Test password reset functionality
+Authentication tests in `test_auth.py` cover:
+
+- Admin user login with valid credentials
+- Login attempts with incorrect username/password (should be rejected)
+- Login attempts with empty or missing credentials
+- Token structure and expiration validation
+
+Current coverage: 94%
 
 ### Solution Endpoints
 
@@ -95,12 +139,12 @@ The `conftest.py` file should contain:
 ### Test Case Structure
 
 ```python
-async def test_endpoint_functionality(client, db, auth_headers):
+def test_endpoint_functionality(client, admin_headers):
     # Setup test data
     # ...
 
     # Make request to endpoint
-    response = await client.post("/api/endpoint", json=data, headers=auth_headers)
+    response = client.post("/api/endpoint", json=data, headers=admin_headers)
 
     # Assert response
     assert response.status_code == 200
@@ -109,41 +153,7 @@ async def test_endpoint_functionality(client, db, auth_headers):
 
 ### Database Reset Implementation
 
-```python
-@pytest.fixture(scope="session")
-async def db():
-    # Override settings for test database
-    from app.core.config import settings
-    settings.DATABASE_NAME = "tc-test"
-
-    # Connect to MongoDB
-    from app.core.mongodb import connect_to_mongo, close_mongo_connection
-    await connect_to_mongo()
-
-    # Clear all collections before tests
-    db = get_database()
-    collections = await db.list_collection_names()
-    for collection in collections:
-        await db[collection].delete_many({})
-
-    yield db
-
-    # Cleanup after tests
-    await close_mongo_connection()
-```
-
-## Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage report
-pytest --cov=app
-
-# Run specific test file
-pytest tests/test_solutions.py
-```
+The conftest.py file implements a database reset strategy between test sessions.
 
 ## Continuous Integration
 
