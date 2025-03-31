@@ -14,19 +14,9 @@ os.environ["DATABASE_NAME"] = "tc-test"
 os.environ["JWT_SECRET_KEY"] = "test_secret_key_for_testing_only"
 os.environ["AUTH_SERVER_ENABLED"] = "false"
 os.environ["DEFAULT_ADMIN_USERNAME"] = "admin"
-os.environ["DEFAULT_ADMIN_PASSWORD"] = "admin123"
+os.environ["DEFAULT_ADMIN_PASSWORD"] = os.environ["DEFAULT_ADMIN_USERNAME"]
 os.environ["DEFAULT_ADMIN_EMAIL"] = "admin@techcompass.com"
 os.environ["DEFAULT_ADMIN_FULLNAME"] = "System Admin"
-
-# Override settings directly for the current process
-settings.DATABASE_NAME = "tc-test"
-settings.JWT_SECRET_KEY = "test_secret_key_for_testing_only"
-settings.AUTH_SERVER_ENABLED = False
-# These should already be set from .env, but we ensure they're set here for tests
-settings.DEFAULT_ADMIN_USERNAME = "admin"
-settings.DEFAULT_ADMIN_PASSWORD = "admin123"
-settings.DEFAULT_ADMIN_EMAIL = "admin@techcompass.com"
-settings.DEFAULT_ADMIN_FULLNAME = "System Admin"
 
 
 @pytest.fixture(scope="module")
