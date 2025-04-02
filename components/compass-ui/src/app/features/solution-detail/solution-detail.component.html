@@ -2,14 +2,14 @@
   <div class="breadcrumb">
     <p-breadcrumb [model]="[
         { label: 'Home', routerLink: '/' },
-        { label: 'Catalog', routerLink: '/tech-radar/items' },
+        { label: 'Catalog', routerLink: '/items' },
         { label: solution.name }
       ]"></p-breadcrumb>
   </div>
 
   <div class="solution-header">
     <div class="solution-logo">
-      <img [src]="solution.logo || '/assets/default-solution-logo.svg'" [alt]="solution.name" />
+      <img [src]="solution.logo || '/tech-radar/assets/default-solution-logo.svg'" [alt]="solution.name" />
     </div>
     <div class="solution-info">
       <div class="title-row">

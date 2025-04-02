@@ -1,10 +1,10 @@
 {
-  "/compass-api": {
+  "/tech-radar/compass-api": {
     "target": "http://127.0.0.1:8000",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/compass-api": "/api"
+      "^/tech-radar/compass-api": "/api"
     }
   }
-} 
+}

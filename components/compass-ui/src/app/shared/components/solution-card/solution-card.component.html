@@ -3,7 +3,7 @@
     <span class="new-badge" *ngIf="showNewBadge">NEW</span>
     <div class="card-header">
       <div class="logo-and-status">
-        <img [src]="solution.logo || '/assets/default-solution-logo.svg'" 
+        <img [src]="solution.logo || 'assets/default-solution-logo.svg'" 
              [alt]="solution.name + ' logo'" 
              class="solution-logo">
         <div class="status-badge">
@@ -15,7 +15,7 @@
       </div>
       <div class="title-row">
         <h3 class="title">
-          <a [routerLink]="['/tech-radar/items', solution.slug]">{{ solution.name }}</a>
+          <a [routerLink]="['/items', solution.slug]">{{ solution.name }}</a>
         </h3>
       </div>
     </div>
@@ -42,7 +42,7 @@
         Updated {{solution.updated_at | date:'mediumDate'}}
       </span>
       <p-button 
-        [routerLink]="['/tech-radar/items', solution.slug]"
+        [routerLink]="['/items', solution.slug]"
         label="Learn More" 
         styleClass="p-button-outlined p-button-rounded">
       </p-button>

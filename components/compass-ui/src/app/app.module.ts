@@ -1,15 +1,16 @@
+import { APP_BASE_HREF } from "@angular/common";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { MarkdownModule } from "ngx-markdown";
 import { MessageService } from "primeng/api";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { CoreModule } from "./core/core.module";
-import { SharedModule } from "./shared/shared.module";
 import { AuthInterceptor } from "./core/interceptors/auth.interceptor";
+import { SharedModule } from "./shared/shared.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,6 +30,7 @@ import { AuthInterceptor } from "./core/interceptors/auth.interceptor";
       useClass: AuthInterceptor,
       multi: true,
     },
+    { provide: APP_BASE_HREF, useValue: "/tech-radar/" },
   ],
   bootstrap: [AppComponent],
 })

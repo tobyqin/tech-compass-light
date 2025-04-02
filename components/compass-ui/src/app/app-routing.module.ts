@@ -64,11 +64,6 @@ const routes: Routes = [
     children: [
       {
         path: "",
-        pathMatch: "full",
-        redirectTo: "tech-radar",
-      },
-      {
-        path: "tech-radar",
         title: "Technology Radar",
         loadComponent: () =>
           import("./features/tech-radar/tech-radar.component").then(
@@ -76,7 +71,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/search",
+        path: "search",
         title: "Search",
         loadComponent: () =>
           import("./features/search/search.component").then(
@@ -84,7 +79,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/new",
+        path: "new",
         title: "Submit Item",
         loadChildren: () =>
           import("./features/submit-solution/submit-solution.module").then(
@@ -92,7 +87,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/items",
+        path: "items",
         title: "Technology Catalog",
         loadComponent: () =>
           import("./features/solution-catalog/solution-catalog.component").then(
@@ -100,7 +95,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/items/:slug",
+        path: "items/:slug",
         title: "Technology Detail",
         loadComponent: () =>
           import("./features/solution-detail/solution-detail.component").then(
@@ -108,7 +103,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/categories",
+        path: "categories",
         title: "Technology Categories",
         loadChildren: () =>
           import("./features/categories/categories.module").then(
@@ -116,7 +111,7 @@ const routes: Routes = [
           ),
       },
       {
-        path: "tech-radar/about",
+        path: "about",
         title: "About",
         loadChildren: () =>
           import("./features/about/about.module").then((m) => m.AboutModule),
@@ -143,7 +138,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes, {
+      useHash: false,
+      initialNavigation: "enabledBlocking",
+    }),
+  ],
   exports: [RouterModule],
   providers: [
     { provide: TitleStrategy, useClass: CustomTitleStrategy },

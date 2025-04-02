@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: '/compass-api'
-}; 
+  apiUrl: "/tech-radar/compass-api",
+};
