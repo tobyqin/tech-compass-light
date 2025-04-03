@@ -4,6 +4,7 @@
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 A platform for discovering, evaluating, and sharing technology solutions within your organization. Tech Compass helps teams make informed decisions about technology choices by providing:
+
 - A centralized catalog of technology solutions
 - Detailed evaluations and recommendations
 - Team and department-specific insights
@@ -73,11 +74,11 @@ The project follows a microservices architecture with the following components:
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: 
+- **Frontend**:
   - Angular 17+
   - PrimeNG
   - TypeScript
-- **Backend**: 
+- **Backend**:
   - Python FastAPI
   - MongoDB
 
@@ -130,18 +131,55 @@ docker-compose up -d
 
 ## 👩‍💻 Development
 
-### Branch Strategy
+### VSCode Settings
 
-- `main`: Production-ready code
-- `develop`: Development branch
-- Feature branches: `feature/*`
-- Bug fixes: `fix/*`
+Install the following extensions:
 
-### Code Style
+- Python
+- Ruff
+- Prettier - Code formatter
+- Material Icon Theme
 
-- Frontend: ESLint + Prettier
-- Backend: Black + isort
-- Pre-commit hooks are configured
+```json
+{
+  "editor.inlineSuggest.enabled": true,
+  "files.autoSaveDelay": 500,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.openRepositoryInParentFolders": "always",
+  "workbench.iconTheme": "material-icon-theme",
+  "files.autoSave": "afterDelay",
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.idea": true,
+    "**/.pytest_cache": true
+  },
+  "explorer.confirmDelete": false,
+  "search.useParentIgnoreFiles": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "ruff.lineLength": 120,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    }
+  },
+  "ruff.importStrategy": "useBundled",
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "explorer.confirmDragAndDrop": false,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.unusedImports": "always",
+    "source.fixAll.ruff": "explicit"
+  }
+}
+```
 
 ### Testing
 
