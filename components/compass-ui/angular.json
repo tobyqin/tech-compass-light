@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "baseHref": "/tech-radar/",
-            "outputPath": "dist/tech-compass-ui",
+            "outputPath": "dist/tech-compass-ui/tech-radar",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],

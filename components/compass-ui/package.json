@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config src/proxy.conf.json --host 0.0.0.0 --serve-path=/tech-radar/",
     "build": "ng build --base-href /tech-radar/",
+    "postbuild": "mkdir -p dist && cp root-redirect.html dist/tech-compass-ui/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --browsers ChromeHeadless --watch=false"
   },
