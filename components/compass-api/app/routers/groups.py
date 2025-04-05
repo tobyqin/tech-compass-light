@@ -18,7 +18,7 @@ async def create_group(
     current_user: User = Depends(get_current_superuser),
     group_service: GroupService = Depends(),
 ) -> StandardResponse[Group]:
-    """Create a new group (admin only)."""
+    """Create a new group (superuser only)."""
     try:
         result = await group_service.create_group(group, current_user.username)
         return StandardResponse.of(result)
@@ -55,7 +55,7 @@ async def update_group(
     current_user: User = Depends(get_current_superuser),
     group_service: GroupService = Depends(),
 ) -> StandardResponse[Group]:
-    """Update a group by ID (admin only)."""
+    """Update a group by ID (superuser only)."""
     try:
         group = await group_service.update_group_by_id(group_id, group_update, current_user.username)
         if not group:
@@ -71,7 +71,7 @@ async def delete_group(
     current_user: User = Depends(get_current_superuser),
     group_service: GroupService = Depends(),
 ) -> None:
-    """Delete a group by ID (admin only)."""
+    """Delete a group by ID (superuser only)."""
     try:
         success = await group_service.delete_group_by_id(group_id)
         if not success:
