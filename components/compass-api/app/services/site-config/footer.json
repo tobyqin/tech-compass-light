@@ -3,15 +3,15 @@
   "quickLinks": [
     {
       "label": "Submit",
-      "path": "/tech-radar/new"
+      "path": "/new"
     },
     {
       "label": "Search",
-      "path": "/tech-radar/search"
+      "path": "/search"
     },
     {
       "label": "About",
-      "path": "/tech-radar/about"
+      "path": "/about"
     }
   ],
   "copyright": " 2024 Tech Compass"

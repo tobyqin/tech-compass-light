@@ -139,6 +139,7 @@ Install the following extensions:
 - Ruff
 - Prettier - Code formatter
 - Material Icon Theme
+- REST Client
 
 ```json
 {
