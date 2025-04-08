@@ -1,9 +1,6 @@
 import logging
 from typing import Any, List, Optional, Tuple
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import Response
-
 from app.core.auth import get_current_active_user, get_current_superuser
 from app.models.history import HistoryRecord
 from app.models.response import StandardResponse
@@ -14,6 +11,8 @@ from app.services.history_service import HistoryService
 from app.services.rating_service import RatingService
 from app.services.solution_service import SolutionService
 from app.services.user_service import UserService
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import Response
 
 logger = logging.getLogger(__name__)
 
@@ -394,6 +393,7 @@ async def get_solution_history(
     slug: str,
     skip: int = 0,
     limit: int = 20,
+    fields: Optional[str] = Query(None, description="Filter by fields (comma-separated list of field names)"),
     solution_service: SolutionService = Depends(),
     history_service: HistoryService = Depends(),
 ) -> Any:
@@ -401,6 +401,10 @@ async def get_solution_history(
     Get change history for a specific solution.
 
     Returns a list of history records for the solution, sorted by change date in descending order.
+
+    Query Parameters:
+    - fields: Optional comma-separated list of fields to filter by (e.g., 'name,description,category')
+             Only returns history records with changes to any of these fields.
     """
     solution = await solution_service.get_solution_by_slug(slug)
     if not solution:
@@ -409,8 +413,13 @@ async def get_solution_history(
             detail=f"Solution with slug '{slug}' not found",
         )
 
+    # Process fields if provided
+    field_list = None
+    if fields:
+        field_list = [field.strip() for field in fields.split(",")]
+
     history_records, total = await history_service.get_object_history(
-        object_type="solution", object_id=str(solution.id), skip=skip, limit=limit
+        object_type="solution", object_id=str(solution.id), skip=skip, limit=limit, fields=field_list
     )
 
     return StandardResponse.paginated(history_records, total, skip, limit)

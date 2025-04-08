@@ -1,10 +1,9 @@
 from typing import Dict, List, Optional
 
-from bson.objectid import ObjectId
-from pymongo import DESCENDING
-
 from app.core.database import get_database
 from app.models.history import ChangeType, HistoryQuery, HistoryRecord
+from bson.objectid import ObjectId
+from pymongo import DESCENDING
 
 
 class HistoryService:
@@ -54,6 +53,13 @@ class HistoryService:
 
         if query.username:
             filter_criteria["$or"] = [{"created_by": query.username}, {"updated_by": query.username}]
+
+        if query.fields:
+            # Filter for records that include changes to any of the specified fields
+            field_conditions = [{"changed_fields.field_name": field_name} for field_name in query.fields]
+            if "$and" not in filter_criteria:
+                filter_criteria["$and"] = []
+            filter_criteria["$and"].append({"$or": field_conditions})
 
         date_criteria = {}
         if query.start_date:
@@ -112,7 +118,7 @@ class HistoryService:
                     self._convert_objectids(item)
 
     async def get_object_history(
-        self, object_type: str, object_id: str, skip: int = 0, limit: int = 20
+        self, object_type: str, object_id: str, skip: int = 0, limit: int = 20, fields: Optional[List[str]] = None
     ) -> tuple[List[HistoryRecord], int]:
         """
         Get history records for a specific object
@@ -122,11 +128,12 @@ class HistoryService:
             object_id: ID of the object
             skip: Number of records to skip
             limit: Maximum number of records to return
+            fields: Optional list of field names to filter by (only returns records with these fields)
 
         Returns:
             A tuple of (records, total_count)
         """
-        query = HistoryQuery(object_type=object_type, object_id=object_id, skip=skip, limit=limit)
+        query = HistoryQuery(object_type=object_type, object_id=object_id, skip=skip, limit=limit, fields=fields)
         return await self.get_history_records(query)
 
     async def record_object_change(

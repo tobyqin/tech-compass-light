@@ -32,6 +32,18 @@ Authorization: Bearer {{adminToken}}
 GET {{baseUrl}}/history?change_type=create
 Authorization: Bearer {{adminToken}}
 
+### Filter history by specific fields
+GET {{baseUrl}}/history?fields=name,description
+Authorization: Bearer {{adminToken}}
+
+### Complex filter with fields and object type
+GET {{baseUrl}}/history?object_type=solution&fields=description,category,recommend_status
+Authorization: Bearer {{adminToken}}
+
+### Filter history by multiple criteria including fields
+GET {{baseUrl}}/history?object_type=solution&change_type=update&fields=name,pros,cons&skip=0&limit=10
+Authorization: Bearer {{adminToken}}
+
 ### Complex filter with pagination
 GET {{baseUrl}}/history?object_type=solution&change_type=update&skip=0&limit=10
 Authorization: Bearer {{adminToken}}

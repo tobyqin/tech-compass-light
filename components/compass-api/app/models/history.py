@@ -2,9 +2,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
-
 from app.models.common import AuditModel
+from pydantic import BaseModel, Field
 
 
 class ChangeType(str, Enum):
@@ -102,5 +101,8 @@ class HistoryQuery(BaseModel):
     username: Optional[str] = Field(None, description="Filter by username who made the change")
     start_date: Optional[datetime] = Field(None, description="Filter changes after this date")
     end_date: Optional[datetime] = Field(None, description="Filter changes before this date")
+    fields: Optional[List[str]] = Field(
+        None, description="Filter records that include changes to these specific fields"
+    )
     skip: int = Field(0, description="Number of records to skip (for pagination)")
     limit: int = Field(20, description="Maximum number of records to return (for pagination)")
