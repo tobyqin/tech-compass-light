@@ -81,8 +81,10 @@
 
         <p-tabPanel header="History">
           <div class="history-content">
-            <h3>Status Change History</h3>
-            <p>This tab shows the history of changes to the solution's Recommend Status and Review Status.</p>
+            <div class="history-section">
+              <h3>Status Change History</h3>
+              <p>This tab shows the history of changes to the solution's Recommend Status and Review Status.</p>
+            </div>
 
             <div *ngIf="loadingHistory" class="history-loading">
               <p-progressSpinner></p-progressSpinner>

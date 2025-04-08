@@ -861,17 +861,24 @@
 
 // History tab styles
 .history-content {
-  padding: 1rem 0;
 
-  h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
+  .history-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--surface-border);
 
-  p {
-    color: var(--text-color-secondary);
-    margin-bottom: 1.5rem;
+    h3 {
+      margin: 0 0 1rem 0;
+      color: var(--text-color);
+      font-size: 1.25rem;
+    }
+
+    p {
+      color: var(--text-color-secondary);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 0;
+    }
   }
 
   .history-loading {
