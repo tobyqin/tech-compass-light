@@ -120,12 +120,6 @@
             <p-tag [value]="solution.recommend_status"
               [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
           </div>
-          <div class="info-item">
-            <label>Adoption Complexity</label>
-            <p-tag [value]="solution.adoption_complexity.replace('_', ' ')" [severity]="
-                getAdoptionComplexitySeverity(solution.adoption_complexity)
-              "></p-tag>
-          </div>
         </div>
 
         <div class="info-section">
@@ -147,9 +141,9 @@
             <label>Email</label>
             <a [href]="'mailto:' + solution.maintainer_email">{{
               solution.maintainer_email.length > 18
-                ? solution.maintainer_email.substring(0, 18) + '...' 
-                : solution.maintainer_email
-            }}</a>
+              ? solution.maintainer_email.substring(0, 18) + '...'
+              : solution.maintainer_email
+              }}</a>
           </div>
         </div>
 
