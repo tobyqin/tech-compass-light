@@ -1,6 +1,6 @@
 <div class="edit-solution">
   <h1>Edit Item</h1>
-  
+
   <form [formGroup]="solutionForm" (ngSubmit)="onSubmit()" class="p-fluid">
     <div class="section-card">
       <div class="section-header">
@@ -13,11 +13,13 @@
         </div>
         <div class="form-field">
           <label for="category">Category *</label>
-          <p-dropdown id="category" [options]="categories" formControlName="category" optionLabel="name" optionValue="name" [style]="{'width':'100%'}" placeholder="Select a category"></p-dropdown>
+          <p-dropdown id="category" [options]="categories" formControlName="category" optionLabel="name"
+            optionValue="name" [style]="{'width':'100%'}" placeholder="Select a category"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="group">Group</label>
-          <p-dropdown id="group" [options]="groups" formControlName="group" optionLabel="name" optionValue="name" [style]="{'width':'100%'}" placeholder="Select a group"></p-dropdown>
+          <p-dropdown id="group" [options]="groups" formControlName="group" optionLabel="name" optionValue="name"
+            [style]="{'width':'100%'}" placeholder="Select a group"></p-dropdown>
         </div>
       </div>
       <div class="form-row">
@@ -33,13 +35,8 @@
       <div class="form-row">
         <div class="form-field">
           <label for="tags">Tags</label>
-          <p-chips 
-            id="tags" 
-            formControlName="tags"
-            placeholder="Enter a tag and press Enter"
-            [addOnBlur]="true"
-            [separator]="','"
-            [allowDuplicate]="false">
+          <p-chips id="tags" formControlName="tags" placeholder="Enter a tag and press Enter" [addOnBlur]="true"
+            [separator]="','" [allowDuplicate]="false">
           </p-chips>
         </div>
       </div>
@@ -62,6 +59,12 @@
           <label for="how_to_use">How to Use</label>
           <textarea id="how_to_use" pInputTextarea formControlName="how_to_use" [rows]="4" [autoResize]="true"
             placeholder="Instructions on how to use the solution (markdown supported)"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="how_to_use_url">How to Use URL (Optional, when clicked "Get It" button will open this URL)</label>
+          <input id="how_to_use_url" type="url" pInputText formControlName="how_to_use_url" placeholder="https://" />
         </div>
       </div>
       <div class="form-row">
@@ -94,7 +97,8 @@
       <div class="form-row">
         <div class="form-field">
           <label for="department">Department *</label>
-          <p-dropdown id="department" [options]="departments" formControlName="department" [style]="{'width':'100%'}" placeholder="Select a department"></p-dropdown>
+          <p-dropdown id="department" [options]="departments" formControlName="department" [style]="{'width':'100%'}"
+            placeholder="Select a department"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="team">Team Name *</label>
@@ -128,11 +132,13 @@
       <div class="form-row">
         <div class="form-field">
           <label for="official_website">Official Website</label>
-          <input id="official_website" type="url" pInputText formControlName="official_website" placeholder="https://" />
+          <input id="official_website" type="url" pInputText formControlName="official_website"
+            placeholder="https://" />
         </div>
         <div class="form-field">
           <label for="documentation_url">Documentation URL</label>
-          <input id="documentation_url" type="url" pInputText formControlName="documentation_url" placeholder="https://" />
+          <input id="documentation_url" type="url" pInputText formControlName="documentation_url"
+            placeholder="https://" />
         </div>
         <div class="form-field">
           <label for="demo_url">Demo URL</label>
@@ -146,11 +152,14 @@
         </div>
         <div class="form-field">
           <label for="provider_type">Product Type</label>
-          <p-dropdown id="provider_type" [options]="providerTypeOptions" formControlName="provider_type" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select product type"></p-dropdown>
+          <p-dropdown id="provider_type" [options]="providerTypeOptions" formControlName="provider_type"
+            optionLabel="label" optionValue="value" [style]="{'width':'100%'}"
+            placeholder="Select product type"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="vendor_product_url">Vendor Product URL</label>
-          <input id="vendor_product_url" type="url" pInputText formControlName="vendor_product_url" placeholder="https://" />
+          <input id="vendor_product_url" type="url" pInputText formControlName="vendor_product_url"
+            placeholder="https://" />
         </div>
       </div>
     </div>
@@ -162,35 +171,26 @@
       <div class="form-row">
         <div class="form-field">
           <label for="stage">Development Stage *</label>
-          <p-dropdown id="stage" [options]="stageOptions" formControlName="stage" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select stage"></p-dropdown>
+          <p-dropdown id="stage" [options]="stageOptions" formControlName="stage" optionLabel="label"
+            optionValue="value" [style]="{'width':'100%'}" placeholder="Select stage"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="recommend_status">
-            Recommend Status * 
+            Recommend Status *
             <span class="admin-note">(Admin only)</span>
           </label>
-          <p-dropdown id="recommend_status" 
-            [options]="recommendStatusOptions" 
-            formControlName="recommend_status" 
-            optionLabel="label" 
-            optionValue="value" 
-            [style]="{'width':'100%'}" 
-            placeholder="Select status"
+          <p-dropdown id="recommend_status" [options]="recommendStatusOptions" formControlName="recommend_status"
+            optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select status"
             [disabled]="!isAdmin">
           </p-dropdown>
         </div>
         <div class="form-field">
           <label for="review_status">
-            Review Status * 
+            Review Status *
             <span class="admin-note">(Admin only)</span>
           </label>
-          <p-dropdown id="review_status" 
-            [options]="reviewStatusOptions" 
-            formControlName="review_status" 
-            optionLabel="label" 
-            optionValue="value" 
-            [style]="{'width':'100%'}" 
-            placeholder="Select status"
+          <p-dropdown id="review_status" [options]="reviewStatusOptions" formControlName="review_status"
+            optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select status"
             [disabled]="!isAdmin">
           </p-dropdown>
         </div>
@@ -198,15 +198,20 @@
       <div class="form-row">
         <div class="form-field">
           <label for="adoption_complexity">Adoption Complexity *</label>
-          <p-dropdown id="adoption_complexity" [options]="adoptionComplexityOptions" formControlName="adoption_complexity" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select adoption complexity"></p-dropdown>
+          <p-dropdown id="adoption_complexity" [options]="adoptionComplexityOptions"
+            formControlName="adoption_complexity" optionLabel="label" optionValue="value" [style]="{'width':'100%'}"
+            placeholder="Select adoption complexity"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="adoption_level">Adoption Level *</label>
-          <p-dropdown id="adoption_level" [options]="adoptionLevelOptions" formControlName="adoption_level" optionLabel="label" optionValue="value" [style]="{'width':'100%'}" placeholder="Select adoption level"></p-dropdown>
+          <p-dropdown id="adoption_level" [options]="adoptionLevelOptions" formControlName="adoption_level"
+            optionLabel="label" optionValue="value" [style]="{'width':'100%'}"
+            placeholder="Select adoption level"></p-dropdown>
         </div>
         <div class="form-field">
           <label for="adoption_user_count">Estimated User Count *</label>
-          <p-inputNumber id="adoption_user_count" formControlName="adoption_user_count" [min]="0" placeholder="Enter number of users"></p-inputNumber>
+          <p-inputNumber id="adoption_user_count" formControlName="adoption_user_count" [min]="0"
+            placeholder="Enter number of users"></p-inputNumber>
         </div>
       </div>
     </div>
@@ -234,13 +239,8 @@
         <p-messages></p-messages>
       </div>
       <div class="buttons-container">
-        <p-button 
-          type="submit"
-          label="Save Changes"
-          icon="pi pi-check"
-          [loading]="loading"
-          [disabled]="!solutionForm.valid || loading"
-          styleClass="p-button-primary p-button-rounded">
+        <p-button type="submit" label="Save Changes" icon="pi pi-check" [loading]="loading"
+          [disabled]="!solutionForm.valid || loading" styleClass="p-button-primary p-button-rounded">
         </p-button>
       </div>
     </div>
