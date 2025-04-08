@@ -91,11 +91,25 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   activeTab = 0;
 
   /**
+   * Handles the Get It button click
+   * If how_to_use_url exists, opens it in a new tab
+   * Always activates the How to Use tab
+   */
+  onGetItClick(): void {
+    const solution = this.solution$.getValue();
+    if (solution?.how_to_use_url) {
+      window.open(solution.how_to_use_url, "_blank");
+    }
+    this.activateHowToUseTab();
+  }
+
+  /**
    * Activates the How to Use tab
    */
   activateHowToUseTab(): void {
     this.activeTab = 1; // Index 1 corresponds to the How to Use tab
   }
+
   newComment = "";
   newCommentIsAdopted = false;
   newRating = {
