@@ -76,6 +76,18 @@ Authorization: Bearer {{adminToken}}
 GET {{baseUrl}}/solutions/example-solution/history
 Authorization: Bearer {{adminToken}}
 
+### Get solution history filtered by fields
+GET {{baseUrl}}/solutions/example-solution/history?fields=name,description
+Authorization: Bearer {{adminToken}}
+
+### Get solution history with multiple field filters
+GET {{baseUrl}}/solutions/example-solution/history?fields=recommend_status,stage,pros,cons
+Authorization: Bearer {{adminToken}}
+
+### Get solution history with field filter and pagination
+GET {{baseUrl}}/solutions/example-solution/history?fields=category,tags&skip=0&limit=5
+Authorization: Bearer {{adminToken}}
+
 ### Check if solution name exists
 GET {{baseUrl}}/solutions/check-name/Example%20Solution
 Authorization: Bearer {{adminToken}}
