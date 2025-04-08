@@ -1,31 +1,31 @@
-import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Component, OnInit } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
-  Validators,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { MenuItem, MessageService } from "primeng/api";
+import { MessageService } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
 
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
 import { ChipsModule } from "primeng/chips";
 import { DropdownModule } from "primeng/dropdown";
+import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { InputTextareaModule } from "primeng/inputtextarea";
-import { InputNumberModule } from "primeng/inputnumber";
 import { MessagesModule } from "primeng/messages";
 
+import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
+import { AuthService } from "../../core/services/auth.service";
 import { CategoryService } from "../../core/services/category.service";
 import { DepartmentService } from "../../core/services/department.service";
+import { Group, GroupService } from "../../core/services/group.service";
 import { SolutionService } from "../../core/services/solution.service";
-import { AuthService } from "../../core/services/auth.service";
-import { GroupService, Group } from "../../core/services/group.service";
-import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
 
 @Component({
   selector: "app-submit-solution",
@@ -108,6 +108,7 @@ export class SubmitSolutionComponent implements OnInit {
       brief: ["", [Validators.required, Validators.maxLength(200)]],
       description: ["", Validators.required],
       how_to_use: [""],
+      how_to_use_url: [""],
       faq: [""],
       about: [""],
       upskilling: [""],
@@ -174,7 +175,7 @@ export class SubmitSolutionComponent implements OnInit {
     this.groupService.getAllGroups().subscribe((response) => {
       if (response.success) {
         this.groups = response.data;
-        
+
         // Set default group if available
         if (this.groups.length > 0) {
           this.solutionForm.patchValue({ group: this.groups[0].name });

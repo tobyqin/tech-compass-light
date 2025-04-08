@@ -249,6 +249,7 @@ class TestDataGenerator:
             "description": fake.text(max_nb_chars=200),
             "brief": fake.text(max_nb_chars=100).split(".")[0] + ".",
             "how_to_use": random.choice(how_to_use_templates),
+            "how_to_use_url": fake.url() if random.random() > 0.3 else None,  # 70% chance to have a how-to-use URL
             "faq": faq_content,
             "about": random.choice(about_templates),
             "category": category_name,

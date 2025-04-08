@@ -1,31 +1,31 @@
-import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Component, OnInit } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
-  Validators,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
-import { AuthService } from "../../../core/services/auth.service";
 import { take } from "rxjs/operators";
+import { AuthService } from "../../../core/services/auth.service";
 
 import { ButtonModule } from "primeng/button";
 import { ChipsModule } from "primeng/chips";
 import { DropdownModule } from "primeng/dropdown";
+import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { InputTextareaModule } from "primeng/inputtextarea";
-import { InputNumberModule } from "primeng/inputnumber";
 import { MessagesModule } from "primeng/messages";
 
+import { StandardResponse } from "../../../core/interfaces/standard-response.interface";
 import { CategoryService } from "../../../core/services/category.service";
 import { DepartmentService } from "../../../core/services/department.service";
+import { Group, GroupService } from "../../../core/services/group.service";
 import { SolutionService } from "../../../core/services/solution.service";
-import { GroupService, Group } from "../../../core/services/group.service";
 import { Solution } from "../../../shared/interfaces/solution.interface";
-import { StandardResponse } from "../../../core/interfaces/standard-response.interface";
 
 @Component({
   selector: "tc-edit-solution",
@@ -113,6 +113,7 @@ export class EditSolutionComponent implements OnInit {
       brief: ["", [Validators.required, Validators.maxLength(200)]],
       description: ["", Validators.required],
       how_to_use: [""],
+      how_to_use_url: [""],
       faq: [""],
       about: [""],
       upskilling: [""],

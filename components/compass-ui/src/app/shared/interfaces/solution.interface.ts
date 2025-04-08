@@ -51,6 +51,7 @@ export interface Solution {
   rating_count: number;
   group?: string;
   how_to_use?: string;
+  how_to_use_url?: string;
   faq?: string;
   about?: string;
   support_url?: string;

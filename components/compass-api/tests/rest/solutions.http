@@ -41,6 +41,8 @@ Content-Type: application/json
   "name": "Example Solution",
   "brief": "A concise example solution for testing purposes",
   "description": "This is an example solution for testing",
+  "how_to_use": "Basic instructions on how to use this solution",
+  "how_to_use_url": "https://example.com/how-to-use",
   "category": "Development Framework",
   "department": "IT",
   "team": "Development Team",
@@ -62,6 +64,7 @@ Content-Type: application/json
 
 {
   "description": "Updated description for example solution",
+  "how_to_use_url": "https://example.com/updated-how-to-use",
   "recommend_status": "TRIAL"
 }
 

@@ -62,6 +62,7 @@ class SolutionBase(BaseModel):
         description="Brief description of the solution (max 200 chars)",
     )
     how_to_use: Optional[str] = Field("", description="Instructions on how to use the solution, markdown supported")
+    how_to_use_url: Optional[str] = Field(None, description="External URL for how-to-use guide")
     faq: Optional[str] = Field("", description="Frequently asked questions about the solution, markdown supported")
     about: Optional[str] = Field("", description="Additional information about the solution, markdown supported")
     logo: Optional[str] = Field("", description="Logo URL or path")
@@ -125,6 +126,7 @@ class SolutionUpdate(BaseModel):
     description: Optional[str] = None
     brief: Optional[str] = None
     how_to_use: Optional[str] = None
+    how_to_use_url: Optional[str] = None
     faq: Optional[str] = None
     about: Optional[str] = None
     logo: Optional[str] = None
