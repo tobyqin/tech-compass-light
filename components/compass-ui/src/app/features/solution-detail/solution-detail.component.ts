@@ -10,6 +10,10 @@ import { environment } from "../../../environments/environment";
 import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
 import { AuthService } from "../../core/services/auth.service";
 import { Comment, CommentService } from "../../core/services/comment.service";
+import {
+  HistoryRecord,
+  HistoryService,
+} from "../../core/services/history.service";
 import type { Rating } from "../../core/services/rating.service";
 import { RatingService } from "../../core/services/rating.service";
 import {
@@ -27,6 +31,7 @@ import { ChipModule } from "primeng/chip";
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { RatingModule } from "primeng/rating";
+import { TableModule } from "primeng/table";
 import { TabViewModule } from "primeng/tabview";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
@@ -66,6 +71,7 @@ type Severity =
     ToastModule,
     TooltipModule,
     MarkdownModule,
+    TableModule,
   ],
   providers: [DialogService],
 })
@@ -73,21 +79,26 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private userCommentsPage = 0;
   private ratingsPage = 0;
+  private historyPage = 0;
 
   solution$ = new BehaviorSubject<Solution | null>(null);
   officialComments$ = new BehaviorSubject<Comment[]>([]);
   userComments$ = new BehaviorSubject<Comment[]>([]);
   ratings$ = new BehaviorSubject<Rating[]>([]);
+  history$ = new BehaviorSubject<HistoryRecord[]>([]);
 
   loading = true;
   loadingOfficialComments = false;
   loadingUserComments = false;
   loadingRatings = false;
+  loadingHistory = false;
   hasMoreUserComments = true;
   hasMoreRatings = true;
+  hasMoreHistory = true;
   totalOfficialComments = 0;
   totalUserComments = 0;
   totalRatings = 0;
+  totalHistory = 0;
   activeTab = 0;
 
   /**
@@ -136,6 +147,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     private commentService: CommentService,
     private ratingService: RatingService,
     private solutionService: SolutionService,
+    private historyService: HistoryService,
     private router: Router
   ) {}
 
@@ -146,6 +158,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       this.loadComments(slug);
       this.loadRatings(slug);
       this.loadAdoptedUsers(slug);
+      this.loadHistory(slug);
     });
 
     this.authService.currentUser$.subscribe((user) => {
@@ -475,5 +488,80 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       `Reach out for tech solution: ${solution.name}`
     );
     window.location.href = `mailto:${email}?subject=${subject}`;
+  }
+
+  /**
+   * Load history records for changes to recommend_status and review_status
+   */
+  loadHistory(slug: string, loadMore = false) {
+    if (this.loadingHistory) {
+      return;
+    }
+
+    if (loadMore) {
+      this.historyPage++;
+    } else {
+      this.historyPage = 0;
+      this.history$.next([]);
+    }
+
+    this.loadingHistory = true;
+
+    this.historyService
+      .getSolutionHistory(slug, {
+        skip: this.historyPage * 20,
+        limit: 20,
+        fields: ["recommend_status", "review_status"],
+      })
+      .pipe(
+        finalize(() => {
+          this.loadingHistory = false;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (response) => {
+          if (loadMore) {
+            this.history$.next([...this.history$.getValue(), ...response.data]);
+          } else {
+            this.history$.next(response.data);
+          }
+          this.totalHistory = response.total;
+          this.hasMoreHistory =
+            this.history$.getValue().length < response.total;
+        },
+        error: (error) => {
+          console.error("Error loading history:", error);
+          this.messageService.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to load history records",
+          });
+        },
+      });
+  }
+
+  /**
+   * Format the value for display in the history table
+   */
+  formatValue(value: any): string {
+    if (value === null || value === undefined) {
+      return "N/A";
+    }
+    if (typeof value === "object") {
+      return JSON.stringify(value);
+    }
+    return value.toString();
+  }
+
+  /**
+   * Get a user-friendly field name for display
+   */
+  getFieldDisplayName(fieldName: string): string {
+    const displayNames: Record<string, string> = {
+      recommend_status: "Recommend Status",
+      review_status: "Review Status",
+    };
+    return displayNames[fieldName] || fieldName;
   }
 }

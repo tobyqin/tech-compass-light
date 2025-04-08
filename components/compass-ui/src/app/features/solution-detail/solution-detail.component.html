@@ -78,6 +78,71 @@
             </div>
           </div>
         </p-tabPanel>
+
+        <p-tabPanel header="History">
+          <div class="history-content">
+            <h3>Status Change History</h3>
+            <p>This tab shows the history of changes to the solution's Recommend Status and Review Status.</p>
+
+            <div *ngIf="loadingHistory" class="history-loading">
+              <p-progressSpinner></p-progressSpinner>
+              <p>Loading history records...</p>
+            </div>
+
+            <ng-container *ngIf="!loadingHistory">
+              <div *ngIf="(history$ | async) as historyRecords">
+                <div *ngIf="historyRecords.length === 0" class="empty-content">
+                  <p>No status change history available for this solution.</p>
+                </div>
+
+                <div *ngIf="historyRecords.length > 0" class="history-table">
+                  <p-table [value]="historyRecords" styleClass="p-datatable-sm" [tableStyle]="{'min-width': '50rem'}">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Date</th>
+                        <th>Field</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                        <th>Changed By</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-record>
+                      <ng-container *ngFor="let field of record.changed_fields">
+                        <tr *ngIf="field.field_name === 'recommend_status' || field.field_name === 'review_status'">
+                          <td>{{ record.created_at | date:'medium' }}</td>
+                          <td>{{ getFieldDisplayName(field.field_name) }}</td>
+                          <td>
+                            <p-tag *ngIf="field.field_name === 'recommend_status'"
+                              [value]="formatValue(field.old_value)"
+                              [severity]="getRecommendStatusSeverity(field.old_value)">
+                            </p-tag>
+                            <span *ngIf="field.field_name !== 'recommend_status'">{{ formatValue(field.old_value)
+                              }}</span>
+                          </td>
+                          <td>
+                            <p-tag *ngIf="field.field_name === 'recommend_status'"
+                              [value]="formatValue(field.new_value)"
+                              [severity]="getRecommendStatusSeverity(field.new_value)">
+                            </p-tag>
+                            <span *ngIf="field.field_name !== 'recommend_status'">{{ formatValue(field.new_value)
+                              }}</span>
+                          </td>
+                          <td>{{ record.created_by }}</td>
+                        </tr>
+                      </ng-container>
+                    </ng-template>
+                  </p-table>
+
+                  <div *ngIf="hasMoreHistory" class="load-more">
+                    <p-button label="Load More" (onClick)="loadHistory(solution.slug, true)" [disabled]="loadingHistory"
+                      styleClass="p-button-outlined p-button-sm">
+                    </p-button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </p-tabPanel>
       </p-tabView>
     </div>
 
