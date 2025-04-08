@@ -116,18 +116,20 @@
                           <td>
                             <p-tag *ngIf="field.field_name === 'recommend_status'"
                               [value]="formatValue(field.old_value)"
-                              [severity]="getRecommendStatusSeverity(field.old_value)">
+                              [severity]="field.old_value ? getRecommendStatusSeverity(field.old_value) : 'secondary'">
                             </p-tag>
-                            <span *ngIf="field.field_name !== 'recommend_status'">{{ formatValue(field.old_value)
-                              }}</span>
+                            <p-tag *ngIf="field.field_name === 'review_status'" [value]="formatValue(field.old_value)"
+                              [severity]="field.old_value ? getReviewStatusSeverity(field.old_value) : 'secondary'">
+                            </p-tag>
                           </td>
                           <td>
                             <p-tag *ngIf="field.field_name === 'recommend_status'"
                               [value]="formatValue(field.new_value)"
-                              [severity]="getRecommendStatusSeverity(field.new_value)">
+                              [severity]="field.new_value ? getRecommendStatusSeverity(field.new_value) : 'secondary'">
                             </p-tag>
-                            <span *ngIf="field.field_name !== 'recommend_status'">{{ formatValue(field.new_value)
-                              }}</span>
+                            <p-tag *ngIf="field.field_name === 'review_status'" [value]="formatValue(field.new_value)"
+                              [severity]="field.new_value ? getReviewStatusSeverity(field.new_value) : 'secondary'">
+                            </p-tag>
                           </td>
                           <td>{{ record.created_by }}</td>
                         </tr>

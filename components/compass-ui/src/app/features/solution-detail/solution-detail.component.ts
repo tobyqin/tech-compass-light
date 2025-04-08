@@ -212,6 +212,18 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     return severityMap[complexity] || "info";
   }
 
+  /**
+   * Get the severity color for a review status
+   */
+  getReviewStatusSeverity(status: string): Severity {
+    const severityMap: { [key: string]: Severity } = {
+      PENDING: "warning",
+      APPROVED: "success",
+      REJECTED: "danger",
+    };
+    return severityMap[status] || "secondary";
+  }
+
   private loadSolution(slug: string) {
     this.loading = true;
     this.http

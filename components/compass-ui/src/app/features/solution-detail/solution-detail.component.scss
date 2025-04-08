@@ -862,6 +862,11 @@
 // History tab styles
 .history-content {
 
+  ::ng-deep .p-tag.p-tag-secondary {
+    background-color: var(--surface-200);
+    color: var(--text-color-secondary);
+  }
+
   .history-section {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
