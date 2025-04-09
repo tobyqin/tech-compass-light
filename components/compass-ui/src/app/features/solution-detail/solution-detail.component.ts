@@ -576,4 +576,32 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     };
     return displayNames[fieldName] || fieldName;
   }
+
+  navigateToReplacedSolution(name: string) {
+    if (!name || name === 'default solution') return;
+    
+    this.http.get<any>(`${environment.apiUrl}/solutions`, {
+      params: { name }
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.length > 0) {
+          const solution = response.data[0];
+          this.router.navigate(['/items', solution.slug]);
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Replacement solution not found'
+          });
+        }
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load replacement solution'
+        });
+      }
+    });
+  }
 }

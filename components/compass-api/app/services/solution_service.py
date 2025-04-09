@@ -2,10 +2,6 @@ import re
 from datetime import datetime
 from typing import List, Optional
 
-from bson import ObjectId
-from fastapi import logger
-from pymongo import ASCENDING, DESCENDING
-
 from app.core.database import get_database
 from app.models.history import ChangeType
 from app.models.solution import Solution, SolutionCreate, SolutionInDB, SolutionUpdate
@@ -14,6 +10,9 @@ from app.services.group_service import GroupService
 from app.services.history_service import HistoryService
 from app.services.rating_service import RatingService
 from app.services.tag_service import TagService
+from bson import ObjectId
+from fastapi import logger
+from pymongo import ASCENDING, DESCENDING
 
 VALID_SORT_FIELDS = {"name", "category", "created_at", "updated_at"}
 
@@ -63,7 +62,7 @@ class SolutionService:
         """
         category = await self.category_service.get_or_create_category(category_name, username)
         return category.name
-        
+
     async def _process_group(self, group_name: str, username: Optional[str] = None) -> str:
         """Process group creation/update
 
@@ -117,7 +116,7 @@ class SolutionService:
         # Handle category update
         if "category" in update_dict:
             update_dict["category"] = await self._process_category(update_dict["category"], username)
-            
+
         # Handle group update
         if "group" in update_dict:
             update_dict["group"] = await self._process_group(update_dict["group"], username)
@@ -529,6 +528,18 @@ class SolutionService:
             # Convert to dict to allow adding rating fields
             solution_dict = solution.model_dump()
             rating_summary = await self.rating_service.get_rating_summary(solution.slug)
+            solution_dict["rating"] = rating_summary["average"]
+            solution_dict["rating_count"] = rating_summary["count"]
+            return Solution(**solution_dict)
+        return None
+
+    async def get_solution_by_name_with_rating(self, name: str) -> Optional[Solution]:
+        """Get a solution by name with rating"""
+        solution = await self.collection.find_one({"name": name})
+        if solution:
+            # Convert to dict to allow adding rating fields
+            solution_dict = solution
+            rating_summary = await self.rating_service.get_rating_summary(solution["slug"])
             solution_dict["rating"] = rating_summary["average"]
             solution_dict["rating_count"] = rating_summary["count"]
             return Solution(**solution_dict)
