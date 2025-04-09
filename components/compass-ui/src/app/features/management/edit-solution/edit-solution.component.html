@@ -195,6 +195,13 @@
           </p-dropdown>
         </div>
       </div>
+      <div class="form-row" *ngIf="solutionForm.get('recommend_status')?.value === 'HOLD'">
+        <div class="form-field">
+          <label for="replaced_by">Replaced by (Optional, Enter the name of the solution that replaces this one)</label>
+          <input id="replaced_by" type="text" pInputText formControlName="replaced_by" 
+            placeholder="Enter the name of the solution that replaces this one" />
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-field">
           <label for="adoption_complexity">Adoption Complexity *</label>

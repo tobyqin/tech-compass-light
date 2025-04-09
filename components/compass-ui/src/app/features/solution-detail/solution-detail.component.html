@@ -183,6 +183,10 @@
             <p-tag [value]="solution.recommend_status"
               [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
           </div>
+          <div class="info-item" *ngIf="solution.recommend_status === 'HOLD'">
+            <label>Replaced by</label>
+            <span>{{ solution.replaced_by || 'default solution' }}</span>
+          </div>
         </div>
 
         <div class="info-section">
