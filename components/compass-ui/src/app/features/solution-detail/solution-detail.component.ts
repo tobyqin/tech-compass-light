@@ -580,7 +580,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
   navigateToReplacedSolution(name: string) {
     if (!name || name === 'default solution') return;
     
-    this.http.get<any>(`${environment.apiUrl}/solutions`, {
+    this.http.get<any>(`${environment.apiUrl}/solutions/`, {
       params: { name }
     }).subscribe({
       next: (response) => {
