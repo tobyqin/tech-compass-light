@@ -61,6 +61,9 @@ class SolutionBase(BaseModel):
         max_length=200,
         description="Brief description of the solution (max 200 chars)",
     )
+    replaced_by: Optional[str] = Field(
+        default="default solution", description="name of the solution that replaces this one"
+    )
     how_to_use: Optional[str] = Field("", description="Instructions on how to use the solution, markdown supported")
     how_to_use_url: Optional[str] = Field(None, description="External URL for how-to-use guide")
     faq: Optional[str] = Field("", description="Frequently asked questions about the solution, markdown supported")
@@ -154,6 +157,7 @@ class SolutionUpdate(BaseModel):
     stage: Optional[StageEnum] = None
     recommend_status: Optional[RecommendStatusEnum] = None
     review_status: Optional[ReviewStatusEnum] = None
+    replaced_by: Optional[str] = None
 
 
 class SolutionInDB(SolutionInDBBase, AuditModel):

@@ -37,6 +37,7 @@ export interface Solution {
   demo_url?: string;
   logo?: string;
   version?: string;
+  replaced_by?: string;
   tags: string[];
   pros?: string[];
   cons?: string[];

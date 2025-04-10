@@ -42,6 +42,7 @@ async def create_solution(
 async def get_solutions(
     skip: int = 0,
     limit: int = 10,
+    name: Optional[str] = None,
     category: Optional[str] = None,
     department: Optional[str] = None,
     team: Optional[str] = None,
@@ -60,6 +61,7 @@ async def get_solutions(
     """Get all solutions with pagination, filtering and sorting.
 
     Query Parameters:
+    - name: Filter by exact solution name
     - category: Filter by category name
     - department: Filter by department name
     - team: Filter by team name
@@ -70,6 +72,13 @@ async def get_solutions(
     - sort: Sort field (name, category, created_at, updated_at). Prefix with - for descending order
     """
     try:
+        # If exact name is provided, try to get that specific solution
+        if name:
+            solution = await solution_service.get_solution_by_name_with_rating(name)
+            if solution:
+                return StandardResponse.of([solution])
+            return StandardResponse.paginated(data=[], total=0, skip=0, limit=0)
+
         # Validate enum values if provided
         if recommend_status and recommend_status not in [
             "ADOPT",
@@ -423,3 +432,19 @@ async def get_solution_history(
     )
 
     return StandardResponse.paginated(history_records, total, skip, limit)
+
+
+@router.get("/by-name/{name}", response_model=StandardResponse[Solution])
+async def get_solution_by_name(
+    name: str,
+    solution_service: SolutionService = Depends(),
+) -> Any:
+    """Get a solution by its exact name."""
+    try:
+        solution = await solution_service.get_solution_by_name_with_rating(name)
+        if not solution:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Solution with name '{name}' not found")
+        return StandardResponse.of(solution)
+    except Exception as e:
+        logger.error(f"Error getting solution by name: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting solution by name: {str(e)}")

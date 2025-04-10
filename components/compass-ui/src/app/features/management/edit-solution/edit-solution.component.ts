@@ -139,6 +139,7 @@ export class EditSolutionComponent implements OnInit {
       stage: ["", Validators.required],
       recommend_status: [{ value: "", disabled: true }],
       review_status: [{ value: "", disabled: true }],
+      replaced_by: ["default solution"],
       adoption_level: ["", Validators.required],
       adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],

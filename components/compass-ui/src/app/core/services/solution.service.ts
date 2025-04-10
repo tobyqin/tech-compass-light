@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
 import {
-    Solution
+  Solution
 } from "../../shared/interfaces/solution.interface";
 import { StandardResponse } from "../interfaces/standard-response.interface";
 
@@ -176,6 +176,11 @@ export class SolutionService {
 
   getSolution(slug: string): Observable<StandardResponse<Solution>> {
     return this.http.get<StandardResponse<Solution>>(`${this.apiUrl}${slug}`);
+  }
+
+  getSolutionByName(name: string): Observable<StandardResponse<Solution[]>> {
+    const params = new HttpParams().set('name', name);
+    return this.http.get<StandardResponse<Solution[]>>(`${environment.apiUrl}/solutions`, { params });
   }
 
   // Get adopted users for a solution

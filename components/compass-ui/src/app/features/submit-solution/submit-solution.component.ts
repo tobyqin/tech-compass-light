@@ -133,6 +133,7 @@ export class SubmitSolutionComponent implements OnInit {
       cons: ["", Validators.required],
       stage: ["", Validators.required],
       recommend_status: ["", Validators.required],
+      replaced_by: ["default solution"],
       adoption_level: ["", Validators.required],
       adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],
