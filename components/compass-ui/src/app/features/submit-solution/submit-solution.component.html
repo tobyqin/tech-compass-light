@@ -193,7 +193,7 @@
         </div>
         <div class="form-row" *ngIf="solutionForm.get('recommend_status')?.value === 'HOLD'">
           <div class="form-field">
-            <label for="replaced_by">Replaced by</label>
+            <label for="replaced_by">Replaced By</label>
             <input id="replaced_by" type="text" pInputText formControlName="replaced_by" 
               [placeholder]="'default solution'"
               [value]="solutionForm.get('replaced_by')?.value || 'default solution'" />

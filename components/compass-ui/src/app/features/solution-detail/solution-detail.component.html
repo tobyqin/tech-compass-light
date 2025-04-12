@@ -184,7 +184,7 @@
               [severity]="getRecommendStatusSeverity(solution.recommend_status)"></p-tag>
           </div>
           <div class="info-item" *ngIf="solution.recommend_status === 'HOLD'">
-            <label>Replaced by</label>
+            <label>Replaced By</label>
             <a href="javascript:void(0)" 
                *ngIf="solution.replaced_by && solution.replaced_by !== 'default solution'"
                (click)="navigateToReplacedSolution(solution.replaced_by)"
