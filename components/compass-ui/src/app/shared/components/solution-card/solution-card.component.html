@@ -3,9 +3,10 @@
     <span class="new-badge" *ngIf="showNewBadge">NEW</span>
     <div class="card-header">
       <div class="logo-and-status">
-        <img [src]="solution.logo || 'assets/default-solution-logo.svg'" 
-             [alt]="solution.name + ' logo'" 
-             class="solution-logo">
+        <div class="solution-logo">
+          <img [src]="solution.logo ||  '/tech-radar/assets/default-solution-logo.svg'" 
+               [alt]="solution.name + ' logo'">
+        </div>
         <div class="status-badge">
           <p-tag 
             [value]="solution.recommend_status" 
