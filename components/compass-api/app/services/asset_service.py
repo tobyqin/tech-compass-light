@@ -138,24 +138,32 @@ class AssetService:
 
     async def get_asset_data(self, asset_id: str) -> bytes:
         """Get the binary data of an asset"""
-        if not ObjectId.is_valid(asset_id):
-            raise HTTPException(status_code=400, detail="Invalid asset ID")
+        try:
+            if not ObjectId.is_valid(asset_id):
+                raise HTTPException(status_code=400, detail="Invalid asset ID format")
 
-        asset = await self.collection.find_one({"_id": ObjectId(asset_id)})
-        if not asset:
-            raise HTTPException(status_code=404, detail="Asset not found")
+            asset = await self.collection.find_one({"_id": ObjectId(asset_id)})
+            if not asset:
+                raise HTTPException(status_code=404, detail="Asset not found")
 
-        if "gridFSId" in asset:
-            # Get from GridFS
-            try:
-                grid_out = await self.fs.open_download_stream(asset["gridFSId"])
-                contents = await grid_out.read()
-                return contents
-            except gridfs.NoFile:
-                raise HTTPException(status_code=404, detail="Asset file not found in GridFS")
-        else:
-            # Get from regular collection
-            return asset["data"]
+            if "gridFSId" in asset:
+                # Get from GridFS
+                try:
+                    grid_out = await self.fs.open_download_stream(ObjectId(asset["gridFSId"]))
+                    contents = await grid_out.read()
+                    return contents
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail=f"Error retrieving file from GridFS: {str(e)}")
+            elif "data" in asset:
+                # Get from regular collection
+                return asset["data"]
+            else:
+                raise HTTPException(status_code=500, detail="Asset data not found in expected location")
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error retrieving asset data: {str(e)}")
 
     async def delete_asset(self, asset_id: str) -> bool:
         """Delete a single asset"""

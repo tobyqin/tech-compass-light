@@ -28,17 +28,27 @@ async def get_assets(
     return StandardResponse.paginated(data=assets, total=total, skip=skip, limit=limit)
 
 
-@router.get("/image/{asset_id}")
+@router.get("/{asset_id}")
 async def get_image(asset_id: str, asset_service: AssetService = Depends(get_asset_service)):
     """
     Get image content by ID.
     """
-    asset = await asset_service.get_asset_by_id(asset_id)
-    if not asset:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
+    try:
+        asset = await asset_service.get_asset_by_id(asset_id)
+        if not asset:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
 
-    content = await asset_service.get_asset_data(asset_id)
-    return Response(content=content, media_type=asset.mimeType)
+        content = await asset_service.get_asset_data(asset_id)
+        if not content:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
+
+        return Response(
+            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving image: {str(e)}"
+        )
 
 
 @router.post("/upload", response_model=StandardResponse[Asset], status_code=status.HTTP_201_CREATED)
