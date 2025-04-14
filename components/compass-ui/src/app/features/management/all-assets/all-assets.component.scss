@@ -156,3 +156,32 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.duplicate-dialog-content {
+  padding: 1.5rem;
+
+  .warning-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+
+    i {
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.5;
+
+      &.existing-info {
+        text-align: left;
+        background: var(--surface-ground);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        width: 100%;
+      }
+    }
+  }
+}

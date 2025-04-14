@@ -11,6 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-all-assets',
@@ -24,6 +25,7 @@ import { TableModule } from 'primeng/table';
     DialogModule,
     FileUploadModule,
     InputTextModule,
+    ToastModule,
   ],
   providers: [MessageService]
 })
@@ -37,6 +39,13 @@ export class AllAssetsComponent implements OnInit {
   uploadedFiles: File[] = [];
   uploadUrl = `${environment.apiUrl}/assets/upload`;
 
+  // File exists dialog state
+  duplicateDialog = {
+    visible: false,
+    message: '',
+    existingFile: null as Asset | null
+  };
+
   constructor(
     public assetService: AssetService,
     private messageService: MessageService
@@ -44,6 +53,28 @@ export class AllAssetsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAssets();
+  }
+
+  // Check if file name already exists
+  checkDuplicateFileName(fileName: string): Asset | null {
+    return this.assets.find(asset => asset.name.toLowerCase() === fileName.toLowerCase()) || null;
+  }
+
+  // Check for duplicate files in a batch
+  checkDuplicateFiles(files: File[]): { duplicates: { file: File, existing: Asset }[], valid: File[] } {
+    const duplicates: { file: File, existing: Asset }[] = [];
+    const valid: File[] = [];
+
+    for (const file of files) {
+      const existingAsset = this.checkDuplicateFileName(file.name);
+      if (existingAsset) {
+        duplicates.push({ file, existing: existingAsset });
+      } else {
+        valid.push(file);
+      }
+    }
+
+    return { duplicates, valid };
   }
 
   loadAssets(): void {
@@ -66,7 +97,20 @@ export class AllAssetsComponent implements OnInit {
 
   onUpload(event: any): void {
     const files = event.files;
+    
     if (files.length === 1) {
+      // Single file upload
+      const existingAsset = this.checkDuplicateFileName(files[0].name);
+      if (existingAsset) {
+        this.duplicateDialog = {
+          visible: true,
+          message: `File "${files[0].name}" already exists`,
+          existingFile: existingAsset
+        };
+        this.fileUpload.clear();
+        return;
+      }
+
       this.assetService.uploadImage(files[0])
         .subscribe({
           next: (response) => {
@@ -88,7 +132,21 @@ export class AllAssetsComponent implements OnInit {
           }
         });
     } else if (files.length > 1) {
-      this.assetService.uploadMultipleImages(files)
+      // Multiple files upload
+      const { duplicates, valid } = this.checkDuplicateFiles(files);
+      
+      if (duplicates.length > 0) {
+        const duplicateNames = duplicates.map(d => d.file.name).join('\n');
+        this.duplicateDialog = {
+          visible: true,
+          message: `The following files already exist:\n${duplicateNames}`,
+          existingFile: null
+        };
+        this.fileUpload.clear();
+        return;
+      }
+
+      this.assetService.uploadMultipleImages(valid)
         .subscribe({
           next: (response) => {
             this.assets = [...this.assets, ...response.data];

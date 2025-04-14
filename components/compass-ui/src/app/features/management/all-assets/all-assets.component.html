@@ -137,4 +137,31 @@
       </div>
     </div>
   </div>
-</p-dialog> 
+</p-dialog>
+
+<!-- File Exists Dialog -->
+<p-dialog 
+  [(visible)]="duplicateDialog.visible" 
+  [header]="'File Already Exists'" 
+  [style]="{width: '450px'}"
+  [modal]="true">
+  <div class="duplicate-dialog-content">
+    <div class="warning-message">
+      <i class="pi pi-exclamation-triangle" style="color: var(--yellow-500); font-size: 2rem;"></i>
+      <p>{{ duplicateDialog.message }}</p>
+      <p class="existing-info" *ngIf="duplicateDialog.existingFile">
+        Existing File Information:<br>
+        File Name: {{ duplicateDialog.existingFile.name }}<br>
+        Upload Time: {{ duplicateDialog.existingFile.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}
+      </p>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="OK" 
+      (onClick)="duplicateDialog.visible = false">
+    </p-button>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast> 
