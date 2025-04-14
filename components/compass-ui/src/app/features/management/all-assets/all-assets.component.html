@@ -101,7 +101,7 @@
       name="files"
       [url]="uploadUrl"
       [multiple]="true"
-      accept="image/*"
+      accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
       [maxFileSize]="1000000"
       [auto]="false"
       (onUpload)="onUploadComplete($event)"
@@ -114,7 +114,7 @@
         <div class="upload-content">
           <div *ngIf="uploadedFiles.length === 0" class="upload-message">
             <p>Drag and drop images here or click to select</p>
-            <p class="upload-hint">Supported formats: JPG, PNG, GIF</p>
+            <p class="upload-hint">Supported formats: JPG, PNG, GIF, WebP, SVG</p>
             <p class="upload-hint">Max file size: 1MB</p>
           </div>
         </div>
@@ -131,7 +131,7 @@
         <p-button 
           icon="pi pi-upload" 
           label="Upload"
-          [disabled]="!fileUpload.files?.length"
+          [disabled]="!fileUpload.files.length"
           (onClick)="fileUpload.upload()">
         </p-button>
       </div>
