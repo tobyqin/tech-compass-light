@@ -1,0 +1,148 @@
+<div class="all-assets">
+  <div class="header-with-actions">
+    <h1>All Assets</h1>
+    <div class="action-buttons">
+      <p-button 
+        icon="pi pi-upload" 
+        label="Upload" 
+        (onClick)="showUploadDialog()"
+        [disabled]="loading">
+      </p-button>
+      <p-button 
+        icon="pi pi-trash" 
+        label="Delete Selected" 
+        severity="danger"
+        [disabled]="!selectedAssets.length || loading"
+        (onClick)="deleteSelectedAssets()">
+      </p-button>
+    </div>
+  </div>
+
+  <div class="assets-table-container">
+    <p-table 
+      [value]="assets" 
+      [loading]="loading"
+      [(selection)]="selectedAssets"
+      [paginator]="true" 
+      [rows]="10"
+      [rowsPerPageOptions]="[10,25,50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} assets"
+      [globalFilterFields]="['name']"
+      responsiveLayout="scroll">
+      
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-between align-items-center">
+          <h5 class="m-0">Manage Assets</h5>
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" placeholder="Search assets..." />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+          <th>Preview</th>
+          <th pSortableColumn="size">Size <p-sortIcon field="size"></p-sortIcon></th>
+          <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-asset>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="asset"></p-tableCheckbox>
+          </td>
+          <td>{{asset.name}}</td>
+          <td>
+            <img [src]="asset.url" [alt]="asset.name" style="max-width: 100px; max-height: 60px;" />
+          </td>
+          <td>{{formatFileSize(asset.size)}}</td>
+          <td>{{asset.createdAt | date:'medium'}}</td>
+          <td>
+            <div class="action-buttons">
+              <a [href]="asset.url" target="_blank" class="p-button p-button-secondary p-button-rounded p-button-text">
+                <i class="pi pi-download"></i>
+              </a>
+              <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [text]="true"
+                (onClick)="deleteAsset(asset)">
+              </p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">
+            <div class="empty-message">
+              <i class="pi pi-image"></i>
+              <p>No assets found</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-dialog 
+  [(visible)]="uploadDialog" 
+  [style]="{width: '450px'}" 
+  header="Upload Assets" 
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false">
+  <div class="upload-dialog-content">
+    <p-fileUpload
+      #fileUpload
+      name="files"
+      [url]="uploadUrl"
+      [multiple]="true"
+      accept="image/*"
+      [maxFileSize]="1000000"
+      [auto]="false"
+      (onUpload)="onUploadComplete($event)"
+      (uploadHandler)="onUpload($event)"
+      [customUpload]="true"
+      [showUploadButton]="false"
+      [showCancelButton]="false"
+      chooseLabel="Choose Images">
+      <ng-template pTemplate="content">
+        <div class="upload-content">
+          <div *ngIf="uploadedFiles.length === 0" class="upload-message">
+            <p>Drag and drop images here or click to select</p>
+            <p class="upload-hint">Supported formats: JPG, PNG, GIF</p>
+            <p class="upload-hint">Max file size: 1MB</p>
+          </div>
+        </div>
+      </ng-template>
+    </p-fileUpload>
+    <div class="upload-dialog-footer">
+      <div class="upload-actions">
+        <p-button 
+          icon="pi pi-times" 
+          label="Cancel" 
+          styleClass="p-button-text"
+          (onClick)="cancelUpload()">
+        </p-button>
+        <p-button 
+          icon="pi pi-upload" 
+          label="Upload"
+          [disabled]="!fileUpload.files?.length"
+          (onClick)="fileUpload.upload()">
+        </p-button>
+      </div>
+    </div>
+  </div>
+</p-dialog> 

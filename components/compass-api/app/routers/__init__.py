@@ -12,6 +12,7 @@ from app.routers import (
     tags,
     tech_radar,
     users,
+    assets,
 )
 
 api_router = APIRouter()
@@ -28,3 +29,4 @@ api_router.include_router(comments.router, prefix="/comments", tags=["comments"]
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(site_config.router, prefix="/site-config", tags=["site-config"])
 api_router.include_router(history.router, prefix="/history", tags=["history"])
+api_router.include_router(assets.router, prefix="/assets", tags=["assets"])
