@@ -1,4 +1,3 @@
-from io import BytesIO
 from typing import List
 
 from app.core.auth import get_current_superuser
@@ -7,9 +6,14 @@ from app.models.response import StandardResponse
 from app.models.user import User
 from app.services.asset_service import AssetService, get_asset_service
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from fastapi.responses import Response, StreamingResponse
+from fastapi.responses import Response
+from pydantic import BaseModel
 
 router = APIRouter()
+
+
+class DeleteMultipleRequest(BaseModel):
+    asset_ids: List[str]
 
 
 @router.get("/", response_model=StandardResponse[List[Asset]])
@@ -22,6 +26,19 @@ async def get_assets(
     assets = await asset_service.get_all_assets(skip=skip, limit=limit)
     total = await asset_service.count_assets()
     return StandardResponse.paginated(data=assets, total=total, skip=skip, limit=limit)
+
+
+@router.get("/image/{asset_id}")
+async def get_image(asset_id: str, asset_service: AssetService = Depends(get_asset_service)):
+    """
+    Get image content by ID.
+    """
+    asset = await asset_service.get_asset_by_id(asset_id)
+    if not asset:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
+
+    content = await asset_service.get_asset_data(asset_id)
+    return Response(content=content, media_type=asset.mimeType)
 
 
 @router.post("/upload", response_model=StandardResponse[Asset], status_code=status.HTTP_201_CREATED)
@@ -55,23 +72,6 @@ async def upload_multiple_assets(
     return StandardResponse.of(assets)
 
 
-@router.get("/{asset_id}/download")
-async def download_asset(asset_id: str, asset_service: AssetService = Depends(get_asset_service)):
-    """
-    Download an asset by ID.
-    """
-    asset = await asset_service.get_asset_by_id(asset_id)
-    if not asset:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
-
-    content = await asset_service.get_asset_data(asset_id)
-    return StreamingResponse(
-        BytesIO(content),
-        media_type=asset.mimeType,
-        headers={"Content-Disposition": f'attachment; filename="{asset.name}"'},
-    )
-
-
 @router.delete("/{asset_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 async def delete_asset(
     asset_id: str,
@@ -88,12 +88,12 @@ async def delete_asset(
 
 @router.post("/delete-multiple", response_model=StandardResponse[dict])
 async def delete_multiple_assets(
-    asset_ids: List[str],
+    request: DeleteMultipleRequest,
     current_user: User = Depends(get_current_superuser),
     asset_service: AssetService = Depends(get_asset_service),
 ) -> StandardResponse[dict]:
     """
     Delete multiple assets (superuser only).
     """
-    deleted_count = await asset_service.delete_multiple_assets(asset_ids)
+    deleted_count = await asset_service.delete_multiple_assets(request.asset_ids)
     return StandardResponse.of({"message": f"Deleted {deleted_count} assets successfully"})

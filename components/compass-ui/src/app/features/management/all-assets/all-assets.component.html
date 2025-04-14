@@ -61,15 +61,12 @@
           </td>
           <td>{{asset.name}}</td>
           <td>
-            <img [src]="asset.url" [alt]="asset.name" style="max-width: 100px; max-height: 60px;" />
+            <img [src]="'/api/assets/image/' + asset._id" [alt]="asset.name" style="max-width: 100px; max-height: 60px; pointer-events: none;" />
           </td>
           <td>{{formatFileSize(asset.size)}}</td>
           <td>{{asset.createdAt | date:'medium'}}</td>
           <td>
             <div class="action-buttons">
-              <a [href]="asset.url" target="_blank" class="p-button p-button-secondary p-button-rounded p-button-text">
-                <i class="pi pi-download"></i>
-              </a>
               <p-button 
                 icon="pi pi-trash" 
                 severity="danger" 

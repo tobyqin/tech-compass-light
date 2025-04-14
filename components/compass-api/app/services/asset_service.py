@@ -31,56 +31,95 @@ class AssetService:
 
             # Save to GridFS if file is large (>16MB) or regular collection if small
             if file_size > 16 * 1024 * 1024:  # 16MB
-                grid_file_id = await self.fs.upload_from_stream(
-                    file.filename, contents, metadata={"contentType": file.content_type}
-                )
-                asset_data = {
-                    "name": file.filename,
-                    "mimeType": file.content_type,
-                    "size": file_size,
-                    "gridFSId": grid_file_id,
-                    "url": f"/api/assets/{grid_file_id}/download",
-                    "createdAt": datetime.utcnow(),
-                    "updatedAt": datetime.utcnow(),
-                }
+                try:
+                    grid_file_id = await self.fs.upload_from_stream(
+                        file.filename, contents, metadata={"contentType": file.content_type}
+                    )
+                    asset_data = {
+                        "name": file.filename,
+                        "mimeType": file.content_type,
+                        "size": file_size,
+                        "gridFSId": str(grid_file_id),
+                        "createdAt": datetime.utcnow(),
+                        "updatedAt": datetime.utcnow(),
+                    }
+                except Exception as grid_error:
+                    raise HTTPException(status_code=500, detail=f"Error saving to GridFS: {str(grid_error)}")
             else:
                 asset_data = {
                     "name": file.filename,
                     "mimeType": file.content_type,
                     "size": file_size,
                     "data": contents,
-                    "url": "",  # Will be set after insertion
                     "createdAt": datetime.utcnow(),
                     "updatedAt": datetime.utcnow(),
                 }
 
-            # Insert into assets collection
-            result = await self.collection.insert_one(asset_data)
-            asset_data["_id"] = result.inserted_id
+            try:
+                # Insert into assets collection
+                result = await self.collection.insert_one(asset_data)
+                asset_id = str(result.inserted_id)
 
-            # Set URL for small files
-            if "data" in asset_data:
-                asset_data["url"] = f"/api/assets/{result.inserted_id}/download"
-                await self.collection.update_one({"_id": result.inserted_id}, {"$set": {"url": asset_data["url"]}})
+                # Create complete asset data including _id
+                complete_asset_data = {**asset_data, "_id": asset_id}
 
-            return AssetInDB(**asset_data)
+                # Create and validate the model
+                asset = AssetInDB(**complete_asset_data)
+                return asset
 
+            except Exception as db_error:
+                raise HTTPException(status_code=500, detail=f"Error saving to database: {str(db_error)}")
+
+        except HTTPException:
+            raise
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Unexpected error saving file {file.filename}: {str(e)}")
 
-    async def save_multiple_files(self, files: List[UploadFile]) -> List[AssetInDB]:
+    async def save_multiple_files(self, files: List[UploadFile]) -> List[Asset]:
         """Save multiple files and return their asset records"""
         assets = []
-        for file in files:
-            asset = await self.save_file(file)
-            assets.append(asset)
-        return assets
+        saved_assets = []
+        try:
+            for file in files:
+                try:
+                    # Save file and get AssetInDB instance
+                    asset_in_db = await self.save_file(file)
+
+                    # Create Asset instance directly with the data we have
+                    asset = Asset(
+                        id=asset_in_db.id,  # Use id field which is aliased to _id
+                        name=asset_in_db.name,
+                        mimeType=asset_in_db.mimeType,
+                        size=asset_in_db.size,
+                        gridFSId=asset_in_db.gridFSId,
+                        createdAt=asset_in_db.createdAt,
+                        updatedAt=asset_in_db.updatedAt,
+                    )
+                    assets.append(asset)
+                    saved_assets.append(asset)
+                except Exception as file_error:
+                    raise HTTPException(
+                        status_code=500, detail=f"Error processing file {file.filename}: {str(file_error)}"
+                    )
+            return assets
+
+        except Exception as e:
+            # Clean up any saved assets if there's an error
+            for asset in saved_assets:
+                try:
+                    await self.delete_asset(str(asset.id))
+                except:
+                    pass
+            raise HTTPException(status_code=500, detail=f"Error in save_multiple_files: {str(e)}")
 
     async def get_all_assets(self, skip: int = 0, limit: int = 100) -> List[Asset]:
         """Get all assets with pagination"""
         cursor = self.collection.find({}).sort("createdAt", -1).skip(skip).limit(limit)
         assets = []
         async for doc in cursor:
+            doc["_id"] = str(doc["_id"])
+            if "gridFSId" in doc and doc["gridFSId"]:
+                doc["gridFSId"] = str(doc["gridFSId"])
             assets.append(Asset(**doc))
         return assets
 
@@ -91,6 +130,9 @@ class AssetService:
 
         asset = await self.collection.find_one({"_id": ObjectId(asset_id)})
         if asset:
+            asset["_id"] = str(asset["_id"])
+            if "gridFSId" in asset and asset["gridFSId"]:
+                asset["gridFSId"] = str(asset["gridFSId"])
             return Asset(**asset)
         return None
 
