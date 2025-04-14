@@ -51,7 +51,7 @@ async def get_image(asset_id: str, asset_service: AssetService = Depends(get_ass
         )
 
 
-@router.get("/name/{name}", response_model=StandardResponse[Asset])
+@router.get("/{name}", response_model=StandardResponse[Asset])
 async def get_asset_by_name(
     name: str, asset_service: AssetService = Depends(get_asset_service)
 ) -> StandardResponse[Asset]:
@@ -69,7 +69,7 @@ async def get_asset_by_name(
         )
 
 
-@router.get("/name/{name}/data")
+@router.get("/{name}/data")
 async def get_asset_data_by_name(name: str, asset_service: AssetService = Depends(get_asset_service)):
     """
     Get asset binary data by name.

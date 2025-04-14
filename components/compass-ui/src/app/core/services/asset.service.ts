@@ -48,7 +48,7 @@ export class AssetService {
   }
 
   // Get asset image url
-  getAssetImageUrl(id: string): string {
+  getAssetIdUrl(id: string): string {
     return `${this.apiUrl}/${id}`;
   }
 
@@ -62,18 +62,18 @@ export class AssetService {
     return this.http.post<any>(`${this.apiUrl}/delete-multiple`, { asset_ids: ids });
   }
 
-  getAssetUrl(assetName: string | null | undefined): string {
+  getAssetDataUrl(assetName: string | null | undefined): string {
     if (!assetName) {
       return '';
     }
-    return `${this.apiUrl}/name/${assetName}/data`;
+    return `${this.apiUrl}/${assetName}/data`;
   }
 
   getAssetByName(name: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/name/${name}`);
+    return this.http.get<any>(`${this.apiUrl}/${name}`);
   }
 
   getAssetData(name: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/name/${name}/data`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/${name}/data`, { responseType: 'blob' });
   }
 } 
