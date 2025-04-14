@@ -17,7 +17,7 @@ export interface Asset {
   providedIn: 'root'
 })
 export class AssetService {
-  private apiUrl = `${environment.apiUrl}/assets`;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -25,7 +25,7 @@ export class AssetService {
   uploadImage(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<any>(`${this.apiUrl}/upload`, formData);
+    return this.http.post<any>(`${this.apiUrl}/assets/upload`, formData);
   }
 
   // Upload multiple images
@@ -34,26 +34,31 @@ export class AssetService {
     for (const file of files) {
       formData.append('files', file);
     }
-    return this.http.post<any>(`${this.apiUrl}/upload-multiple`, formData);
+    return this.http.post<any>(`${this.apiUrl}/assets/upload-multiple`, formData);
   }
 
   // Get all assets
   getAllAssets(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>(`${this.apiUrl}/assets/`);
   }
 
   // Get single asset by id
   getAssetById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/assets/${id}`);
+  }
+
+  // Get asset image url
+  getAssetImageUrl(id: string): string {
+    return `${this.apiUrl}/assets/${id}`;
   }
 
   // Delete single asset
   deleteAsset(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/assets/${id}`);
   }
 
   // Delete multiple assets
   deleteMultipleAssets(ids: string[]): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/delete-multiple`, { asset_ids: ids });
+    return this.http.post<any>(`${this.apiUrl}/assets/delete-multiple`, { asset_ids: ids });
   }
 } 

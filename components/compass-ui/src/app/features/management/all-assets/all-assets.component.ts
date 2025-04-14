@@ -38,7 +38,7 @@ export class AllAssetsComponent implements OnInit {
   uploadUrl = `${environment.apiUrl}/assets/upload`;
 
   constructor(
-    private assetService: AssetService,
+    public assetService: AssetService,
     private messageService: MessageService
   ) {}
 
