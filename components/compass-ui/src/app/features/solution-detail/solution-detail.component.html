@@ -9,7 +9,7 @@
 
   <div class="solution-header">
     <div class="solution-logo">
-      <img [src]="solution.logo || '/tech-radar/assets/default-solution-logo.svg'" [alt]="solution.name" />
+      <img [src]="solution.logo ? assetService.getAssetUrl(solution.logo) : '/tech-radar/assets/default-solution-logo.svg'" [alt]="solution.name" />
     </div>
     <div class="solution-info">
       <div class="title-row">

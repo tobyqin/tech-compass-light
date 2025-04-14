@@ -1,12 +1,13 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
-import { TagModule } from 'primeng/tag';
 import { RatingModule } from 'primeng/rating';
+import { TagModule } from 'primeng/tag';
+import { AssetService } from '../../../core/services/asset.service';
 import { Solution } from '../../interfaces/solution.interface';
 
 type TagSeverity = 'success' | 'info' | 'warning' | 'danger';
@@ -30,6 +31,8 @@ type TagSeverity = 'success' | 'info' | 'warning' | 'danger';
 export class SolutionCardComponent {
   @Input() solution!: Solution;
   @Input() showNewBadge: boolean = false;
+
+  constructor(public assetService: AssetService) {}
 
   getRecommendStatusSeverity(): TagSeverity {
     switch (this.solution.recommend_status) {

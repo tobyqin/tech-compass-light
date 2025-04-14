@@ -51,6 +51,47 @@ async def get_image(asset_id: str, asset_service: AssetService = Depends(get_ass
         )
 
 
+@router.get("/name/{name}", response_model=StandardResponse[Asset])
+async def get_asset_by_name(
+    name: str, asset_service: AssetService = Depends(get_asset_service)
+) -> StandardResponse[Asset]:
+    """
+    Get asset metadata by name.
+    """
+    try:
+        asset = await asset_service.get_asset_by_name(name)
+        if not asset:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
+        return StandardResponse.of(asset)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving asset: {str(e)}"
+        )
+
+
+@router.get("/name/{name}/data")
+async def get_asset_data_by_name(name: str, asset_service: AssetService = Depends(get_asset_service)):
+    """
+    Get asset binary data by name.
+    """
+    try:
+        asset = await asset_service.get_asset_by_name(name)
+        if not asset:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
+
+        content = await asset_service.get_asset_data(str(asset.id))
+        if not content:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
+
+        return Response(
+            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error retrieving asset data: {str(e)}"
+        )
+
+
 @router.post("/upload", response_model=StandardResponse[Asset], status_code=status.HTTP_201_CREATED)
 async def upload_asset(
     file: UploadFile = File(...),

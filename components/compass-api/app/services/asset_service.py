@@ -136,6 +136,16 @@ class AssetService:
             return Asset(**asset)
         return None
 
+    async def get_asset_by_name(self, name: str) -> Optional[Asset]:
+        """Get a single asset by name"""
+        asset = await self.collection.find_one({"name": name})
+        if asset:
+            asset["_id"] = str(asset["_id"])
+            if "gridFSId" in asset and asset["gridFSId"]:
+                asset["gridFSId"] = str(asset["gridFSId"])
+            return Asset(**asset)
+        return None
+
     async def get_asset_data(self, asset_id: str) -> bytes:
         """Get the binary data of an asset"""
         try:
