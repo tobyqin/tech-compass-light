@@ -43,8 +43,7 @@
           </th>
           <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
           <th>Preview</th>
-          <th pSortableColumn="size">Size <p-sortIcon field="size"></p-sortIcon></th>
-          <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+          <th pSortableColumn="created_at">Created At <p-sortIcon field="created_at"></p-sortIcon></th>
           <th>Actions</th>
         </tr>
       </ng-template>
@@ -58,8 +57,7 @@
           <td>
             <img [src]="assetService.getAssetIdUrl(asset._id!)" [alt]="asset.name" style="max-width: 100px; max-height: 60px; pointer-events: none;" />
           </td>
-          <td>{{formatFileSize(asset.size)}}</td>
-          <td>{{asset.createdAt | date:'medium'}}</td>
+          <td>{{asset.created_at | date:'medium'}}</td>
           <td>
             <div class="action-buttons">
               <p-button 
@@ -76,7 +74,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6">
+          <td colspan="5">
             <div class="empty-message">
               <i class="pi pi-image"></i>
               <p>No assets found</p>
@@ -102,10 +100,11 @@
       [url]="uploadUrl"
       [multiple]="true"
       accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-      [maxFileSize]="1000000"
+      [maxFileSize]="maxFileSize"
       [auto]="false"
       (onUpload)="onUploadComplete($event)"
       (uploadHandler)="onUpload($event)"
+      (onError)="onError($event)"
       [customUpload]="true"
       [showUploadButton]="false"
       [showCancelButton]="false"
@@ -115,7 +114,7 @@
           <div *ngIf="uploadedFiles.length === 0" class="upload-message">
             <p>Drag and drop images here or click to select</p>
             <p class="upload-hint">Supported formats: JPG, PNG, GIF, WebP, SVG</p>
-            <p class="upload-hint">Max file size: 1MB</p>
+            <p class="upload-hint">Max file size: {{formatFileSize(maxFileSize)}}</p>
           </div>
         </div>
       </ng-template>

@@ -97,7 +97,7 @@ class AssetService:
 
     async def get_all_assets(self, skip: int = 0, limit: int = 100) -> List[Asset]:
         """Get all assets with pagination"""
-        cursor = self.collection.find({}).sort("created_at", -1).skip(skip).limit(limit)
+        cursor = self.collection.find({}, {"data": 0}).sort("created_at", -1).skip(skip).limit(limit)
         assets = []
         async for doc in cursor:
             doc["_id"] = str(doc["_id"])
@@ -109,7 +109,7 @@ class AssetService:
         if not ObjectId.is_valid(asset_id):
             raise HTTPException(status_code=400, detail="Invalid asset ID")
 
-        asset = await self.collection.find_one({"_id": ObjectId(asset_id)})
+        asset = await self.collection.find_one({"_id": ObjectId(asset_id)}, {"data": 0})
         if asset:
             asset["_id"] = str(asset["_id"])
             return Asset(**asset)
