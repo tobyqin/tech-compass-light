@@ -78,7 +78,7 @@ Stores the main technical solution information.
 | how_to_use          | String        | Instructions on how to use the solution, markdown supported             | "## Getting Started\n1. Install Docker..."                                   |
 | faq                 | String        | Frequently asked questions, markdown supported                          | "## Common Issues\n\*\*Q: How do I..."                                       |
 | about               | String        | Additional information, markdown supported                              | "Docker was first released in 2013..."                                       |
-| logo                | String        | Logo asset name or path                                                        | "/assets/logos/docker.png"                                                   |
+| logo                | String        | Logo asset name or path                                                 | "/assets/logos/docker.png"                                                   |
 | category            | String        | Primary category                                                        | "Container Platform"                                                         |
 | group               | String        | Group identifier for organizing solutions                               | "Default"                                                                    |
 | department          | String        | Department name                                                         | "Engineering"                                                                |
