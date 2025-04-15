@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import List, Optional
 
@@ -7,6 +8,23 @@ from pymongo import ASCENDING, DESCENDING
 
 from ..core.mongodb import get_database
 from ..models.asset import Asset, AssetInDB
+
+
+def format_name(name: str) -> str:
+    """Format asset name to be URL-friendly
+    Format: {name}
+    Example: image-name
+    """
+    # Remove file extension
+    name_without_ext = name.rsplit(".", 1)[0]
+    # Convert to lowercase and replace spaces/special chars with hyphens
+    formatted_name = re.sub(r"[^\w\s-]", "", name_without_ext.lower())
+    # Replace spaces and multiple hyphens with single hyphen
+    formatted_name = re.sub(r"[-\s]+", "-", formatted_name).strip("-")
+    # Get the extension
+    ext = name.rsplit(".", 1)[1] if "." in name else ""
+    # Combine formatted name with extension
+    return f"{formatted_name}.{ext}" if ext else formatted_name
 
 
 class AssetService:
@@ -22,11 +40,16 @@ class AssetService:
     async def save_file(self, file: UploadFile, username: Optional[str] = None) -> AssetInDB:
         """Save a file and create asset record"""
         try:
+            # Format name first
+            formatted_name = format_name(file.filename)
+
+
             # Read file content
             contents = await file.read()
 
+            # Prepare asset data with formatted name
             asset_data = {
-                "name": file.filename,
+                "name": formatted_name,
                 "mime_type": file.content_type,
                 "data": contents,
                 "created_at": datetime.utcnow(),

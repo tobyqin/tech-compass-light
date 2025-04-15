@@ -58,9 +58,28 @@ export class AllAssetsComponent implements OnInit {
     this.loadAssets();
   }
 
+  // Format file name to be URL-friendly
+  formatName(name: string): string {
+    // Remove file extension
+    const nameWithoutExt = name.split('.').slice(0, -1).join('.') || name;
+    
+    // Convert to lowercase and replace spaces/special chars with hyphens
+    let formatted = nameWithoutExt.toLowerCase();
+    formatted = formatted.replace(/[^\w\s-]/g, '');
+    formatted = formatted.replace(/[-\s]+/g, '-');
+    formatted = formatted.trim().replace(/^-+|-+$/g, '');
+    
+    // Get the extension
+    const ext = name.includes('.') ? name.split('.').pop() : '';
+    
+    // Combine formatted name with extension
+    return ext ? `${formatted}.${ext}` : formatted;
+  }
+
   // Check if file name already exists
   checkDuplicateFileName(fileName: string): Asset | null {
-    return this.assets.find(asset => asset.name.toLowerCase() === fileName.toLowerCase()) || null;
+    const formattedName = this.formatName(fileName);
+    return this.assets.find(asset => asset.name.toLowerCase() === formattedName.toLowerCase()) || null;
   }
 
   // Check for duplicate files in a batch
