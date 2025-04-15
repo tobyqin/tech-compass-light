@@ -8,6 +8,7 @@ import { DialogService } from "primeng/dynamicdialog";
 import { BehaviorSubject, Subject, finalize, takeUntil } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
+import { AssetService } from '../../core/services/asset.service';
 import { AuthService } from "../../core/services/auth.service";
 import { Comment, CommentService } from "../../core/services/comment.service";
 import {
@@ -148,7 +149,8 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     private ratingService: RatingService,
     private solutionService: SolutionService,
     private historyService: HistoryService,
-    private router: Router
+    private router: Router,
+    public assetService: AssetService
   ) {}
 
   ngOnInit() {
