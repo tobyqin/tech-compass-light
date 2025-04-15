@@ -6,11 +6,11 @@ import { environment } from '../../../environments/environment';
 export interface Asset {
   _id?: string;
   name: string;
-  url: string;
-  mimeType: string;
-  size: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  mime_type: string;
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
 }
 
 @Injectable({
@@ -66,7 +66,7 @@ export class AssetService {
     if (!assetName) {
       return '';
     }
-    return `${this.apiUrl}/${assetName}/data`;
+    return `${this.apiUrl}/view/${assetName}`;
   }
 
   getAssetByName(name: string): Observable<any> {
@@ -74,6 +74,6 @@ export class AssetService {
   }
 
   getAssetData(name: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${name}/data`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/view/${name}`, { responseType: 'blob' });
   }
 } 

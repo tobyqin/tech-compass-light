@@ -43,7 +43,7 @@ async def get_image(asset_id: str, asset_service: AssetService = Depends(get_ass
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
 
         return Response(
-            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+            content=content, media_type=asset.mime_type, headers={"Cache-Control": "public, max-age=31536000"}
         )
     except Exception as e:
         raise HTTPException(
@@ -69,7 +69,7 @@ async def get_asset_by_name(
         )
 
 
-@router.get("/{name}/data")
+@router.get("/view/{name}")
 async def get_asset_data_by_name(name: str, asset_service: AssetService = Depends(get_asset_service)):
     """
     Get asset binary data by name.
@@ -84,7 +84,7 @@ async def get_asset_data_by_name(name: str, asset_service: AssetService = Depend
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
 
         return Response(
-            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+            content=content, media_type=asset.mime_type, headers={"Cache-Control": "public, max-age=31536000"}
         )
     except Exception as e:
         raise HTTPException(

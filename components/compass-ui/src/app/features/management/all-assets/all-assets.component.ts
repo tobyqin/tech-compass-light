@@ -38,6 +38,7 @@ export class AllAssetsComponent implements OnInit {
   uploadDialog = false;
   uploadedFiles: File[] = [];
   uploadUrl = `${environment.apiUrl}/assets/upload`;
+  maxFileSize = 15 * 1024 * 1024; // 15MB in bytes
 
   // File exists dialog state
   duplicateDialog = {
@@ -229,6 +230,20 @@ export class AllAssetsComponent implements OnInit {
   cancelUpload(): void {
     this.fileUpload.clear();
     this.uploadDialog = false;
+  }
+
+  onError(event: any): void {
+    if (event.files) {
+      const oversizedFiles = event.files.filter((file: File) => file.size > this.maxFileSize);
+      if (oversizedFiles.length > 0) {
+        const fileNames = oversizedFiles.map((file: File) => file.name).join(', ');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `File(s) too large: ${fileNames}. Maximum file size is ${this.formatFileSize(this.maxFileSize)}`
+        });
+      }
+    }
   }
 
   formatFileSize(bytes: number): string {
