@@ -44,6 +44,7 @@
           <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
           <th>Preview</th>
           <th pSortableColumn="created_at">Created At <p-sortIcon field="created_at"></p-sortIcon></th>
+          <th pSortableColumn="created_by">Created By <p-sortIcon field="created_by"></p-sortIcon></th>
           <th>Actions</th>
         </tr>
       </ng-template>
@@ -58,6 +59,7 @@
             <img [src]="assetService.getAssetIdUrl(asset._id!)" [alt]="asset.name" style="max-width: 100px; max-height: 60px; pointer-events: none;" />
           </td>
           <td>{{asset.created_at | date:'medium'}}</td>
+          <td>{{asset.created_by}}</td>
           <td>
             <div class="action-buttons">
               <p-button 
@@ -74,7 +76,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5">
+          <td colspan="6">
             <div class="empty-message">
               <i class="pi pi-image"></i>
               <p>No assets found</p>
