@@ -43,7 +43,7 @@ async def get_image(asset_id: str, asset_service: AssetService = Depends(get_ass
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
 
         return Response(
-            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+            content=content, media_type=asset.mime_type, headers={"Cache-Control": "public, max-age=31536000"}
         )
     except Exception as e:
         raise HTTPException(
@@ -69,7 +69,7 @@ async def get_asset_by_name(
         )
 
 
-@router.get("/{name}/data")
+@router.get("/view/{name}")
 async def get_asset_data_by_name(name: str, asset_service: AssetService = Depends(get_asset_service)):
     """
     Get asset binary data by name.
@@ -84,7 +84,7 @@ async def get_asset_data_by_name(name: str, asset_service: AssetService = Depend
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset content not found")
 
         return Response(
-            content=content, media_type=asset.mimeType, headers={"Cache-Control": "public, max-age=31536000"}
+            content=content, media_type=asset.mime_type, headers={"Cache-Control": "public, max-age=31536000"}
         )
     except Exception as e:
         raise HTTPException(
@@ -103,7 +103,7 @@ async def upload_asset(
     """
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only image files are allowed")
-    asset = await asset_service.save_file(file)
+    asset = await asset_service.save_file(file, username=current_user.username)
     return StandardResponse.of(asset)
 
 
@@ -119,7 +119,7 @@ async def upload_multiple_assets(
     for file in files:
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"File {file.filename} is not an image")
-    assets = await asset_service.save_multiple_files(files)
+    assets = await asset_service.save_multiple_files(files, username=current_user.username)
     return StandardResponse.of(assets)
 
 

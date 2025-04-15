@@ -43,8 +43,8 @@
           </th>
           <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
           <th>Preview</th>
-          <th pSortableColumn="size">Size <p-sortIcon field="size"></p-sortIcon></th>
-          <th pSortableColumn="createdAt">Created At <p-sortIcon field="createdAt"></p-sortIcon></th>
+          <th pSortableColumn="created_at">Created At <p-sortIcon field="created_at"></p-sortIcon></th>
+          <th pSortableColumn="created_by">Created By <p-sortIcon field="created_by"></p-sortIcon></th>
           <th>Actions</th>
         </tr>
       </ng-template>
@@ -58,15 +58,26 @@
           <td>
             <img [src]="assetService.getAssetIdUrl(asset._id!)" [alt]="asset.name" style="max-width: 100px; max-height: 60px; pointer-events: none;" />
           </td>
-          <td>{{formatFileSize(asset.size)}}</td>
-          <td>{{asset.createdAt | date:'medium'}}</td>
+          <td>{{asset.created_at | date:'medium'}}</td>
+          <td>{{asset.created_by}}</td>
           <td>
             <div class="action-buttons">
+              <p-button 
+                icon="pi pi-copy" 
+                severity="secondary" 
+                [rounded]="true" 
+                [text]="true"
+                pTooltip="Copy Name"
+                tooltipPosition="top"
+                (onClick)="copyAssetName(asset.name)">
+              </p-button>
               <p-button 
                 icon="pi pi-trash" 
                 severity="danger" 
                 [rounded]="true" 
                 [text]="true"
+                pTooltip="Delete"
+                tooltipPosition="top"
                 (onClick)="deleteAsset(asset)">
               </p-button>
             </div>
@@ -102,10 +113,11 @@
       [url]="uploadUrl"
       [multiple]="true"
       accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-      [maxFileSize]="1000000"
+      [maxFileSize]="maxFileSize"
       [auto]="false"
       (onUpload)="onUploadComplete($event)"
       (uploadHandler)="onUpload($event)"
+      (onError)="onError($event)"
       [customUpload]="true"
       [showUploadButton]="false"
       [showCancelButton]="false"
@@ -115,7 +127,7 @@
           <div *ngIf="uploadedFiles.length === 0" class="upload-message">
             <p>Drag and drop images here or click to select</p>
             <p class="upload-hint">Supported formats: JPG, PNG, GIF, WebP, SVG</p>
-            <p class="upload-hint">Max file size: 1MB</p>
+            <p class="upload-hint">Max file size: {{formatFileSize(maxFileSize)}}</p>
           </div>
         </div>
       </ng-template>
@@ -152,7 +164,7 @@
       <p class="existing-info" *ngIf="duplicateDialog.existingFile">
         Existing File Information:<br>
         File Name: {{ duplicateDialog.existingFile.name }}<br>
-        Upload Time: {{ duplicateDialog.existingFile.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}
+        Upload Time: {{ duplicateDialog.existingFile.created_at | date:'yyyy-MM-dd HH:mm:ss' }}
       </p>
     </div>
   </div>

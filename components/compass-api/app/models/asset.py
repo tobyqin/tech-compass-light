@@ -1,35 +1,35 @@
-from datetime import datetime
 from typing import Optional
 
+from app.models.common import AuditModel
 from pydantic import BaseModel, Field
 
 
-class Asset(BaseModel):
-    id: str = Field(alias="_id")
-    name: str
-    mimeType: str
-    size: int
-    gridFSId: Optional[str] = None
-    createdAt: datetime
-    updatedAt: datetime
+class AssetBase(BaseModel):
+    """Base asset model with common fields"""
 
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    name: str = Field(..., description="Asset name", min_length=1, max_length=255)
+    mime_type: str = Field(..., description="MIME type of the asset")
 
 
-class AssetInDB(BaseModel):
-    id: str = Field(alias="_id")
-    name: str
-    mimeType: str
-    size: int
-    gridFSId: Optional[str] = None
-    data: Optional[bytes] = None
-    createdAt: datetime
-    updatedAt: datetime
+class AssetCreate(AssetBase):
+    """Asset creation model"""
 
-    class Config:
-        populate_by_name = True
-        allow_population_by_field_name = True
-        json_encoders = {datetime: lambda v: v.isoformat()}
+    data: Optional[bytes] = Field(None, description="Binary data of the asset")
+
+
+class AssetUpdate(AssetBase):
+    """Asset update model"""
+
+    data: Optional[bytes] = Field(None, description="Binary data of the asset")
+
+
+class AssetInDB(AssetBase, AuditModel):
+    """Asset model as stored in database"""
+
+    data: Optional[bytes] = Field(None, description="Binary data of the asset")
+
+
+class Asset(AssetInDB):
+    """Asset model for API responses"""
+
+    pass
