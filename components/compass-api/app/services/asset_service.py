@@ -30,12 +30,8 @@ class AssetService:
                 "mime_type": file.content_type,
                 "data": contents,
                 "created_at": datetime.utcnow(),
-                "updated_at": datetime.utcnow(),
+                "created_by": username,
             }
-
-            if username:
-                asset_data["created_by"] = username
-                asset_data["updated_by"] = username
 
             try:
                 # Insert into assets collection

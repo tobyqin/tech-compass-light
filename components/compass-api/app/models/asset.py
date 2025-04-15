@@ -29,7 +29,7 @@ class AssetInDB(AssetBase, AuditModel):
     data: Optional[bytes] = Field(None, description="Binary data of the asset")
 
 
-class Asset(AssetBase, AuditModel):
+class Asset(AssetInDB):
     """Asset model for API responses"""
 
     pass
