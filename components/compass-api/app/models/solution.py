@@ -68,7 +68,7 @@ class SolutionBase(BaseModel):
     how_to_use_url: Optional[str] = Field(None, description="External URL for how-to-use guide")
     faq: Optional[str] = Field("", description="Frequently asked questions about the solution, markdown supported")
     about: Optional[str] = Field("", description="Additional information about the solution, markdown supported")
-    logo: Optional[str] = Field("", description="Logo URL or path")
+    logo: Optional[str] = Field("", description="Logo asset name or path")
     category: Optional[str] = Field(None, description="Primary category")
     department: str = Field(..., description="Department name")
     team: str = Field(..., description="Team name")
