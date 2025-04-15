@@ -12,6 +12,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-all-assets',
@@ -26,6 +27,7 @@ import { ToastModule } from 'primeng/toast';
     FileUploadModule,
     InputTextModule,
     ToastModule,
+    TooltipModule,
   ],
   providers: [MessageService]
 })
@@ -252,5 +254,21 @@ export class AllAssetsComponent implements OnInit {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  copyAssetName(name: string): void {
+    navigator.clipboard.writeText(name).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Asset name copied to clipboard'
+      });
+    }).catch(() => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to copy asset name'
+      });
+    });
   }
 } 

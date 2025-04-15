@@ -63,12 +63,11 @@ class AssetService:
                     # Save file and get AssetInDB instance
                     asset_in_db = await self.save_file(file, username)
 
-                    # Create Asset instance directly with the data we have
+                    # Create Asset instance without binary data
                     asset = Asset(
-                        id=asset_in_db.id,  # Use id field which is aliased to _id
+                        id=asset_in_db.id,
                         name=asset_in_db.name,
                         mime_type=asset_in_db.mime_type,
-                        data=asset_in_db.data,
                         created_at=asset_in_db.created_at,
                         updated_at=asset_in_db.updated_at,
                         created_by=asset_in_db.created_by if hasattr(asset_in_db, "created_by") else None,

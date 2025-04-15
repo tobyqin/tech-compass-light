@@ -63,10 +63,21 @@
           <td>
             <div class="action-buttons">
               <p-button 
+                icon="pi pi-copy" 
+                severity="secondary" 
+                [rounded]="true" 
+                [text]="true"
+                pTooltip="Copy Name"
+                tooltipPosition="top"
+                (onClick)="copyAssetName(asset.name)">
+              </p-button>
+              <p-button 
                 icon="pi pi-trash" 
                 severity="danger" 
                 [rounded]="true" 
                 [text]="true"
+                pTooltip="Delete"
+                tooltipPosition="top"
                 (onClick)="deleteAsset(asset)">
               </p-button>
             </div>
