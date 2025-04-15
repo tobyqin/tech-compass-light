@@ -103,7 +103,7 @@ async def upload_asset(
     """
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only image files are allowed")
-    asset = await asset_service.save_file(file)
+    asset = await asset_service.save_file(file, username=current_user.username)
     return StandardResponse.of(asset)
 
 
@@ -119,7 +119,7 @@ async def upload_multiple_assets(
     for file in files:
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"File {file.filename} is not an image")
-    assets = await asset_service.save_multiple_files(files)
+    assets = await asset_service.save_multiple_files(files, username=current_user.username)
     return StandardResponse.of(assets)
 
 
