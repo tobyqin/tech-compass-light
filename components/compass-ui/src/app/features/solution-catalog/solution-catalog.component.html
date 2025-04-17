@@ -57,6 +57,17 @@
           placeholder="Select Sort Order">
         </p-dropdown>
       </div>
+
+      <div class="filter-item add-product-btn">
+        <label>&nbsp;</label>
+        <button pButton 
+                type="button" 
+                label="Add Product" 
+                icon="pi pi-plus"
+                class="p-button-primary" 
+                routerLink="/new">
+        </button>
+      </div>
     </div>
 
     <div class="tags-section" *ngIf="!loadingTags">
