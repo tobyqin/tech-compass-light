@@ -32,7 +32,6 @@ export interface Solution {
   maintainer_id: string;
   maintainer_name: string;
   maintainer_email: string;
-  support_team_email?: string;
   official_website?: string;
   documentation_url?: string;
   demo_url?: string;

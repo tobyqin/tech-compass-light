@@ -204,12 +204,12 @@
               : solution.maintainer_email
               }}</a>
           </div>
-          <div class="info-item" *ngIf="solution.support_team_email">
+          <div class="info-item" *ngIf="solution.team_email">
             <label>Product Support DL/Email</label>
-            <a [href]="'mailto:' + solution.support_team_email">{{
-              solution.support_team_email.length > 18
-              ? solution.support_team_email.substring(0, 18) + '...'
-              : solution.support_team_email
+            <a [href]="'mailto:' + solution.team_email">{{
+              solution.team_email.length > 18
+              ? solution.team_email.substring(0, 18) + '...'
+              : solution.team_email
               }}</a>
           </div>
         </div>
