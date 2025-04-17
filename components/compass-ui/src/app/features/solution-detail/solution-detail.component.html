@@ -43,6 +43,11 @@
               <h3>Description</h3>
               <markdown [data]="solution.description"></markdown>
             </div>
+
+            <div *ngIf="solution.about" class="about-section">
+              <h3>About</h3>
+              <markdown [data]="solution.about"></markdown>
+            </div>
           </div>
         </p-tabPanel>
 
@@ -64,17 +69,6 @@
             </div>
             <div *ngIf="!solution.faq" class="empty-content">
               <p>No frequently asked questions available for this item.</p>
-            </div>
-          </div>
-        </p-tabPanel>
-
-        <p-tabPanel header="About">
-          <div class="about-content">
-            <div *ngIf="solution.about">
-              <markdown [data]="solution.about"></markdown>
-            </div>
-            <div *ngIf="!solution.about" class="empty-content">
-              <p>No additional information available about this item.</p>
             </div>
           </div>
         </p-tabPanel>
