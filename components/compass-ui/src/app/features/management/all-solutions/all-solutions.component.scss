@@ -4,6 +4,31 @@
   display: flex;
   flex-direction: column;
 
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    ::ng-deep .p-button {
+      .p-button-icon {
+        font-size: 0.875rem;
+      }
+
+      .p-button-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+  }
+
   h1 {
     margin: 0 0 1.5rem;
     font-size: 1.5rem;
@@ -55,7 +80,7 @@
   .solution-link {
     color: var(--primary-color);
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -165,7 +190,7 @@
   ::ng-deep {
     .p-datatable {
       height: 100%;
-      
+
       .p-datatable-wrapper {
         max-height: calc(100vh - 14rem);
       }
@@ -215,7 +240,7 @@
       &:not(.p-disabled):not(.p-readonly) {
         .p-rating-icon {
           cursor: default;
-          
+
           &:hover {
             color: var(--rating-star-color) !important;
           }
@@ -223,4 +248,4 @@
       }
     }
   }
-} 
+}

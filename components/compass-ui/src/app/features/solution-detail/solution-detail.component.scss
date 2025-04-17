@@ -210,6 +210,13 @@
               margin-top: 0;
             }
           }
+
+          // Add styles for regular p tags to match markdown
+          p {
+            color: var(--text-color-secondary);
+            line-height: 1.6;
+            margin-top: 0;
+          }
         }
       }
 

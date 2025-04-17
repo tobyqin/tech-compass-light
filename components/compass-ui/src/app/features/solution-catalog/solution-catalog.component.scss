@@ -108,25 +108,6 @@
         ::ng-deep .p-dropdown-panel {
           z-index: 1000;
         }
-
-        &.add-product-btn {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          margin-left: auto;
-          flex: 0 0 auto; // Don't grow or shrink
-          width: auto; // Take only needed width
-
-          button {
-            height: 40px;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-
-            .p-button-icon {
-              font-size: 0.875rem;
-            }
-          }
-        }
       }
     }
 
