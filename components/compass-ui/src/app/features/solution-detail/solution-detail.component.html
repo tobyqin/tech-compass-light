@@ -43,6 +43,11 @@
               <h3>Description</h3>
               <markdown [data]="solution.description"></markdown>
             </div>
+
+            <div *ngIf="solution.about" class="about-section">
+              <h3>About</h3>
+              <markdown [data]="solution.about"></markdown>
+            </div>
           </div>
         </p-tabPanel>
 
@@ -64,17 +69,6 @@
             </div>
             <div *ngIf="!solution.faq" class="empty-content">
               <p>No frequently asked questions available for this item.</p>
-            </div>
-          </div>
-        </p-tabPanel>
-
-        <p-tabPanel header="About">
-          <div class="about-content">
-            <div *ngIf="solution.about">
-              <markdown [data]="solution.about"></markdown>
-            </div>
-            <div *ngIf="!solution.about" class="empty-content">
-              <p>No additional information available about this item.</p>
             </div>
           </div>
         </p-tabPanel>
@@ -197,14 +191,6 @@
 
         <div class="info-section">
           <h3>Product Owner</h3>
-          <div class="maintainer-avatar">
-            <img [src]="
-                environment.apiUrl +
-                '/users/' +
-                solution.maintainer_id +
-                '/avatar'
-              " [alt]="solution.maintainer_name" />
-          </div>
           <div class="info-item">
             <label>Name</label>
             <span>{{ solution.maintainer_name }}
@@ -216,6 +202,14 @@
               solution.maintainer_email.length > 18
               ? solution.maintainer_email.substring(0, 18) + '...'
               : solution.maintainer_email
+              }}</a>
+          </div>
+          <div class="info-item" *ngIf="solution.support_team_email">
+            <label>Product Support DL/Email</label>
+            <a [href]="'mailto:' + solution.support_team_email">{{
+              solution.support_team_email.length > 18
+              ? solution.support_team_email.substring(0, 18) + '...'
+              : solution.support_team_email
               }}</a>
           </div>
         </div>

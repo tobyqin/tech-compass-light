@@ -56,6 +56,13 @@
       </div>
       <div class="form-row">
         <div class="form-field">
+          <label for="about">About</label>
+          <textarea id="about" pInputTextarea formControlName="about" [rows]="4" [autoResize]="true"
+            placeholder="Additional information about the solution (markdown supported)"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
           <label for="how_to_use">How to Use</label>
           <textarea id="how_to_use" pInputTextarea formControlName="how_to_use" [rows]="4" [autoResize]="true"
             placeholder="Instructions on how to use the solution (markdown supported)"></textarea>
@@ -72,13 +79,6 @@
           <label for="faq">FAQ</label>
           <textarea id="faq" pInputTextarea formControlName="faq" [rows]="4" [autoResize]="true"
             placeholder="Frequently asked questions about the solution (markdown supported)"></textarea>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label for="about">About</label>
-          <textarea id="about" pInputTextarea formControlName="about" [rows]="4" [autoResize]="true"
-            placeholder="Additional information about the solution (markdown supported)"></textarea>
         </div>
       </div>
       <div class="form-row">
@@ -121,6 +121,13 @@
         <div class="form-field">
           <label for="maintainer_email">Product Owner Email *</label>
           <input id="maintainer_email" type="email" pInputText formControlName="maintainer_email" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="support_team_email">Product Support DL/Email</label>
+          <input id="support_team_email" type="email" pInputText formControlName="support_team_email" 
+                 placeholder="Enter product support team email or distribution list" />
         </div>
       </div>
     </div>

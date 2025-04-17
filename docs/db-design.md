@@ -87,6 +87,7 @@ Stores the main technical solution information.
 | maintainer          | String        | Username of the maintainer                                              | "johndoe"                                                                    |
 | maintainer_name     | String        | Name of the maintainer                                                  | "John Doe"                                                                   |
 | maintainer_email    | String        | Email of the maintainer                                                 | "john.doe@company.com"                                                       |
+| support_team_email  | String        | Product support team email/distribution list                            | "product-support@company.com"                                                |
 | official_website    | String        | Official website URL                                                    | "https://www.docker.com"                                                     |
 | documentation_url   | String        | Documentation URL                                                       | "https://docs.docker.com"                                                    |
 | demo_url            | String        | Demo/POC URL                                                            | "https://demo.docker.company.com"                                            |
