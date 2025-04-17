@@ -126,7 +126,6 @@ export class EditSolutionComponent implements OnInit {
       maintainer_id: ["", Validators.required],
       maintainer_name: ["", Validators.required],
       maintainer_email: ["", [Validators.required, Validators.email]],
-      support_team_email: ["", [Validators.email]],
       official_website: [""],
       documentation_url: [""],
       demo_url: [""],

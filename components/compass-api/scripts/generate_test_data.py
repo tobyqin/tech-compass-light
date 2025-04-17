@@ -259,9 +259,6 @@ class TestDataGenerator:
             "maintainer_id": fake.user_name().lower(),  # Generate lowercase username
             "maintainer_name": fake.name(),
             "maintainer_email": fake.email(),
-            "support_team_email": fake.company_email()
-            if random.random() > 0.3
-            else None,  # 70% chance to have support email
             "official_website": fake.url(),
             "documentation_url": fake.url(),
             "demo_url": fake.url(),
