@@ -13,7 +13,7 @@ export class AuthGuard {
       return true;
     }
 
-    // 直接导航到登录页面
+    // Navigate directly to login page
     this.router.navigate(["/"]);
     return false;
   }

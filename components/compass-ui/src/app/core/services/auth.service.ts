@@ -102,7 +102,7 @@ export class AuthService {
           this.currentUserSubject.next(response.user);
           localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
           
-          // 直接导航到管理页面，不使用 returnUrl
+          // Navigate directly to management page without using returnUrl
           this.router.navigate(['/manage']);
         })
       );

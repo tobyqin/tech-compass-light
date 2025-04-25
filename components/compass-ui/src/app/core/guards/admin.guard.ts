@@ -14,7 +14,7 @@ export class AdminGuard {
       take(1),
       map((user) => {
         if (!user) {
-          // 直接导航到根路径，不带任何参数
+          // Navigate directly to root path without parameters
           this.router.navigate(['/']);
           return false;
         }
