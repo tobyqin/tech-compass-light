@@ -1,20 +1,14 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { BehaviorSubject, catchError, firstValueFrom, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-export interface User {
-  _id: string;
-  email: string;
-  username: string;
-  full_name: string;
-  is_active: boolean;
-  is_superuser: boolean;
-}
+import { User } from "../models/user.model";
 
 export interface LoginResponse {
   access_token: string;
   token_type: string;
+  user: User;
 }
 
 export interface StandardResponse<T> {
@@ -31,52 +25,109 @@ export interface StandardResponse<T> {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
+  private readonly AUTH_TOKEN_KEY = "auth_token";
+  private readonly USER_KEY = "user";
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
-  private tokenKey = 'auth_token';
-  private http: HttpClient;
+  redirectUrl: string | null = null;
+  private initializationPromise: Promise<void> | null = null;
 
-  constructor(@Inject(HttpClient) http: HttpClient) {
-    this.http = http;
-    setTimeout(() => this.initializeAuth(), 0);
+  constructor(
+    @Inject(HttpClient) private http: HttpClient, 
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.initializeAuth();
   }
 
-  private initializeAuth(): void {
-    const token = this.getAuthToken();
-    if (token) {
-      this.fetchCurrentUser().pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
+  private async initializeAuth(): Promise<void> {
+    if (this.initializationPromise) {
+      return this.initializationPromise;
+    }
+
+    this.initializationPromise = new Promise<void>(async (resolve) => {
+      const token = this.getAuthToken();
+      const cachedUser = this.getCachedUser();
+      
+      if (cachedUser) {
+        this.currentUserSubject.next(cachedUser);
+      }
+      
+      if (token) {
+        try {
+          const response = await firstValueFrom(this.fetchCurrentUser());
+          if (response.success) {
+            this.currentUserSubject.next(response.data);
+            localStorage.setItem(this.USER_KEY, JSON.stringify(response.data));
+          }
+        } catch (error) {
+          if (error instanceof HttpErrorResponse && error.status === 401) {
             this.clearAuth();
           }
-          return of(null);
-        })
-      ).subscribe();
+        }
+      }
+      
+      resolve();
+    });
+
+    return this.initializationPromise;
+  }
+
+  private getCachedUser(): User | null {
+    const userJson = localStorage.getItem(this.USER_KEY);
+    if (userJson) {
+      try {
+        return JSON.parse(userJson);
+      } catch {
+        return null;
+      }
     }
+    return null;
+  }
+
+  async ensureAuthInitialized(): Promise<void> {
+    return this.initializeAuth();
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
-    const formData = new URLSearchParams();
-    formData.set('username', username);
-    formData.set('password', password);
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("password", password);
 
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, formData.toString(), {
-      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
-    }).pipe(
-      tap(response => {
-        localStorage.setItem(this.tokenKey, response.access_token);
-        this.fetchCurrentUser().subscribe();
-      })
-    );
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/auth/login`, formData)
+      .pipe(
+        tap((response) => {
+          localStorage.setItem(this.AUTH_TOKEN_KEY, response.access_token);
+          this.currentUserSubject.next(response.user);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+          
+          // Get return URL from route parameters or saved redirect URL
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || this.redirectUrl;
+          
+          if (returnUrl) {
+            // Clear the saved redirect URL
+            this.redirectUrl = null;
+            // Navigate to the return URL
+            this.router.navigate([returnUrl], { replaceUrl: true });
+          } else {
+            // Default navigation
+            this.router.navigate(['/manage'], { replaceUrl: true });
+          }
+        })
+      );
   }
 
   logout(): void {
     this.clearAuth();
+    this.router.navigate(['/']);
   }
 
   private clearAuth(): void {
-    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.AUTH_TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
+    this.redirectUrl = null;
   }
 
   fetchCurrentUser(): Observable<StandardResponse<User>> {
@@ -84,6 +135,7 @@ export class AuthService {
       tap(response => {
         if (response.success) {
           this.currentUserSubject.next(response.data);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.data));
         }
       }),
       catchError((error: HttpErrorResponse) => {
@@ -96,7 +148,7 @@ export class AuthService {
   }
 
   getAuthToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return localStorage.getItem(this.AUTH_TOKEN_KEY);
   }
 
   isLoggedIn(): boolean {

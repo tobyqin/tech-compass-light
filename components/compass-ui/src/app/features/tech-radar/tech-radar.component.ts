@@ -7,9 +7,10 @@ import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Subscription } from "rxjs";
-import { SiteConfigService } from "../../core/services/site-config.service";
-import { GroupService, Group } from "../../core/services/group.service";
 import { environment } from "../../../environments/environment";
+import { AuthService } from "../../core/services/auth.service";
+import { Group, GroupService } from "../../core/services/group.service";
+import { SiteConfigService } from "../../core/services/site-config.service";
 
 // External libraries
 declare const d3: any;
@@ -89,10 +90,24 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     private siteConfigService: SiteConfigService,
     private groupService: GroupService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // Check for returnUrl and handle redirection if user is logged in
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl && this.authService.isLoggedIn()) {
+      // Ensure the URL starts with a slash but doesn't have /tech-radar/
+      let redirectTo = returnUrl.startsWith('/') ? returnUrl : '/' + returnUrl;
+      redirectTo = redirectTo.replace(/^\/tech-radar\//, '/');
+      
+      this.router.navigate([redirectTo], { 
+        replaceUrl: true
+      });
+      return;
+    }
+
     this.loadConfig().then(() => this.initializeRadar());
   }
 

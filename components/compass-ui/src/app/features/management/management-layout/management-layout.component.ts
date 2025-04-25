@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { MenuItem } from "primeng/api";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { MenuItem } from "primeng/api";
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 

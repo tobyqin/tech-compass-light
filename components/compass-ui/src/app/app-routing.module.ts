@@ -142,6 +142,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes, {
       useHash: false,
       initialNavigation: "enabledBlocking",
+      onSameUrlNavigation: 'reload',
+      paramsInheritanceStrategy: 'always'
     }),
   ],
   exports: [RouterModule],
