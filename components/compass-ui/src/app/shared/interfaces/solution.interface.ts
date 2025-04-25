@@ -29,6 +29,7 @@ export interface Solution {
   department: string;
   team: string;
   team_email: string;
+  service_now_group?: string;
   maintainer_id: string;
   maintainer_name: string;
   maintainer_email: string;

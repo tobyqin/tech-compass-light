@@ -208,16 +208,16 @@
             <span>{{ solution.maintainer_name }}
               <span class="text-color-secondary">({{ solution.maintainer_id }})</span></span>
           </div>
-          <div class="info-item">
-            <label>Email</label>
-            <a [href]="'mailto:' + solution.maintainer_email">{{
-              solution.maintainer_email.length > 18
-              ? solution.maintainer_email.substring(0, 18) + '...'
-              : solution.maintainer_email
-              }}</a>
+        </div>
+
+        <div class="info-section">
+          <h3>Product Support</h3>
+          <div class="info-item" *ngIf="solution.service_now_group">
+            <label>Service Now Group</label>
+            <span>{{ solution.service_now_group }}</span>
           </div>
           <div class="info-item" *ngIf="solution.team_email">
-            <label>Product Support DL/Email</label>
+            <label>DL/Email</label>
             <a [href]="'mailto:' + solution.team_email">{{
               solution.team_email.length > 18
               ? solution.team_email.substring(0, 18) + '...'
