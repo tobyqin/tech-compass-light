@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from "@angular/router";
+import { Router } from "@angular/router";
 import { map, Observable, take } from "rxjs";
 import { AuthService } from "../services/auth.service";
 
@@ -9,20 +9,13 @@ import { AuthService } from "../services/auth.service";
 export class AdminGuard {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
+  canActivate(): Observable<boolean> {
     return this.authService.currentUser$.pipe(
       take(1),
       map((user) => {
         if (!user) {
-          // Save the attempted URL for redirecting
-          this.authService.redirectUrl = state.url;
-          this.router.navigate(['/'], { 
-            queryParams: { returnUrl: state.url },
-            replaceUrl: true 
-          });
+          // 直接导航到根路径，不带任何参数
+          this.router.navigate(['/']);
           return false;
         }
         

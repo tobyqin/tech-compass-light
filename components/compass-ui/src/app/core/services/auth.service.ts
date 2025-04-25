@@ -102,18 +102,8 @@ export class AuthService {
           this.currentUserSubject.next(response.user);
           localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
           
-          // Get return URL from route parameters or saved redirect URL
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || this.redirectUrl;
-          
-          if (returnUrl) {
-            // Clear the saved redirect URL
-            this.redirectUrl = null;
-            // Navigate to the return URL
-            this.router.navigate([returnUrl], { replaceUrl: true });
-          } else {
-            // Default navigation
-            this.router.navigate(['/manage'], { replaceUrl: true });
-          }
+          // 直接导航到管理页面，不使用 returnUrl
+          this.router.navigate(['/manage']);
         })
       );
   }

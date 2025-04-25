@@ -95,19 +95,6 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Check for returnUrl and handle redirection if user is logged in
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    if (returnUrl && this.authService.isLoggedIn()) {
-      // Ensure the URL starts with a slash but doesn't have /tech-radar/
-      let redirectTo = returnUrl.startsWith('/') ? returnUrl : '/' + returnUrl;
-      redirectTo = redirectTo.replace(/^\/tech-radar\//, '/');
-      
-      this.router.navigate([redirectTo], { 
-        replaceUrl: true
-      });
-      return;
-    }
-
     this.loadConfig().then(() => this.initializeRadar());
   }
 
