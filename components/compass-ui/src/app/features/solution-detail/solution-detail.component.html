@@ -206,7 +206,7 @@
           </div>
         </div>
 
-        <div class="info-section">
+        <div class="info-section" *ngIf="solution.service_now_group || solution.team_email">
           <h3>Product Support</h3>
           <div class="info-item" *ngIf="solution.service_now_group">
             <label>Service Now Group</label>
