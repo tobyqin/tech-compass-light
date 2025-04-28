@@ -7,9 +7,10 @@ import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Subscription } from "rxjs";
-import { SiteConfigService } from "../../core/services/site-config.service";
-import { GroupService, Group } from "../../core/services/group.service";
 import { environment } from "../../../environments/environment";
+import { AuthService } from "../../core/services/auth.service";
+import { Group, GroupService } from "../../core/services/group.service";
+import { SiteConfigService } from "../../core/services/site-config.service";
 
 // External libraries
 declare const d3: any;
@@ -89,7 +90,8 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     private siteConfigService: SiteConfigService,
     private groupService: GroupService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {

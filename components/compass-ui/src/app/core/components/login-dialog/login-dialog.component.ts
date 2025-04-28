@@ -297,6 +297,8 @@ export class LoginDialogComponent implements OnInit, OnDestroy {
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
         this.ref.close(true);
+        // Refresh the page after successful login
+        window.location.reload();
       },
       error: (error) => {
         this.loading = false;

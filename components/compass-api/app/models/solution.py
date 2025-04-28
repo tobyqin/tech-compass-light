@@ -73,6 +73,7 @@ class SolutionBase(BaseModel):
     department: str = Field(..., description="Department name")
     team: str = Field(..., description="Team name")
     team_email: Optional[str] = Field(None, description="Team contact email")
+    service_now_group: Optional[str] = Field(None, description="Group identifier for organizing solutions")
     maintainer_id: Optional[str] = Field(None, description="ID of the maintainer")
     maintainer_name: Optional[str] = Field(None, description="Name of the maintainer")
     maintainer_email: Optional[str] = Field(None, description="Email of the maintainer")
@@ -124,7 +125,6 @@ class SolutionInDBBase(SolutionBase):
 class SolutionUpdate(BaseModel):
     """Solution update model - all fields are optional"""
 
-    group: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
     brief: Optional[str] = None
@@ -137,6 +137,7 @@ class SolutionUpdate(BaseModel):
     department: Optional[str] = None
     team: Optional[str] = None
     team_email: Optional[str] = None
+    service_now_group: Optional[str] = None
     maintainer_id: Optional[str] = None
     maintainer_name: Optional[str] = None
     maintainer_email: Optional[str] = None

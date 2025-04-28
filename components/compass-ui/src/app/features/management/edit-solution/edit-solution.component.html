@@ -96,21 +96,6 @@
       </div>
       <div class="form-row">
         <div class="form-field">
-          <label for="department">Department *</label>
-          <p-dropdown id="department" [options]="departments" formControlName="department" [style]="{'width':'100%'}"
-            placeholder="Select a department"></p-dropdown>
-        </div>
-        <div class="form-field">
-          <label for="team">Support Team Name *</label>
-          <input id="team" type="text" pInputText formControlName="team" />
-        </div>
-        <div class="form-field">
-          <label for="team_email">Support Team DL/Email *</label>
-          <input id="team_email" type="email" pInputText formControlName="team_email" />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
           <label for="maintainer_id">Product Owner ID *</label>
           <input id="maintainer_id" type="text" pInputText formControlName="maintainer_id" />
         </div>
@@ -121,6 +106,33 @@
         <div class="form-field">
           <label for="maintainer_email">Product Owner Email *</label>
           <input id="maintainer_email" type="email" pInputText formControlName="maintainer_email" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <h3><i class="pi pi-users"></i> Product Support</h3>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="department">Department *</label>
+          <p-dropdown id="department" [options]="departments" formControlName="department" [style]="{'width':'100%'}"
+            placeholder="Select a department"></p-dropdown>
+        </div>
+        <div class="form-field">
+          <label for="team">Support Team Name *</label>
+          <input id="team" type="text" pInputText formControlName="team" />
+        </div>
+        <div class="form-field">
+          <label for="team_email">Support Team DL/Email</label>
+          <input id="team_email" type="email" pInputText formControlName="team_email" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="service_now_group">Service Now Group</label>
+          <input id="service_now_group" type="text" pInputText formControlName="service_now_group" />
         </div>
       </div>
     </div>
