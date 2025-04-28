@@ -29,7 +29,6 @@ export class AuthService {
   private readonly USER_KEY = "user";
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
-  redirectUrl: string | null = null;
   private initializationPromise: Promise<void> | null = null;
 
   constructor(
@@ -101,9 +100,6 @@ export class AuthService {
           localStorage.setItem(this.AUTH_TOKEN_KEY, response.access_token);
           this.currentUserSubject.next(response.user);
           localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
-          
-          // Navigate directly to management page without using returnUrl
-          this.router.navigate(['/manage']);
         })
       );
   }
@@ -117,7 +113,6 @@ export class AuthService {
     localStorage.removeItem(this.AUTH_TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
-    this.redirectUrl = null;
   }
 
   fetchCurrentUser(): Observable<StandardResponse<User>> {
