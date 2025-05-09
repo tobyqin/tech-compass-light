@@ -606,4 +606,20 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Copied to clipboard'
+      });
+    }).catch(() => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to copy to clipboard'
+      });
+    });
+  }
 }
