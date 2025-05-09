@@ -14,7 +14,7 @@
     <div class="solution-info">
       <div class="title-row">
         <h1>{{ solution.name }}</h1>
-        <p-button label="Get It" icon="pi pi-download" (click)="onGetItClick()" severity="success" size="small" rounded
+        <p-button *ngIf="solution.recommend_status !== 'HOLD'" label="Get It" icon="pi pi-download" (click)="onGetItClick()" severity="success" size="small" rounded
           styleClass="p-button-raised">
         </p-button>
       </div>
@@ -210,7 +210,15 @@
           <h3>Product Support</h3>
           <div class="info-item" *ngIf="solution.service_now_group">
             <label>Service Now Group</label>
-            <span>{{ solution.service_now_group }}</span>
+            <div class="d-flex align-items-center gap-2">
+              <span pTooltip="{{ solution.service_now_group }}" tooltipPosition="top">
+                {{ solution.service_now_group.length > 20 ? (solution.service_now_group | slice:0:20) + '...' : solution.service_now_group }}
+              </span>
+              <button pButton type="button" icon="pi pi-copy" class="p-button-text p-button-sm" 
+                      (click)="copyToClipboard(solution.service_now_group)"
+                      pTooltip="Copy to clipboard">
+              </button>
+            </div>
           </div>
           <div class="info-item" *ngIf="solution.team_email">
             <label>DL/Email</label>
