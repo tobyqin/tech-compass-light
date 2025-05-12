@@ -22,7 +22,7 @@ export class AdminGuard {
         if (user.is_superuser) {
           return true;
         }
-        
+
         this.router.navigate(["/manage"]);
         return false;
       })
