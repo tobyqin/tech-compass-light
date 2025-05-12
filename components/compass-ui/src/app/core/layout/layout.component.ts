@@ -48,10 +48,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
   // Initialize with empty values
   config = {
     logo: {
-      path: "assets/logo.svg", // Default logo path
+      path: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", // Default logo path, transparent pixel
       alt: "App Logo",
     },
-    name: "Application", // Default app name
+    name: "", // Default app name
     navigation: [] as NavigationItem[],
     footer: {
       aboutText: "",
