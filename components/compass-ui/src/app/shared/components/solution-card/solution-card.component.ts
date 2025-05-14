@@ -10,7 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { AssetService } from '../../../core/services/asset.service';
 import { Solution } from '../../interfaces/solution.interface';
 
-type TagSeverity = 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast';
+type TagSeverity = 'success' | 'info' | 'warning' | 'danger';
 
 @Component({
   selector: 'app-solution-card',
@@ -41,9 +41,9 @@ export class SolutionCardComponent {
       case 'TRIAL':
         return 'info';
       case 'ASSESS':
-        return 'info';
-      case 'HOLD':
         return 'warning';
+      case 'HOLD':
+        return 'danger';
       case 'EXIT':
         return 'danger';
       default:

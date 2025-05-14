@@ -188,11 +188,11 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     const severityMap: { [key: string]: Severity } = {
       ADOPT: "success",
       TRIAL: "info",
-      ASSESS: "info",
-      HOLD: "warning",
-      EXIT: "danger"
+      ASSESS: "warning",
+      HOLD: "danger",
+      EXIT: "danger",
     };
-    return severityMap[status] || "secondary";
+    return severityMap[status] || "info";
   }
 
   getAdoptionLevelSeverity(level: string): Severity {
@@ -222,7 +222,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
     const severityMap: { [key: string]: Severity } = {
       PENDING: "warning",
       APPROVED: "success",
-      REJECTED: "danger"
+      REJECTED: "danger",
     };
     return severityMap[status] || "secondary";
   }

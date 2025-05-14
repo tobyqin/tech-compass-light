@@ -193,8 +193,8 @@ export class AllSolutionsComponent implements OnInit {
     const severityMap: { [key: string]: TagSeverity } = {
       ADOPT: "success",
       TRIAL: "info",
-      ASSESS: "info",
-      HOLD: "warning",
+      ASSESS: "warning",
+      HOLD: "danger",
       EXIT: "danger",
       PENDING: "warning",
       APPROVED: "success",
