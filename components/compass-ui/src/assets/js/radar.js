@@ -128,8 +128,8 @@ function radar_visualization(config) {
       y: 15 * quadrants[quadrant].factor_y
     };
     var cartesian_max = {
-      x: rings[3].radius * quadrants[quadrant].factor_x,
-      y: rings[3].radius * quadrants[quadrant].factor_y
+      x: rings[rings.length - 1].radius * quadrants[quadrant].factor_x,
+      y: rings[rings.length - 1].radius * quadrants[quadrant].factor_y
     };
     return {
       clipx: function(d) {
@@ -225,14 +225,15 @@ function radar_visualization(config) {
   config.font_family = config.font_family || "Arial, Helvetica";
 
   // draw grid lines
+  const maxRadius = rings[rings.length - 1].radius;
   grid.append("line")
-    .attr("x1", 0).attr("y1", -400)
-    .attr("x2", 0).attr("y2", 400)
+    .attr("x1", 0).attr("y1", -maxRadius)
+    .attr("x2", 0).attr("y2", maxRadius)
     .style("stroke", config.colors.grid)
     .style("stroke-width", 1);
   grid.append("line")
-    .attr("x1", -400).attr("y1", 0)
-    .attr("x2", 400).attr("y2", 0)
+    .attr("x1", -maxRadius).attr("y1", 0)
+    .attr("x2", maxRadius).attr("y2", 0)
     .style("stroke", config.colors.grid)
     .style("stroke-width", 1);
 
