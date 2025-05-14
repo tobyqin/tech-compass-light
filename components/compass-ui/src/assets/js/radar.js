@@ -71,11 +71,11 @@ function radar_visualization(config) {
   ];
 
   const rings = [
-    { radius: 100 },  // ADOPT (innermost)
-    { radius: 190 },  // TRIAL
-    { radius: 280 },  // ASSESS
-    { radius: 370 },  // HOLD
-    { radius: 460 }   // EXIT (outermost)
+    { radius: 80 },   // ADOPT (innermost)
+    { radius: 160 },  // TRIAL
+    { radius: 240 },  // ASSESS
+    { radius: 320 },  // HOLD
+    { radius: 400 }   // EXIT (outermost)
   ];
 
   function polar(cartesian) {
@@ -279,8 +279,37 @@ function radar_visualization(config) {
     const dx = ring < 2 ? 0 : legendColumnWidth;
     let dy = (index == null ? -16 : index * config.legend_line_height);
 
-    if (ring % 2 === 1) {
+    if (ring % 2 === 1 && ring !== 4) {
       dy = dy + 36 + previousHeight;
+    }
+    
+    if (ring === 4) {
+      const assessEntries = segmented[quadrant][2].length;
+      const assessContentHeight = assessEntries * config.legend_line_height;
+      
+      const holdEntries = segmented[quadrant][3].length;
+      const holdContentHeight = holdEntries * config.legend_line_height;
+      
+      const baseOffset = -16;
+      const standardGap = 36;
+      
+      let exitPosition = baseOffset;
+      
+      if (!assessEntries && !holdEntries) {
+        exitPosition += standardGap + standardGap;
+      } else if (assessEntries && !holdEntries) {
+        exitPosition += standardGap + assessContentHeight + standardGap + standardGap;
+      } else if (!assessEntries && holdEntries) {
+        exitPosition += standardGap + standardGap + holdContentHeight + standardGap;
+      } else {
+        exitPosition += standardGap + assessContentHeight + standardGap + holdContentHeight + standardGap;
+      }
+      
+      if (index === null) {
+        dy = exitPosition;
+      } else {
+        dy = exitPosition + (index * config.legend_line_height);
+      }
     }
 
     return translate(
