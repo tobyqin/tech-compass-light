@@ -360,10 +360,14 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       ? data.entries 
       : data.entries.filter(entry => entry.ring !== 4);  // Only filter entries in EXIT ring
 
-    // Create ring configurations
+    // Create ring configurations with all rings to maintain layout
     const ringConfigs = this.rings.map((ring) => ({
       name: ring.name,
-      color: this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
+      color: ring.name === 'EXIT' && !this.showExitRing 
+        ? 'transparent'  // Make EXIT ring transparent when hidden
+        : this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
+      // Hide EXIT ring text when showExitRing is false
+      hideText: ring.name === 'EXIT' && !this.showExitRing
     }));
 
     const config = {
@@ -372,7 +376,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       title: this.title,
       date: data.date,
       quadrants: this.quadrants,
-      rings: ringConfigs,  // Use ring configurations with colors
+      rings: ringConfigs,
       entries: filteredEntries,
       print_layout: true,
       colors: {

@@ -259,7 +259,7 @@ function radar_visualization(config) {
     .attr("in", "SourceGraphic");
 
   // draw rings
-  for (var i = 0; i < (hasExitRing ? 5 : 4); i++) {
+  for (var i = 0; i < rings.length; i++) {
     grid.append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
@@ -268,7 +268,7 @@ function radar_visualization(config) {
       .style("stroke", config.colors.grid)
       .style("stroke-width", 1);
     
-    if (config.print_layout) {
+    if (config.print_layout && !config.rings[i].hideText) {
       grid.append("text")
         .text(config.rings[i].name)
         .attr("y", -rings[i].radius + 62)
