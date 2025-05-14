@@ -70,7 +70,7 @@ function radar_visualization(config) {
     { radial_min: -0.5, radial_max: 0, factor_x: 1, factor_y: -1 }
   ];
 
-  // 根据是否显示EXIT环来设置rings半径
+  // Configure ring radius based on whether EXIT ring is shown
   const hasExitRing = config.entries.some(entry => entry.ring === 4);
   const rings = hasExitRing ? [
     { radius: 80 },   // ADOPT (innermost)
@@ -79,10 +79,10 @@ function radar_visualization(config) {
     { radius: 320 },  // HOLD
     { radius: 400 }   // EXIT (outermost)
   ] : [
-    { radius: 130 },   // ADOPT (innermost) - 扩大
-    { radius: 220 },   // TRIAL - 扩大
-    { radius: 310 },   // ASSESS - 扩大
-    { radius: 400 },   // HOLD - 最大尺寸
+    { radius: 130 },   // ADOPT (innermost) - expanded
+    { radius: 220 },   // TRIAL - expanded
+    { radius: 310 },   // ASSESS - expanded
+    { radius: 400 },   // HOLD - maximum size
   ];
 
   function polar(cartesian) {

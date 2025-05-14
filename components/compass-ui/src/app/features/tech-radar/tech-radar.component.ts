@@ -335,7 +335,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @param data Processed radar chart data
    */
   private visualizeRadar(data: TechRadarData): void {
-    this.currentData = data; // 保存当前数据以便切换时使用
+    this.currentData = data; // Save current data for toggle use
     const svgElement = document.getElementById("radar");
     if (!svgElement) {
       return;
@@ -355,12 +355,12 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @returns Radar chart configuration object
    */
   private createRadarConfig(data: TechRadarData): any {
-    // 过滤掉 EXIT 相关的条目
+    // Filter out EXIT-related entries
     const filteredEntries = this.showExitRing 
       ? data.entries 
-      : data.entries.filter(entry => entry.ring !== 4);  // 只过滤 EXIT 环的条目
+      : data.entries.filter(entry => entry.ring !== 4);  // Only filter entries in EXIT ring
 
-    // 创建环的配置
+    // Create ring configurations
     const ringConfigs = this.rings.map((ring) => ({
       name: ring.name,
       color: this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
@@ -372,7 +372,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       title: this.title,
       date: data.date,
       quadrants: this.quadrants,
-      rings: ringConfigs,  // 使用带颜色的环配置
+      rings: ringConfigs,  // Use ring configurations with colors
       entries: filteredEntries,
       print_layout: true,
       colors: {
@@ -439,7 +439,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   }
 
   onExitRingToggle(): void {
-    // 重新渲染雷达图
+    // Re-render the radar chart
     const svgElement = document.getElementById("radar");
     if (svgElement && this.currentData) {
       svgElement.innerHTML = "";
