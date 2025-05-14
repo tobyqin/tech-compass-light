@@ -11,7 +11,7 @@ class TechRadarEntry(BaseModel):
     ring: int = Field(
         ge=0,
         le=4,
-        description="Ring position (0-4, representing adopt/trial/assess/hold/exit from inner to outer)",
+        description="Ring position (0-4, representing adopt/trial/assess/hold/exit)",
     )
     label: str = Field(..., description="Solution name")
     link: str = Field(..., description="Link to solution detail page")
