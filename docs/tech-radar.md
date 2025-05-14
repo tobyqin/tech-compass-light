@@ -82,10 +82,10 @@ The radar is structured into two main dimensions:
 - Strategic alignment potential
 
 ### 4. Hold
-**Definition**: Technology to be phased out completely.
+**Definition**: Technologies requiring careful consideration before further adoption or scheduled for strategic replacement.
 
 ### 4. Exit
-**Definition**: 
+**Definition**: Technology to be phased out completely.
 
 **Indicators**:
 - Technical debt risk
