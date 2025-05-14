@@ -43,7 +43,7 @@ export class SolutionService {
     category?: string;
     department?: string;
     team?: string;
-    recommend_status?: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD";
+    recommend_status?: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD" | "EXIT";
     stage?: "DEVELOPING" | "UAT" | "PRODUCTION" | "DEPRECATED" | "RETIRED";
     sort?: string;
     tags?: string;

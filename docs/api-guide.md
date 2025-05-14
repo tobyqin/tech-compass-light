@@ -188,7 +188,7 @@ Get a paginated list of solutions with optional filtering.
 - `category` (string, optional): Filter by category
 - `department` (string, optional): Filter by department
 - `team` (string, optional): Filter by team
-- `recommend_status` (string, optional): Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD)
+- `recommend_status` (string, optional): Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD/EXIT)
 - `stage` (string, optional): Filter by stage (DEVELOPING/UAT/PRODUCTION/DEPRECATED/RETIRED)
 - `review_status` (string, optional): Filter by review status (PENDING/APPROVED/REJECTED)
 - `tags` (string, optional): Filter by tags (comma-separated)
@@ -627,7 +627,7 @@ Get radar quadrants ordered by their radar_quadrant value.
 GET /tech-radar/rings
 ```
 
-Get radar rings in order (ADOPT, TRIAL, ASSESS, HOLD).
+Get radar rings in order (ADOPT, TRIAL, ASSESS, HOLD, EXIT).
 
 ## Site Configuration
 

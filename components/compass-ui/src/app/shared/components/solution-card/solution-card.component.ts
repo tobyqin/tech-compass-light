@@ -44,6 +44,8 @@ export class SolutionCardComponent {
         return 'warning';
       case 'HOLD':
         return 'danger';
+      case 'EXIT':
+        return 'danger';
       default:
         return 'info';
     }

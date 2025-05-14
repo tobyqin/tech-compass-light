@@ -42,7 +42,7 @@ export interface Solution {
   tags: string[];
   pros?: string[];
   cons?: string[];
-  recommend_status: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD";
+  recommend_status: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD" | "EXIT";
   stage: "DEVELOPING" | "UAT" | "PRODUCTION" | "DEPRECATED" | "RETIRED";
   adoption_level: "PILOT" | "TEAM" | "DEPARTMENT" | "ENTERPRISE" | "INDUSTRY";
   adoption_user_count: number;

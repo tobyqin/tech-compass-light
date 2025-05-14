@@ -190,6 +190,7 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       TRIAL: "info",
       ASSESS: "warning",
       HOLD: "danger",
+      EXIT: "danger",
     };
     return severityMap[status] || "info";
   }

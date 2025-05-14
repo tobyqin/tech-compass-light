@@ -597,6 +597,7 @@ class SolutionService:
         trial_solutions = []
         assess_solutions = []
         hold_solutions = []
+        exit_solutions = []
         other_solutions = []
 
         # Add ratings and group by status
@@ -615,6 +616,8 @@ class SolutionService:
                 assess_solutions.append(solution_obj)
             elif solution["recommend_status"] == "HOLD":
                 hold_solutions.append(solution_obj)
+            elif solution["recommend_status"] == "EXIT":
+                exit_solutions.append(solution_obj)
             else:
                 other_solutions.append(solution_obj)
 
@@ -624,12 +627,13 @@ class SolutionService:
             trial_solutions,
             assess_solutions,
             hold_solutions,
+            exit_solutions,
             other_solutions,
         ]:
             solutions_list.sort(key=lambda x: (x.rating or 0), reverse=True)
 
         # Combine all groups maintaining order by status
-        return adopt_solutions + trial_solutions + assess_solutions + hold_solutions + other_solutions
+        return adopt_solutions + trial_solutions + assess_solutions + hold_solutions + exit_solutions + other_solutions
 
     async def get_user_solutions(
         self, username: str, skip: int = 0, limit: int = 100, sort: str = "name"

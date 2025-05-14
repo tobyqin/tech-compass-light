@@ -84,6 +84,9 @@ The radar is structured into two main dimensions:
 ### 4. Hold
 **Definition**: Technologies requiring careful consideration before further adoption or scheduled for strategic replacement.
 
+### 4. Exit
+**Definition**: Technology to be phased out completely.
+
 **Indicators**:
 - Technical debt risk
 - Diminishing community support

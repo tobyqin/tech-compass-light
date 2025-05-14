@@ -70,11 +70,19 @@ function radar_visualization(config) {
     { radial_min: -0.5, radial_max: 0, factor_x: 1, factor_y: -1 }
   ];
 
-  const rings = [
-    { radius: 130 },
-    { radius: 220 },
-    { radius: 310 },
-    { radius: 400 }
+  // Configure ring radius based on whether EXIT ring is shown
+  const hasExitRing = config.entries.some(entry => entry.ring === 4);
+  const rings = hasExitRing ? [
+    { radius: 80 },   // ADOPT (innermost)
+    { radius: 160 },  // TRIAL
+    { radius: 240 },  // ASSESS
+    { radius: 320 },  // HOLD
+    { radius: 400 }   // EXIT (outermost)
+  ] : [
+    { radius: 130 },   // ADOPT (innermost) - expanded
+    { radius: 220 },   // TRIAL - expanded
+    { radius: 310 },   // ASSESS - expanded
+    { radius: 400 },   // HOLD - maximum size
   ];
 
   function polar(cartesian) {
@@ -127,8 +135,8 @@ function radar_visualization(config) {
       y: 15 * quadrants[quadrant].factor_y
     };
     var cartesian_max = {
-      x: rings[3].radius * quadrants[quadrant].factor_x,
-      y: rings[3].radius * quadrants[quadrant].factor_y
+      x: rings[rings.length - 1].radius * quadrants[quadrant].factor_x,
+      y: rings[rings.length - 1].radius * quadrants[quadrant].factor_y
     };
     return {
       clipx: function(d) {
@@ -167,7 +175,7 @@ function radar_visualization(config) {
   var segmented = new Array(4);
   for (let quadrant = 0; quadrant < 4; quadrant++) {
     segmented[quadrant] = new Array(4);
-    for (var ring = 0; ring < 4; ring++) {
+    for (var ring = 0; ring < 5; ring++) {
       segmented[quadrant][ring] = [];
     }
   }
@@ -179,7 +187,7 @@ function radar_visualization(config) {
   // assign unique sequential id to each entry
   var id = 1;
   for (quadrant of [2,3,1,0]) {
-    for (var ring = 0; ring < 4; ring++) {
+    for (var ring = 0; ring < 5; ring++) {
       var entries = segmented[quadrant][ring];
       entries.sort(function(a,b) { return a.label.localeCompare(b.label); })
       for (var i=0; i<entries.length; i++) {
@@ -224,14 +232,15 @@ function radar_visualization(config) {
   config.font_family = config.font_family || "Arial, Helvetica";
 
   // draw grid lines
+  const maxRadius = rings[rings.length - 1].radius;
   grid.append("line")
-    .attr("x1", 0).attr("y1", -400)
-    .attr("x2", 0).attr("y2", 400)
+    .attr("x1", 0).attr("y1", -maxRadius)
+    .attr("x2", 0).attr("y2", maxRadius)
     .style("stroke", config.colors.grid)
     .style("stroke-width", 1);
   grid.append("line")
-    .attr("x1", -400).attr("y1", 0)
-    .attr("x2", 400).attr("y2", 0)
+    .attr("x1", -maxRadius).attr("y1", 0)
+    .attr("x2", maxRadius).attr("y2", 0)
     .style("stroke", config.colors.grid)
     .style("stroke-width", 1);
 
@@ -258,7 +267,8 @@ function radar_visualization(config) {
       .style("fill", "none")
       .style("stroke", config.colors.grid)
       .style("stroke-width", 1);
-    if (config.print_layout) {
+    
+    if (config.print_layout && !config.rings[i].hideText) {
       grid.append("text")
         .text(config.rings[i].name)
         .attr("y", -rings[i].radius + 62)
@@ -277,8 +287,37 @@ function radar_visualization(config) {
     const dx = ring < 2 ? 0 : legendColumnWidth;
     let dy = (index == null ? -16 : index * config.legend_line_height);
 
-    if (ring % 2 === 1) {
+    if (ring % 2 === 1 && ring !== 4) {
       dy = dy + 36 + previousHeight;
+    }
+    
+    if (ring === 4) {
+      const assessEntries = segmented[quadrant][2].length;
+      const assessContentHeight = assessEntries * config.legend_line_height;
+      
+      const holdEntries = segmented[quadrant][3].length;
+      const holdContentHeight = holdEntries * config.legend_line_height;
+      
+      const titleHeight = 16;
+      const standardGap = 36;
+      
+      let exitPosition = -titleHeight;
+      
+      if (!assessEntries && !holdEntries) {
+        exitPosition += standardGap + standardGap;
+      } else if (assessEntries && !holdEntries) {
+        exitPosition += standardGap + assessContentHeight + standardGap + 2*titleHeight;
+      } else if (!assessEntries && holdEntries) {
+        exitPosition += standardGap + standardGap + holdContentHeight + 2*titleHeight;
+      } else {
+        exitPosition += standardGap + assessContentHeight + standardGap + holdContentHeight + 2*titleHeight;
+      }
+      
+      if (index === null) {
+        dy = exitPosition;
+      } else {
+        dy = exitPosition + titleHeight + (index * config.legend_line_height);
+      }
     }
 
     return translate(
@@ -330,7 +369,7 @@ function radar_visualization(config) {
         .style("font-size", "18px")
         .style("font-weight", "bold");
       let previousLegendHeight = 0
-      for (let ring = 0; ring < 4; ring++) {
+      for (let ring = 0; ring < 5; ring++) {
         if (ring % 2 === 0) {
           previousLegendHeight = 0
         }

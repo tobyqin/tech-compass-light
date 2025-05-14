@@ -1,32 +1,32 @@
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ChipModule } from 'primeng/chip';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { CategoryService } from '../../core/services/category.service';
+import { DepartmentService } from '../../core/services/department.service';
 import { SolutionService } from '../../core/services/solution.service';
+import { Tag, TagService } from '../../core/services/tag.service';
 import { SolutionCardComponent } from '../../shared/components/solution-card/solution-card.component';
 import { Solution } from '../../shared/interfaces/solution.interface';
-import { CategoryService, Category } from '../../core/services/category.service';
-import { DepartmentService } from '../../core/services/department.service';
-import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { TagService, Tag } from '../../core/services/tag.service';
-import { ChipModule } from 'primeng/chip';
 
 // PrimeNG imports
-import { DropdownModule } from 'primeng/dropdown';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageModule } from 'primeng/message';
-import { TooltipModule } from 'primeng/tooltip';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface SolutionFilters {
   category?: string;
   department?: string;
   team?: string;
-  recommend_status?: 'ADOPT' | 'TRIAL' | 'ASSESS' | 'HOLD';
+  recommend_status?: 'ADOPT' | 'TRIAL' | 'ASSESS' | 'HOLD' | 'EXIT';
   sort: string;
   tags?: string;
 }
@@ -101,7 +101,8 @@ export class SolutionCatalogComponent implements OnInit, OnDestroy {
     { label: 'Adopt', value: 'ADOPT' },
     { label: 'Trial', value: 'TRIAL' },
     { label: 'Assess', value: 'ASSESS' },
-    { label: 'Hold', value: 'HOLD' }
+    { label: 'Hold', value: 'HOLD' },
+    { label: 'Exit', value: 'EXIT' }
   ];
 
   sortOptions = [

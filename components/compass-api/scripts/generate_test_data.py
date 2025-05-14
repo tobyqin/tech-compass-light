@@ -105,7 +105,7 @@ class TestDataGenerator:
     def create_solution(self) -> Dict:
         """Create a new solution through the API."""
         stages = ["DEVELOPING", "UAT", "PRODUCTION", "DEPRECATED", "RETIRED"]
-        recommend_statuses = ["ADOPT", "TRIAL", "ASSESS", "HOLD"]
+        recommend_statuses = ["ADOPT", "TRIAL", "ASSESS", "HOLD", "EXIT"]
         adoption_levels = ["PILOT", "TEAM", "DEPARTMENT", "ENTERPRISE", "INDUSTRY"]
         adoption_complexity_values = ["AUTOMATED", "EASY", "SUPPORT_REQUIRED"]
         provider_types = ["VENDOR", "INTERNAL"]

@@ -102,7 +102,7 @@ Stores the main technical solution information.
 | pros                | Array[String] | List of advantages                                                      | ["Easy to deploy", "Good documentation"]                                     |
 | cons                | Array[String] | List of disadvantages                                                   | ["Resource overhead", "Learning curve"]                                      |
 | stage               | String        | Development stage status (DEVELOPING/UAT/PRODUCTION/DEPRECATED/RETIRED) | "PRODUCTION"                                                                 |
-| recommend_status    | String        | Strategic recommendation (ADOPT/TRIAL/ASSESS/HOLD)                      | "ADOPT"                                                                      |
+| recommend_status    | String        | Strategic recommendation (ADOPT/TRIAL/ASSESS/HOLD/EXIT)                 | "ADOPT"                                                                      |
 | review_status       | String        | Review status (PENDING/APPROVED/REJECTED)                               | "APPROVED"                                                                   |
 | created_at          | DateTime      | Creation timestamp                                                      | "2024-03-15T10:30:00Z"                                                       |
 | created_by          | String        | Username of creator                                                     | "admin"                                                                      |
@@ -276,6 +276,8 @@ Stores site-wide configuration settings.
 - `TRIAL` - Worth pursuing, understand how it fits
 - `ASSESS` - Worth exploring with the goal of understanding how it will affect your enterprise
 - `HOLD` - Proceed with caution
+- `EXIT` - Deprecated
+
 
 ### Adoption Level Values
 

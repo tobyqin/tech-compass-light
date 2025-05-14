@@ -1,16 +1,15 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ConfirmationService, MessageService } from "primeng/api";
-import { SolutionService } from "../../../core/services/solution.service";
-import { Solution } from "../../../shared/interfaces/solution.interface";
+import { ButtonModule } from "primeng/button";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { RatingModule } from "primeng/rating";
 import { TableModule } from "primeng/table";
-import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { SolutionService } from "../../../core/services/solution.service";
+import { Solution } from "../../../shared/interfaces/solution.interface";
 
 type TagSeverity =
   | "success"
@@ -139,6 +138,7 @@ export class MySolutionsComponent implements OnInit {
       TRIAL: "info",
       ASSESS: "warning",
       HOLD: "danger",
+      EXIT: "danger",
       PENDING: "warning",
       APPROVED: "success",
       REJECTED: "danger",

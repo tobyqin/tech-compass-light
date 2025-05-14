@@ -1,10 +1,12 @@
 import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MarkdownModule } from "ngx-markdown";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
+import { InputSwitchModule } from "primeng/inputswitch";
 import { TagModule } from "primeng/tag";
 import { Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
@@ -19,7 +21,7 @@ declare const radar_visualization: any;
 // Data interface definition
 interface TechRadarEntry {
   quadrant: number; // Index of quadrant (0-3)
-  ring: number; // Index of ring (0-3)
+  ring: number; // Index of ring (0-4, representing ADOPT/TRIAL/ASSESS/HOLD/EXIT)
   label: string; // Technology name
   link: string; // Technology link
   active: boolean; // Active status
@@ -51,20 +53,29 @@ interface RadarConfig {
 @Component({
   selector: "tc-tech-radar",
   standalone: true,
-  imports: [CommonModule, BreadcrumbModule, MarkdownModule, ButtonModule, TagModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BreadcrumbModule,
+    MarkdownModule,
+    ButtonModule,
+    TagModule,
+    InputSwitchModule
+  ],
   templateUrl: "./tech-radar.component.html",
   styleUrls: ["./tech-radar.component.scss"],
 })
 export class TechRadarComponent implements OnInit, OnDestroy {
   // Constant definition
   private readonly MAX_QUADRANTS = 4; // Maximum number of quadrants
-  private readonly MAX_RINGS = 4; // Maximum number of rings
+  private readonly MAX_RINGS = 5; // Maximum number of rings (ADOPT, TRIAL, ASSESS, HOLD, EXIT)
   private readonly SCRIPT_LOAD_DELAY = 100; // Script load delay (milliseconds)
   private readonly RING_COLORS = {
     ADOPT: "#00af68",
     TRIAL: "#255be3",
     ASSESS: "#ffcd00",
     HOLD: "#ff3c28",
+    EXIT: "#8B0000",
   };
 
   // Component state
@@ -84,6 +95,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   // Initialize with default values that will be overridden by config
   faqs: Array<{ title: string; content: string }> = [];
   title: string = "Tech Radar";
+
+  showExitRing: boolean = false;
+  private currentData: TechRadarData | null = null;
 
   constructor(
     private http: HttpClient,
@@ -301,7 +315,8 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     const quadrant = Number(entry.quadrant);
     const ring = Number(entry.ring);
 
-    if (quadrant >= this.MAX_QUADRANTS || ring >= this.MAX_RINGS) {
+    if (quadrant >= this.MAX_QUADRANTS || ring >= this.MAX_RINGS || ring < 0 || quadrant < 0) {
+      console.warn(`Invalid entry: quadrant=${quadrant}, ring=${ring}, label=${entry.label}`);
       return null;
     }
 
@@ -320,6 +335,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @param data Processed radar chart data
    */
   private visualizeRadar(data: TechRadarData): void {
+    this.currentData = data; // Save current data for toggle use
     const svgElement = document.getElementById("radar");
     if (!svgElement) {
       return;
@@ -328,7 +344,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     try {
       svgElement.innerHTML = "";
       radar_visualization(this.createRadarConfig(data));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error visualizing radar:", error);
+    }
   }
 
   /**
@@ -337,19 +355,37 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @returns Radar chart configuration object
    */
   private createRadarConfig(data: TechRadarData): any {
-    return {
+    // Filter out EXIT-related entries
+    const filteredEntries = this.showExitRing 
+      ? data.entries 
+      : data.entries.filter(entry => entry.ring !== 4);  // Only filter entries in EXIT ring
+
+    // Create ring configurations with all rings to maintain layout
+    const ringConfigs = this.rings.map((ring) => ({
+      name: ring.name,
+      color: ring.name === 'EXIT' && !this.showExitRing 
+        ? 'transparent'  // Make EXIT ring transparent when hidden
+        : this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
+      // Hide EXIT ring text when showExitRing is false
+      hideText: ring.name === 'EXIT' && !this.showExitRing
+    }));
+
+    const config = {
       svg_id: "radar",
       scale: 0.92,
       title: this.title,
       date: data.date,
       quadrants: this.quadrants,
-      rings: this.rings.map((ring) => ({
-        name: ring.name,
-        color: this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
-      })),
-      entries: data.entries,
+      rings: ringConfigs,
+      entries: filteredEntries,
       print_layout: true,
+      colors: {
+        background: "#fff",
+        grid: "#dddde0",
+        inactive: "#ddd"
+      }
     };
+    return config;
   }
 
   /**
@@ -403,6 +439,15 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       );
       scripts.forEach((script) => script.remove());
       this.scriptsLoaded = false;
+    }
+  }
+
+  onExitRingToggle(): void {
+    // Re-render the radar chart
+    const svgElement = document.getElementById("radar");
+    if (svgElement && this.currentData) {
+      svgElement.innerHTML = "";
+      this.visualizeRadar(this.currentData);
     }
   }
 }

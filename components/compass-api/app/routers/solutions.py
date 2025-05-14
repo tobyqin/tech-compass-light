@@ -47,7 +47,7 @@ async def get_solutions(
     department: Optional[str] = None,
     team: Optional[str] = None,
     recommend_status: Optional[str] = Query(
-        None, description="Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD)"
+        None, description="Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD/EXIT)"
     ),
     stage: Optional[str] = Query(
         None,
@@ -65,7 +65,7 @@ async def get_solutions(
     - category: Filter by category name
     - department: Filter by department name
     - team: Filter by team name
-    - recommend_status: Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD)
+    - recommend_status: Filter by recommendation status (ADOPT/TRIAL/ASSESS/HOLD/EXIT)
     - stage: Filter by stage (DEVELOPING/UAT/PRODUCTION/DEPRECATED/RETIRED)
     - review_status: Filter by review status (PENDING/APPROVED/REJECTED)
     - tags: Filter by tags (comma-separated list of tag names)
@@ -85,10 +85,11 @@ async def get_solutions(
             "TRIAL",
             "ASSESS",
             "HOLD",
+            "EXIT",
         ]:
             raise HTTPException(
                 status_code=400,
-                detail="Invalid recommend_status. Must be one of: ADOPT, TRIAL, ASSESS, HOLD",
+                detail="Invalid recommend_status. Must be one of: ADOPT, TRIAL, ASSESS, HOLD, EXIT",
             )
         if stage and stage not in [
             "DEVELOPING",
