@@ -290,25 +290,25 @@ function radar_visualization(config) {
       const holdEntries = segmented[quadrant][3].length;
       const holdContentHeight = holdEntries * config.legend_line_height;
       
-      const baseOffset = -16;
+      const titleHeight = 16;
       const standardGap = 36;
       
-      let exitPosition = baseOffset;
+      let exitPosition = -titleHeight;
       
       if (!assessEntries && !holdEntries) {
         exitPosition += standardGap + standardGap;
       } else if (assessEntries && !holdEntries) {
-        exitPosition += standardGap + assessContentHeight + standardGap + standardGap;
+        exitPosition += standardGap + assessContentHeight + standardGap + 2*titleHeight;
       } else if (!assessEntries && holdEntries) {
-        exitPosition += standardGap + standardGap + holdContentHeight + standardGap;
+        exitPosition += standardGap + standardGap + holdContentHeight + 2*titleHeight;
       } else {
-        exitPosition += standardGap + assessContentHeight + standardGap + holdContentHeight + standardGap;
+        exitPosition += standardGap + assessContentHeight + standardGap + holdContentHeight + 2*titleHeight;
       }
       
       if (index === null) {
         dy = exitPosition;
       } else {
-        dy = exitPosition + (index * config.legend_line_height);
+        dy = exitPosition + titleHeight + (index * config.legend_line_height);
       }
     }
 
