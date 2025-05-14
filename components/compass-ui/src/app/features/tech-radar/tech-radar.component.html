@@ -16,6 +16,10 @@
 
   <div class="content">
     <div class="radar-container">
+        <div class="radar-controls">
+            <span class="control-label">Show EXIT</span>
+            <p-inputSwitch [(ngModel)]="showExitRing" (onChange)="onExitRingToggle()"></p-inputSwitch>
+        </div>
         <svg id="radar"></svg>
     </div>
 

@@ -253,6 +253,11 @@ function radar_visualization(config) {
 
   // draw rings
   for (var i = 0; i < rings.length; i++) {
+    // 如果是EXIT环（最后一个环）且entries中没有ring=4的条目，则跳过绘制
+    if (i === rings.length - 1 && !config.entries.some(entry => entry.ring === 4)) {
+      continue;
+    }
+    
     grid.append("circle")
       .attr("cx", 0)
       .attr("cy", 0)
@@ -260,7 +265,13 @@ function radar_visualization(config) {
       .style("fill", "none")
       .style("stroke", config.colors.grid)
       .style("stroke-width", 1);
+    
     if (config.print_layout) {
+      // 如果是EXIT环且entries中没有ring=4的条目，则不显示文字
+      if (i === rings.length - 1 && !config.entries.some(entry => entry.ring === 4)) {
+        continue;
+      }
+      
       grid.append("text")
         .text(config.rings[i].name)
         .attr("y", -rings[i].radius + 62)

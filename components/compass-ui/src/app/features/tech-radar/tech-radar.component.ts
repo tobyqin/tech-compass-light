@@ -1,10 +1,12 @@
 import { CommonModule } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MarkdownModule } from "ngx-markdown";
 import { BreadcrumbModule } from "primeng/breadcrumb";
 import { ButtonModule } from "primeng/button";
+import { InputSwitchModule } from "primeng/inputswitch";
 import { TagModule } from "primeng/tag";
 import { Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
@@ -51,7 +53,15 @@ interface RadarConfig {
 @Component({
   selector: "tc-tech-radar",
   standalone: true,
-  imports: [CommonModule, BreadcrumbModule, MarkdownModule, ButtonModule, TagModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BreadcrumbModule,
+    MarkdownModule,
+    ButtonModule,
+    TagModule,
+    InputSwitchModule
+  ],
   templateUrl: "./tech-radar.component.html",
   styleUrls: ["./tech-radar.component.scss"],
 })
@@ -85,6 +95,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
   // Initialize with default values that will be overridden by config
   faqs: Array<{ title: string; content: string }> = [];
   title: string = "Tech Radar";
+
+  showExitRing: boolean = false;
+  private currentData: TechRadarData | null = null;
 
   constructor(
     private http: HttpClient,
@@ -322,6 +335,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @param data Processed radar chart data
    */
   private visualizeRadar(data: TechRadarData): void {
+    this.currentData = data; // 保存当前数据以便切换时使用
     const svgElement = document.getElementById("radar");
     if (!svgElement) {
       return;
@@ -330,7 +344,9 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     try {
       svgElement.innerHTML = "";
       radar_visualization(this.createRadarConfig(data));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error visualizing radar:", error);
+    }
   }
 
   /**
@@ -339,19 +355,33 @@ export class TechRadarComponent implements OnInit, OnDestroy {
    * @returns Radar chart configuration object
    */
   private createRadarConfig(data: TechRadarData): any {
-    return {
+    // 过滤掉 EXIT 相关的条目
+    const filteredEntries = this.showExitRing 
+      ? data.entries 
+      : data.entries.filter(entry => entry.ring !== 4);  // 只过滤 EXIT 环的条目
+
+    // 创建环的配置
+    const ringConfigs = this.rings.map((ring) => ({
+      name: ring.name,
+      color: this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
+    }));
+
+    const config = {
       svg_id: "radar",
       scale: 0.92,
       title: this.title,
       date: data.date,
       quadrants: this.quadrants,
-      rings: this.rings.map((ring) => ({
-        name: ring.name,
-        color: this.RING_COLORS[ring.name as keyof typeof this.RING_COLORS],
-      })),
-      entries: data.entries,
+      rings: ringConfigs,  // 使用带颜色的环配置
+      entries: filteredEntries,
       print_layout: true,
+      colors: {
+        background: "#fff",
+        grid: "#dddde0",
+        inactive: "#ddd"
+      }
     };
+    return config;
   }
 
   /**
@@ -405,6 +435,15 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       );
       scripts.forEach((script) => script.remove());
       this.scriptsLoaded = false;
+    }
+  }
+
+  onExitRingToggle(): void {
+    // 重新渲染雷达图
+    const svgElement = document.getElementById("radar");
+    if (svgElement && this.currentData) {
+      svgElement.innerHTML = "";
+      this.visualizeRadar(this.currentData);
     }
   }
 }
