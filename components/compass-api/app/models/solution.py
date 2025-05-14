@@ -18,6 +18,7 @@ RecommendStatusEnum = Literal[
     "TRIAL",  # Worth pursuing, understand how it fits
     "ASSESS",  # Worth exploring with the goal of understanding how it will affect your enterprise
     "HOLD",  # Proceed with caution
+    "EXIT",  # Technology to be phased out completely
 ]
 
 # Adoption level values
@@ -106,7 +107,7 @@ class SolutionBase(BaseModel):
     stage: Optional[StageEnum] = Field(default="UAT", description="Development stage status")
     recommend_status: Optional[RecommendStatusEnum] = Field(
         default="ASSESS",
-        description="Strategic recommendation (ADOPT/TRIAL/ASSESS/HOLD)",
+        description="Strategic recommendation (ADOPT/TRIAL/ASSESS/HOLD/EXIT)",
     )
 
 

@@ -70,6 +70,9 @@ Content-Type: application/json
 #   },
 #   {
 #     "name": "HOLD"
+#   },
+#   {
+#     "name": "EXIT"
 #   }
 # ]
 
@@ -127,6 +130,7 @@ Content-Type: application/json
 #   * TRIAL = 2
 #   * ASSESS = 3
 #   * HOLD = 4
+#   * EXIT = 5
 # - label: Solution name
 # - active: Always true for approved solutions
 # - moved: Always 0 

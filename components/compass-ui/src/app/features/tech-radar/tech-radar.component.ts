@@ -19,7 +19,7 @@ declare const radar_visualization: any;
 // Data interface definition
 interface TechRadarEntry {
   quadrant: number; // Index of quadrant (0-3)
-  ring: number; // Index of ring (0-3)
+  ring: number; // Index of ring (0-4, representing ADOPT/TRIAL/ASSESS/HOLD/EXIT)
   label: string; // Technology name
   link: string; // Technology link
   active: boolean; // Active status
@@ -58,13 +58,14 @@ interface RadarConfig {
 export class TechRadarComponent implements OnInit, OnDestroy {
   // Constant definition
   private readonly MAX_QUADRANTS = 4; // Maximum number of quadrants
-  private readonly MAX_RINGS = 4; // Maximum number of rings
+  private readonly MAX_RINGS = 5; // Maximum number of rings (ADOPT, TRIAL, ASSESS, HOLD, EXIT)
   private readonly SCRIPT_LOAD_DELAY = 100; // Script load delay (milliseconds)
   private readonly RING_COLORS = {
     ADOPT: "#00af68",
     TRIAL: "#255be3",
     ASSESS: "#ffcd00",
     HOLD: "#ff3c28",
+    EXIT: "#8B0000",
   };
 
   // Component state
@@ -301,7 +302,8 @@ export class TechRadarComponent implements OnInit, OnDestroy {
     const quadrant = Number(entry.quadrant);
     const ring = Number(entry.ring);
 
-    if (quadrant >= this.MAX_QUADRANTS || ring >= this.MAX_RINGS) {
+    if (quadrant >= this.MAX_QUADRANTS || ring >= this.MAX_RINGS || ring < 0 || quadrant < 0) {
+      console.warn(`Invalid entry: quadrant=${quadrant}, ring=${ring}, label=${entry.label}`);
       return null;
     }
 

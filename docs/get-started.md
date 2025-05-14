@@ -46,7 +46,7 @@ Authentication uses JWT tokens with role-based permissions.
 Solutions have several classification fields:
 
 - Stage (DEVELOPING, UAT, PRODUCTION, DEPRECATED, RETIRED)
-- Recommendation Status (ADOPT, TRIAL, ASSESS, HOLD)
+- Recommendation Status (ADOPT, TRIAL, ASSESS, HOLD, EXIT)
 - Adoption Level (PILOT, TEAM, DEPARTMENT, ENTERPRISE, INDUSTRY)
 - Adoption Complexity (AUTOMATED, EASY, SUPPORT_REQUIRED)
 

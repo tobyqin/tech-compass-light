@@ -23,7 +23,7 @@ class TechRadarService:
         query = {"review_status": "APPROVED"}
         if group:
             query["group"] = group
-            
+
         # Get solutions matching query
         cursor = self.solutions.find(query)
 
@@ -33,6 +33,7 @@ class TechRadarService:
             "TRIAL": 1,
             "ASSESS": 2,
             "HOLD": 3,
+            "EXIT": 4,
         }
 
         entries: List[TechRadarEntry] = []
@@ -85,5 +86,13 @@ class TechRadarService:
         return [q for q in quadrants if q is not None]
 
     def get_radar_rings(self) -> List[Dict[str, str]]:
-        """Get radar rings in order (ADOPT, TRIAL, ASSESS, HOLD)."""
-        return [{"name": status} for status in RecommendStatusEnum.__args__]
+        """Get radar rings in order (ADOPT, TRIAL, ASSESS, HOLD, EXIT)."""
+        # Define rings in order from innermost to outermost
+        rings = [
+            "ADOPT",  # Innermost ring (0)
+            "TRIAL",  # (1)
+            "ASSESS",  # (2)
+            "HOLD",  # (3)
+            "EXIT",  # Outermost ring (4)
+        ]
+        return [{"name": ring} for ring in rings]

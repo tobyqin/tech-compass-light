@@ -68,6 +68,7 @@ export class EditSolutionComponent implements OnInit {
     { label: "TRIAL", value: "TRIAL" },
     { label: "ASSESS", value: "ASSESS" },
     { label: "HOLD", value: "HOLD" },
+    { label: "EXIT", value: "EXIT" }
   ];
 
   reviewStatusOptions = [

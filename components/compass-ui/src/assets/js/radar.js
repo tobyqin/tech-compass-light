@@ -71,10 +71,11 @@ function radar_visualization(config) {
   ];
 
   const rings = [
-    { radius: 130 },
-    { radius: 220 },
-    { radius: 310 },
-    { radius: 400 }
+    { radius: 100 },  // ADOPT (innermost)
+    { radius: 190 },  // TRIAL
+    { radius: 280 },  // ASSESS
+    { radius: 370 },  // EXIT
+    { radius: 460 }   // HOLD (outermost)
   ];
 
   function polar(cartesian) {
@@ -122,31 +123,35 @@ function radar_visualization(config) {
       t: quadrants[quadrant].radial_max * Math.PI,
       r: rings[ring].radius
     };
+
+    // Adjust padding based on ring position
+    var padding = ring === rings.length - 1 ? 25 : 15;
+    
     var cartesian_min = {
-      x: 15 * quadrants[quadrant].factor_x,
-      y: 15 * quadrants[quadrant].factor_y
+      x: padding * quadrants[quadrant].factor_x,
+      y: padding * quadrants[quadrant].factor_y
     };
     var cartesian_max = {
-      x: rings[3].radius * quadrants[quadrant].factor_x,
-      y: rings[3].radius * quadrants[quadrant].factor_y
+      x: rings[rings.length - 1].radius * quadrants[quadrant].factor_x,
+      y: rings[rings.length - 1].radius * quadrants[quadrant].factor_y
     };
     return {
       clipx: function(d) {
         var c = bounded_box(d, cartesian_min, cartesian_max);
-        var p = bounded_ring(polar(c), polar_min.r + 15, polar_max.r - 15);
+        var p = bounded_ring(polar(c), polar_min.r + padding, polar_max.r - padding);
         d.x = cartesian(p).x; // adjust data too!
         return d.x;
       },
       clipy: function(d) {
         var c = bounded_box(d, cartesian_min, cartesian_max);
-        var p = bounded_ring(polar(c), polar_min.r + 15, polar_max.r - 15);
+        var p = bounded_ring(polar(c), polar_min.r + padding, polar_max.r - padding);
         d.y = cartesian(p).y; // adjust data too!
         return d.y;
       },
       random: function() {
         return cartesian({
           t: random_between(polar_min.t, polar_max.t),
-          r: normal_between(polar_min.r, polar_max.r)
+          r: normal_between(polar_min.r + padding, polar_max.r - padding)
         });
       }
     }
@@ -166,8 +171,8 @@ function radar_visualization(config) {
   // partition entries according to segments
   var segmented = new Array(4);
   for (let quadrant = 0; quadrant < 4; quadrant++) {
-    segmented[quadrant] = new Array(4);
-    for (var ring = 0; ring < 4; ring++) {
+    segmented[quadrant] = new Array(5);  // Changed from 4 to 5 rings
+    for (var ring = 0; ring < 5; ring++) {  // Changed from 4 to 5 rings
       segmented[quadrant][ring] = [];
     }
   }
@@ -179,7 +184,7 @@ function radar_visualization(config) {
   // assign unique sequential id to each entry
   var id = 1;
   for (quadrant of [2,3,1,0]) {
-    for (var ring = 0; ring < 4; ring++) {
+    for (var ring = 0; ring < 5; ring++) {  // Changed from 4 to 5 rings
       var entries = segmented[quadrant][ring];
       entries.sort(function(a,b) { return a.label.localeCompare(b.label); })
       for (var i=0; i<entries.length; i++) {
@@ -274,11 +279,34 @@ function radar_visualization(config) {
   }
 
   function legend_transform(quadrant, ring, legendColumnWidth, index=null, previousHeight = null) {
+    // For 5 rings, create a balanced layout:
+    // Left column: ADOPT, TRIAL
+    // Right column: ASSESS, HOLD, EXIT
     const dx = ring < 2 ? 0 : legendColumnWidth;
     let dy = (index == null ? -16 : index * config.legend_line_height);
 
-    if (ring % 2 === 1) {
+    // Adjust vertical spacing
+    if (ring === 0) {
+      // ADOPT stays at top
+      dy = dy;
+    } else if (ring === 1) {
+      // TRIAL
       dy = dy + 36 + previousHeight;
+    } else if (ring === 2) {
+      // ASSESS starts at top of right column
+      dy = (index == null ? -16 : index * config.legend_line_height);
+    } else if (ring === 3) {
+      // HOLD
+      const assessItems = segmented[quadrant][2] || [];
+      const assessHeight = assessItems.length * config.legend_line_height;
+      dy = dy + assessHeight + 36;
+    } else if (ring === 4) {
+      // EXIT
+      const assessItems = segmented[quadrant][2] || [];
+      const holdItems = segmented[quadrant][3] || [];
+      const assessHeight = assessItems.length * config.legend_line_height;
+      const holdHeight = holdItems.length * config.legend_line_height;
+      dy = dy + assessHeight + holdHeight + 72; // Double spacing (36 * 2)
     }
 
     return translate(
@@ -330,7 +358,7 @@ function radar_visualization(config) {
         .style("font-size", "18px")
         .style("font-weight", "bold");
       let previousLegendHeight = 0
-      for (let ring = 0; ring < 4; ring++) {
+      for (let ring = 0; ring < 5; ring++) {
         if (ring % 2 === 0) {
           previousLegendHeight = 0
         }

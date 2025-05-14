@@ -10,8 +10,8 @@ class TechRadarEntry(BaseModel):
     quadrant: int = Field(ge=0, le=3, description="Radar quadrant (0-3)")
     ring: int = Field(
         ge=0,
-        le=3,
-        description="Ring position (0-3, representing adopt/trial/assess/hold)",
+        le=4,
+        description="Ring position (0-4, representing adopt/trial/assess/hold/exit from inner to outer)",
     )
     label: str = Field(..., description="Solution name")
     link: str = Field(..., description="Link to solution detail page")

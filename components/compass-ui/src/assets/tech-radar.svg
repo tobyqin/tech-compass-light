@@ -13,6 +13,8 @@
   <text x="400" y="100" fill="#64748b" font-size="14">TRIAL</text>
   <text x="200" y="300" fill="#64748b" font-size="14">HOLD</text>
   <text x="400" y="300" fill="#64748b" font-size="14">ADOPT</text>
+  <text x="400" y="300" fill="#64748b" font-size="14">EXIT</text>
+
 
   <!-- Technology dots and labels -->
   <g>

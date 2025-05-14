@@ -1,20 +1,19 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
-import { SolutionService } from "../../../core/services/solution.service";
-import { CategoryService } from "../../../core/services/category.service";
-import { Solution } from "../../../shared/interfaces/solution.interface";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ConfirmationService, MessageService } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { DropdownModule } from "primeng/dropdown";
+import { MessagesModule } from "primeng/messages";
 import { RatingModule } from "primeng/rating";
 import { TableModule } from "primeng/table";
-import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { DropdownModule } from "primeng/dropdown";
 import { TooltipModule } from "primeng/tooltip";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { MessagesModule } from "primeng/messages";
+import { CategoryService } from "../../../core/services/category.service";
+import { SolutionService } from "../../../core/services/solution.service";
+import { Solution } from "../../../shared/interfaces/solution.interface";
 
 type TagSeverity =
   | "success"
@@ -68,6 +67,7 @@ export class AllSolutionsComponent implements OnInit {
     { label: "TRIAL", value: "TRIAL" },
     { label: "ASSESS", value: "ASSESS" },
     { label: "HOLD", value: "HOLD" },
+    { label: "EXIT", value: "EXIT" },
   ];
 
   reviewStatusOptions = [
@@ -193,8 +193,9 @@ export class AllSolutionsComponent implements OnInit {
     const severityMap: { [key: string]: TagSeverity } = {
       ADOPT: "success",
       TRIAL: "info",
-      ASSESS: "warning",
-      HOLD: "danger",
+      ASSESS: "info",
+      HOLD: "warning",
+      EXIT: "danger",
       PENDING: "warning",
       APPROVED: "success",
       REJECTED: "danger",

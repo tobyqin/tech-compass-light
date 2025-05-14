@@ -3,7 +3,7 @@
   "faqs": [
     {
       "title": "What is the Tech Radar?",
-      "content": "The Tech Radar is a list of technologies, complemented by an assessment result, called *ring assignment*. \nWe use four rings with the following semantics:\n\n* **ADOPT** — Proven technologies recommended for wide use in production, with low risk.\n\n* **TRIAL** — Technologies successfully used in projects with some limitations identified. Moderate risk.\n\n* **ASSESS** — Promising technologies worth exploring through research and prototypes. Higher risk.\n\n* **HOLD** — Technologies not recommended for new projects but can be maintained in existing ones."
+      "content": "The Tech Radar is a list of technologies, complemented by an assessment result, called *ring assignment*. \nWe use five rings with the following semantics:\n\n* **ADOPT** — Proven technologies recommended for wide use in production, with low risk.\n\n* **TRIAL** — Technologies successfully used in projects with some limitations identified. Moderate risk.\n\n* **ASSESS** — Promising technologies worth exploring through research and prototypes. Higher risk.\n\n* **HOLD** — Technologies not recommended for new projects but can be maintained in existing ones.\n\n* **EXIT** — Technologies that should be phased out completely from all projects."
     },
     {
       "title": "What is the purpose?",
