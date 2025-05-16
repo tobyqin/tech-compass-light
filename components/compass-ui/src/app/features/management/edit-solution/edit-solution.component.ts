@@ -102,8 +102,61 @@ export class EditSolutionComponent implements OnInit {
 
   solutionForm: FormGroup;
 
+  private pendingStatusChange: {
+    field: string;
+    oldValue: string;
+    newValue: string;
+    justification: string;
+  } | null = null;
+
+  private initStatusChangeTracking() {
+    const recommendStatusControl = this.solutionForm.get('recommend_status');
+    const reviewStatusControl = this.solutionForm.get('review_status');
+
+    // Store original values
+    let originalRecommendStatus = recommendStatusControl?.value;
+    let originalReviewStatus = reviewStatusControl?.value;
+
+    recommendStatusControl?.valueChanges.subscribe(async (newValue) => {
+      if (newValue !== originalRecommendStatus) {
+        try {
+          const justification = await this.statusChangeDialog.show('Recommend Status', originalRecommendStatus, newValue);
+          this.pendingStatusChange = {
+            field: 'recommend_status',
+            oldValue: originalRecommendStatus,
+            newValue,
+            justification
+          };
+          originalRecommendStatus = newValue;
+        } catch {
+          // If dialog is cancelled, revert the value
+          recommendStatusControl?.setValue(originalRecommendStatus, { emitEvent: false });
+        }
+      }
+    });
+
+    reviewStatusControl?.valueChanges.subscribe(async (newValue) => {
+      if (newValue !== originalReviewStatus) {
+        try {
+          const justification = await this.statusChangeDialog.show('Review Status', originalReviewStatus, newValue);
+          this.pendingStatusChange = {
+            field: 'review_status',
+            oldValue: originalReviewStatus,
+            newValue,
+            justification
+          };
+          originalReviewStatus = newValue;
+        } catch {
+          // If dialog is cancelled, revert the value
+          reviewStatusControl?.setValue(originalReviewStatus, { emitEvent: false });
+        }
+      }
+    });
+  }
+
   private initialFormValues: {
     recommend_status: string | null;
+    review_status: string | null;
   } | null = null;
 
   constructor(
@@ -153,38 +206,6 @@ export class EditSolutionComponent implements OnInit {
       adoption_level: ["", Validators.required],
       adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],
-    });
-  }
-
-  private pendingStatusChange: {
-    field: string;
-    oldValue: string;
-    newValue: string;
-    justification: string;
-  } | null = null;
-
-  private initStatusChangeTracking() {
-    const recommendStatusControl = this.solutionForm.get('recommend_status');
-
-    // Store original values
-    let originalRecommendStatus = recommendStatusControl?.value;
-
-    recommendStatusControl?.valueChanges.subscribe(async (newValue) => {
-      if (newValue !== originalRecommendStatus) {
-        try {
-          const justification = await this.statusChangeDialog.show('Recommend Status', originalRecommendStatus, newValue);
-          this.pendingStatusChange = {
-            field: 'recommend_status',
-            oldValue: originalRecommendStatus,
-            newValue,
-            justification
-          };
-          originalRecommendStatus = newValue;
-        } catch {
-          // If dialog is cancelled, revert the value
-          recommendStatusControl?.setValue(originalRecommendStatus, { emitEvent: false });
-        }
-      }
     });
   }
 
@@ -256,7 +277,8 @@ export class EditSolutionComponent implements OnInit {
           
           // Store initial values after form is populated
           this.initialFormValues = {
-            recommend_status: formValue.recommend_status || null
+            recommend_status: formValue.recommend_status || null,
+            review_status: formValue.review_status || null
           };
           
           // Initialize status change tracking after form is populated
@@ -288,8 +310,10 @@ export class EditSolutionComponent implements OnInit {
 
   private hasStatusChanged(): boolean {
     if (!this.initialFormValues) return false;
-    const currentStatus = this.solutionForm.get('recommend_status')?.value;
-    return currentStatus !== this.initialFormValues.recommend_status;
+    const currentRecommendStatus = this.solutionForm.get('recommend_status')?.value;
+    const currentReviewStatus = this.solutionForm.get('review_status')?.value;
+    return currentRecommendStatus !== this.initialFormValues.recommend_status || 
+           currentReviewStatus !== this.initialFormValues.review_status;
   }
 
   onSubmit() {
@@ -325,7 +349,13 @@ export class EditSolutionComponent implements OnInit {
         solutionData.status_change_justification = this.pendingStatusChange.justification;
       }
 
-      this.solutionService.updateSolution(this.slug, solutionData).subscribe({
+      // Create headers object for status change justification
+      const headers: { [key: string]: string } = {};
+      if (this.pendingStatusChange) {
+        headers['X-Status-Change-Justification'] = this.pendingStatusChange.justification;
+      }
+
+      this.solutionService.updateSolution(this.slug, solutionData, headers).subscribe({
         next: (response) => {
           if (response.success) {
             this.messageService.add({

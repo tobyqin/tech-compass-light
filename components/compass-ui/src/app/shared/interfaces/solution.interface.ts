@@ -42,6 +42,7 @@ export interface Solution {
   tags: string[];
   pros?: string[];
   cons?: string[];
+  review_status: "PENDING" | "APPROVED" | "REJECTED";
   recommend_status: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD" | "EXIT";
   stage: "DEVELOPING" | "UAT" | "PRODUCTION" | "DEPRECATED" | "RETIRED";
   adoption_level: "PILOT" | "TEAM" | "DEPARTMENT" | "ENTERPRISE" | "INDUSTRY";
