@@ -352,6 +352,7 @@ class SolutionService:
         existing_solution: SolutionInDB,
         solution_update: SolutionUpdate,
         username: Optional[str] = None,
+        status_change_justification: Optional[str] = None,
     ) -> Optional[SolutionInDB]:
         """Update a solution
 
@@ -359,6 +360,7 @@ class SolutionService:
             existing_solution: The existing solution to update
             solution_update: The update data
             username: The username of the user making the update
+            status_change_justification: Optional justification for status changes
 
         Returns:
             Updated solution if successful, None otherwise
@@ -389,6 +391,13 @@ class SolutionService:
 
                 # record change if update_dict is not empty
                 if update_dict:
+                    # If there's a status change and justification, use it as the change summary
+                    change_summary = None
+                    if status_change_justification and (
+                        "recommend_status" in update_dict or "review_status" in update_dict
+                    ):
+                        change_summary = "Status changed"
+
                     await self.history_service.record_object_change(
                         object_type="solution",
                         object_id=str(existing_solution.id),
@@ -397,19 +406,27 @@ class SolutionService:
                         username=username or "system",
                         changes=update_dict,
                         old_values=old_values,
+                        change_summary=change_summary,
+                        status_change_justification=status_change_justification,
                     )
 
             return updated_solution
         return None
 
     async def update_solution_by_slug(
-        self, slug: str, solution_update: SolutionUpdate, username: Optional[str] = None
+        self,
+        slug: str,
+        solution_update: SolutionUpdate,
+        username: Optional[str] = None,
+        status_change_justification: Optional[str] = None,
     ) -> Optional[SolutionInDB]:
         """Update a solution by slug"""
         solution = await self.get_solution_by_slug(slug)
         if not solution:
             return None
-        return await self.update_solution(solution, solution_update, username)
+        return await self.update_solution(
+            solution, solution_update, username, status_change_justification=status_change_justification
+        )
 
     async def delete_solution(self, solution_id: str, username: Optional[str] = None) -> bool:
         """Delete a solution"""

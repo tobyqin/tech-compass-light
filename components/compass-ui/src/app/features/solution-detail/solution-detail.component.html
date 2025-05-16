@@ -97,6 +97,7 @@
                       <tr>
                         <th>Date</th>
                         <th>Field</th>
+                        <th>Justification</th>
                         <th>Old Value</th>
                         <th>New Value</th>
                         <th>Changed By</th>
@@ -107,6 +108,7 @@
                         <tr *ngIf="field.field_name === 'recommend_status' || field.field_name === 'review_status'">
                           <td>{{ record.created_at | date:'medium' }}</td>
                           <td>{{ getFieldDisplayName(field.field_name) }}</td>
+                          <td>{{ record.status_change_justification || 'No justification provided' }}</td>
                           <td>
                             <p-tag *ngIf="field.field_name === 'recommend_status'"
                               [value]="formatValue(field.old_value)"
