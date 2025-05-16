@@ -97,10 +97,10 @@
                       <tr>
                         <th>Date</th>
                         <th>Field</th>
+                        <th>Justification</th>
                         <th>Old Value</th>
                         <th>New Value</th>
                         <th>Changed By</th>
-                        <th>Status Change Justification</th>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-record>
@@ -108,6 +108,7 @@
                         <tr *ngIf="field.field_name === 'recommend_status' || field.field_name === 'review_status'">
                           <td>{{ record.created_at | date:'medium' }}</td>
                           <td>{{ getFieldDisplayName(field.field_name) }}</td>
+                          <td>{{ record.status_change_justification || 'No justification provided' }}</td>
                           <td>
                             <p-tag *ngIf="field.field_name === 'recommend_status'"
                               [value]="formatValue(field.old_value)"
@@ -127,7 +128,6 @@
                             </p-tag>
                           </td>
                           <td>{{ record.created_by }}</td>
-                          <td>{{ record.status_change_justification || 'No justification provided' }}</td>
                         </tr>
                       </ng-container>
                     </ng-template>
