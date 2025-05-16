@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
@@ -130,11 +130,22 @@ export class SolutionService {
 
   updateSolution(
     slug: string,
-    solution: Partial<Solution>
+    solution: Partial<Solution>,
+    headers: { [key: string]: string } = {}
   ): Observable<StandardResponse<Solution>> {
+    // Move status_change_justification to header
+    let solutionData = { ...solution };
+    let httpHeaders = new HttpHeaders(headers);
+    
+    if (solutionData.status_change_justification) {
+      httpHeaders = httpHeaders.set('X-Status-Change-Justification', solutionData.status_change_justification);
+      delete solutionData.status_change_justification;  // Remove from body since it's in header
+    }
+
     return this.http.put<StandardResponse<Solution>>(
       `${this.apiUrl}${slug}`,
-      solution
+      solutionData,
+      { headers: httpHeaders }
     );
   }
 

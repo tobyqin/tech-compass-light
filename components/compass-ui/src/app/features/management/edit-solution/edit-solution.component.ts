@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +11,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { take } from "rxjs/operators";
 import { AuthService } from "../../../core/services/auth.service";
+import { StatusChangeDialogComponent } from './status-change-dialog.component';
 
 import { ButtonModule } from "primeng/button";
 import { ChipsModule } from "primeng/chips";
@@ -44,10 +45,13 @@ import { Solution } from "../../../shared/interfaces/solution.interface";
     InputTextareaModule,
     InputNumberModule,
     MessagesModule,
+    StatusChangeDialogComponent
   ],
-  providers: [MessageService],
+  providers: [MessageService]
 })
 export class EditSolutionComponent implements OnInit {
+  @ViewChild('statusChangeDialog') statusChangeDialog!: StatusChangeDialogComponent;
+
   categories: { name: string }[] = [];
   departments: string[] = [];
   groups: Group[] = [];
@@ -98,6 +102,10 @@ export class EditSolutionComponent implements OnInit {
 
   solutionForm: FormGroup;
 
+  private initialFormValues: {
+    recommend_status: string | null;
+  } | null = null;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -145,6 +153,38 @@ export class EditSolutionComponent implements OnInit {
       adoption_level: ["", Validators.required],
       adoption_complexity: ["", Validators.required],
       adoption_user_count: [0, [Validators.required, Validators.min(0)]],
+    });
+  }
+
+  private pendingStatusChange: {
+    field: string;
+    oldValue: string;
+    newValue: string;
+    justification: string;
+  } | null = null;
+
+  private initStatusChangeTracking() {
+    const recommendStatusControl = this.solutionForm.get('recommend_status');
+
+    // Store original values
+    let originalRecommendStatus = recommendStatusControl?.value;
+
+    recommendStatusControl?.valueChanges.subscribe(async (newValue) => {
+      if (newValue !== originalRecommendStatus) {
+        try {
+          const justification = await this.statusChangeDialog.show('Recommend Status', originalRecommendStatus, newValue);
+          this.pendingStatusChange = {
+            field: 'recommend_status',
+            oldValue: originalRecommendStatus,
+            newValue,
+            justification
+          };
+          originalRecommendStatus = newValue;
+        } catch {
+          // If dialog is cancelled, revert the value
+          recommendStatusControl?.setValue(originalRecommendStatus, { emitEvent: false });
+        }
+      }
     });
   }
 
@@ -213,6 +253,17 @@ export class EditSolutionComponent implements OnInit {
             cons: response.data.cons?.join("\n") || "",
           };
           this.solutionForm.patchValue(formValue);
+          
+          // Store initial values after form is populated
+          this.initialFormValues = {
+            recommend_status: formValue.recommend_status || null
+          };
+          
+          // Initialize status change tracking after form is populated
+          setTimeout(() => {
+            this.initStatusChangeTracking();
+          });
+          
           this.loading = false;
         } else {
           this.messageService.add({
@@ -233,6 +284,12 @@ export class EditSolutionComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  private hasStatusChanged(): boolean {
+    if (!this.initialFormValues) return false;
+    const currentStatus = this.solutionForm.get('recommend_status')?.value;
+    return currentStatus !== this.initialFormValues.recommend_status;
   }
 
   onSubmit() {
@@ -263,6 +320,11 @@ export class EditSolutionComponent implements OnInit {
         };
       }
 
+      // Add status_change_justification if there's a pending status change
+      if (this.pendingStatusChange) {
+        solutionData.status_change_justification = this.pendingStatusChange.justification;
+      }
+
       this.solutionService.updateSolution(this.slug, solutionData).subscribe({
         next: (response) => {
           if (response.success) {
@@ -272,6 +334,8 @@ export class EditSolutionComponent implements OnInit {
               detail: "Solution updated successfully",
               life: 3000,
             });
+            // Reset pending status change after successful update
+            this.pendingStatusChange = null;
           } else {
             this.messageService.add({
               severity: "error",

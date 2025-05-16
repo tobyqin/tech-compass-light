@@ -1,5 +1,9 @@
 <div class="edit-solution">
-  <h1>Edit Item</h1>
+  <app-status-change-dialog #statusChangeDialog></app-status-change-dialog>
+  
+  <div class="page-header">
+    <h1>Edit Item</h1>
+  </div>
 
   <form [formGroup]="solutionForm" (ngSubmit)="onSubmit()" class="p-fluid">
     <div class="section-card">

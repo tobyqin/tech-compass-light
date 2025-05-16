@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from app.models.common import AuditModel
+from bson import ObjectId
 from pydantic import BaseModel, Field
 
 
@@ -25,12 +26,18 @@ class ChangeField(BaseModel):
 class HistoryRecord(AuditModel):
     """Model to track changes to objects"""
 
+    id: str = Field(default_factory=lambda: str(ObjectId()), alias="_id")
     object_type: str = Field(..., description="Type of object that was changed (e.g., 'solution', 'category')")
     object_id: str = Field(..., description="ID of the object that was changed")
     object_name: str = Field(..., description="Name of the object for easy reference")
     change_type: ChangeType = Field(..., description="Type of change (create, update, delete)")
     changed_fields: List[ChangeField] = Field(default_factory=list, description="List of fields that were changed")
     change_summary: str = Field(..., description="Summary of changes made")
+    status_change_justification: Optional[str] = Field(None, description="Justification for the change")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_by: str
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_by: str
 
     @classmethod
     def create_record(
@@ -43,6 +50,7 @@ class HistoryRecord(AuditModel):
         changes: Dict[str, Any] = None,
         old_values: Dict[str, Any] = None,
         change_summary: Optional[str] = None,
+        status_change_justification: Optional[str] = None,
     ) -> "HistoryRecord":
         """
         Create a history record for an object change
@@ -56,10 +64,12 @@ class HistoryRecord(AuditModel):
             changes: Dictionary of changed fields and their new values
             old_values: Dictionary of old values for the changed fields
             change_summary: Optional summary of changes
+            status_change_justification: Optional justification for the change
 
         Returns:
             A new HistoryRecord instance
         """
+        now = datetime.utcnow()
         changed_fields = []
 
         if changes and change_type != ChangeType.DELETE:
@@ -86,7 +96,10 @@ class HistoryRecord(AuditModel):
             change_type=change_type,
             changed_fields=changed_fields,
             change_summary=change_summary,
+            status_change_justification=status_change_justification,
+            created_at=now,
             created_by=username,
+            updated_at=now,
             updated_by=username,
         )
 

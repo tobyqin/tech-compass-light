@@ -146,6 +146,7 @@ class HistoryService:
         changes: Optional[Dict] = None,
         old_values: Optional[Dict] = None,
         change_summary: Optional[str] = None,
+        status_change_justification: Optional[str] = None,
     ) -> str:
         """
         Record a change to an object
@@ -159,6 +160,7 @@ class HistoryService:
             changes: Dictionary of changed fields and their new values
             old_values: Dictionary of old values for the changed fields
             change_summary: Optional summary of changes
+            status_change_justification: Optional justification for status changes
 
         Returns:
             The ID of the created history record
@@ -172,5 +174,6 @@ class HistoryService:
             changes=changes,
             old_values=old_values,
             change_summary=change_summary,
+            status_change_justification=status_change_justification,
         )
         return await self.create_history_record(record)
