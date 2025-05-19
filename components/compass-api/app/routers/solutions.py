@@ -11,7 +11,7 @@ from app.services.history_service import HistoryService
 from app.services.rating_service import RatingService
 from app.services.solution_service import SolutionService
 from app.services.user_service import UserService
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import Response
 
 logger = logging.getLogger(__name__)
@@ -212,7 +212,6 @@ async def update_solution(
     solution_update: SolutionUpdate,
     current_user: User = Depends(get_current_active_user),
     solution_service: SolutionService = Depends(),
-    status_change_justification: str = Header(None, alias="X-Status-Change-Justification"),
 ) -> Any:
     """Update a solution by slug.
 
@@ -243,8 +242,11 @@ async def update_solution(
                 detail="Only superusers can modify the review status",
             )
 
+        # Get status change justifications from the request body
+        status_change_justifications = solution_update.status_change_justifications or {}
+
         solution_in_db = await solution_service.update_solution_by_slug(
-            slug, solution_update, current_user.username, status_change_justification=status_change_justification
+            slug, solution_update, current_user.username, status_change_justifications=status_change_justifications
         )
         return StandardResponse.of(solution_in_db)
     except HTTPException as e:

@@ -10,17 +10,18 @@ from pydantic import BaseModel, Field
 class ChangeType(str, Enum):
     """Type of change made to an object"""
 
-    CREATE = "create"
-    UPDATE = "update"
-    DELETE = "delete"
+    CREATE = "CREATE"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
 
 
-class ChangeField(BaseModel):
+class ChangedField(BaseModel):
     """Represents a field that was changed"""
 
-    field_name: str = Field(..., description="Name of the field that was changed")
-    old_value: Optional[Any] = Field(None, description="Previous value of the field")
-    new_value: Optional[Any] = Field(None, description="New value of the field")
+    field_name: str
+    old_value: Any = None
+    new_value: Any = None
+    status_change_justification: Optional[str] = None
 
 
 class HistoryRecord(AuditModel):
@@ -31,9 +32,8 @@ class HistoryRecord(AuditModel):
     object_id: str = Field(..., description="ID of the object that was changed")
     object_name: str = Field(..., description="Name of the object for easy reference")
     change_type: ChangeType = Field(..., description="Type of change (create, update, delete)")
-    changed_fields: List[ChangeField] = Field(default_factory=list, description="List of fields that were changed")
-    change_summary: str = Field(..., description="Summary of changes made")
-    status_change_justification: Optional[str] = Field(None, description="Justification for the change")
+    changed_fields: List[ChangedField] = Field(default_factory=list, description="List of fields that were changed")
+    change_summary: Optional[str] = Field(None, description="Summary of changes made")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     created_by: str
     updated_at: datetime = Field(default_factory=datetime.utcnow)
@@ -77,7 +77,14 @@ class HistoryRecord(AuditModel):
                 old_value = old_values.get(field_name) if old_values else None
                 # Only record if the value actually changed
                 if old_value != new_value:
-                    changed_fields.append(ChangeField(field_name=field_name, old_value=old_value, new_value=new_value))
+                    changed_fields.append(
+                        ChangedField(
+                            field_name=field_name,
+                            old_value=old_value,
+                            new_value=new_value,
+                            status_change_justification=status_change_justification,
+                        )
+                    )
 
         # Generate a default change summary if none provided
         if not change_summary:
@@ -96,7 +103,6 @@ class HistoryRecord(AuditModel):
             change_type=change_type,
             changed_fields=changed_fields,
             change_summary=change_summary,
-            status_change_justification=status_change_justification,
             created_at=now,
             created_by=username,
             updated_at=now,

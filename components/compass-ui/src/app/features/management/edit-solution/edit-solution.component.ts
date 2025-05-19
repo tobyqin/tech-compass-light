@@ -102,12 +102,12 @@ export class EditSolutionComponent implements OnInit {
 
   solutionForm: FormGroup;
 
-  private pendingStatusChange: {
+  private pendingStatusChanges: {
     field: string;
     oldValue: string;
     newValue: string;
     justification: string;
-  } | null = null;
+  }[] = [];
 
   private initStatusChangeTracking() {
     const recommendStatusControl = this.solutionForm.get('recommend_status');
@@ -121,12 +121,15 @@ export class EditSolutionComponent implements OnInit {
       if (newValue !== originalRecommendStatus) {
         try {
           const justification = await this.statusChangeDialog.show('Recommend Status', originalRecommendStatus, newValue);
-          this.pendingStatusChange = {
+          // Find and remove any existing recommend_status change
+          this.pendingStatusChanges = this.pendingStatusChanges.filter(change => change.field !== 'recommend_status');
+          // Add the new change
+          this.pendingStatusChanges.push({
             field: 'recommend_status',
             oldValue: originalRecommendStatus,
             newValue,
             justification
-          };
+          });
           originalRecommendStatus = newValue;
         } catch {
           // If dialog is cancelled, revert the value
@@ -139,12 +142,15 @@ export class EditSolutionComponent implements OnInit {
       if (newValue !== originalReviewStatus) {
         try {
           const justification = await this.statusChangeDialog.show('Review Status', originalReviewStatus, newValue);
-          this.pendingStatusChange = {
+          // Find and remove any existing review_status change
+          this.pendingStatusChanges = this.pendingStatusChanges.filter(change => change.field !== 'review_status');
+          // Add the new change
+          this.pendingStatusChanges.push({
             field: 'review_status',
             oldValue: originalReviewStatus,
             newValue,
             justification
-          };
+          });
           originalReviewStatus = newValue;
         } catch {
           // If dialog is cancelled, revert the value
@@ -344,16 +350,11 @@ export class EditSolutionComponent implements OnInit {
         };
       }
 
-      // Add status_change_justification if there's a pending status change
-      if (this.pendingStatusChange) {
-        solutionData.status_change_justification = this.pendingStatusChange.justification;
-      }
-
-      // Create headers object for status change justification
+      // Create headers object for status change justifications
       const headers: { [key: string]: string } = {};
-      if (this.pendingStatusChange) {
-        headers['X-Status-Change-Justification'] = this.pendingStatusChange.justification;
-      }
+      this.pendingStatusChanges.forEach(change => {
+        headers[`X-Status-Change-Justification-${change.field}`] = change.justification;
+      });
 
       this.solutionService.updateSolution(this.slug, solutionData, headers).subscribe({
         next: (response) => {
@@ -364,8 +365,8 @@ export class EditSolutionComponent implements OnInit {
               detail: "Solution updated successfully",
               life: 3000,
             });
-            // Reset pending status change after successful update
-            this.pendingStatusChange = null;
+            // Reset pending status changes after successful update
+            this.pendingStatusChanges = [];
           } else {
             this.messageService.add({
               severity: "error",

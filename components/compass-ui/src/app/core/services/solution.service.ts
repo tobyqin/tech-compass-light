@@ -133,13 +133,22 @@ export class SolutionService {
     solution: Partial<Solution>,
     headers: { [key: string]: string } = {}
   ): Observable<StandardResponse<Solution>> {
-    // Move status_change_justification to header
     let solutionData = { ...solution };
     let httpHeaders = new HttpHeaders(headers);
     
-    if (solutionData.status_change_justification) {
-      httpHeaders = httpHeaders.set('X-Status-Change-Justification', solutionData.status_change_justification);
-      delete solutionData.status_change_justification;  // Remove from body since it's in header
+    // Extract status change justifications from headers
+    const justifications: { [key: string]: string } = {};
+    Object.keys(headers).forEach(key => {
+      if (key.startsWith('X-Status-Change-Justification-')) {
+        const field = key.replace('X-Status-Change-Justification-', '');
+        justifications[field] = headers[key];
+        delete headers[key];
+      }
+    });
+
+    // Add justifications to the request body
+    if (Object.keys(justifications).length > 0) {
+      solutionData.status_change_justifications = justifications;
     }
 
     return this.http.put<StandardResponse<Solution>>(
