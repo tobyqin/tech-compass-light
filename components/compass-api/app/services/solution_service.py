@@ -254,14 +254,15 @@ class SolutionService:
 
         # Record history for creation
         if created_solution:
+            changed_fields = [{"field_name": k, "old_value": None, "new_value": v} for k, v in solution_dict.items()]
             await self.history_service.record_object_change(
                 object_type="solution",
                 object_id=str(result.inserted_id),
                 object_name=created_solution.name,
                 change_type=ChangeType.CREATE,
                 username=username or "system",
-                changes=solution_dict,
-                old_values=None,
+                changed_fields=changed_fields,
+                change_summary=f"Created solution '{created_solution.name}'",
             )
 
         return created_solution
