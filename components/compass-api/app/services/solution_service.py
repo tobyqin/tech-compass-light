@@ -383,6 +383,12 @@ class SolutionService:
         # Process common update operations
         await self._process_solution_update(update_dict, username, existing_solution)
 
+        # 如果 recommend_status 发生变化，更新时间戳
+        if "recommend_status" in update_dict and update_dict["recommend_status"] != getattr(
+            existing_solution, "recommend_status"
+        ):
+            update_dict["recommen_status_updated_at"] = datetime.utcnow()
+
         result = await self.collection.update_one({"_id": existing_solution.id}, {"$set": update_dict})
         if result.modified_count:
             updated_solution = await self.get_solution_by_id(str(existing_solution.id))
