@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from app.models.common import AuditModel
-from bson import ObjectId
 from pydantic import BaseModel, Field
 
 
@@ -27,17 +26,12 @@ class ChangedField(BaseModel):
 class HistoryRecord(AuditModel):
     """Model to track changes to objects"""
 
-    id: str = Field(default_factory=lambda: str(ObjectId()), alias="_id")
     object_type: str = Field(..., description="Type of object that was changed (e.g., 'solution', 'category')")
     object_id: str = Field(..., description="ID of the object that was changed")
     object_name: str = Field(..., description="Name of the object for easy reference")
     change_type: ChangeType = Field(..., description="Type of change (create, update, delete)")
     changed_fields: List[ChangedField] = Field(default_factory=list, description="List of fields that were changed")
     change_summary: Optional[str] = Field(None, description="Summary of changes made")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    created_by: str
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_by: str
 
     @classmethod
     def create_record(
@@ -69,7 +63,6 @@ class HistoryRecord(AuditModel):
         Returns:
             A new HistoryRecord instance
         """
-        now = datetime.utcnow()
         changed_fields = []
 
         if changes and change_type != ChangeType.DELETE:
@@ -103,10 +96,6 @@ class HistoryRecord(AuditModel):
             change_type=change_type,
             changed_fields=changed_fields,
             change_summary=change_summary,
-            created_at=now,
-            created_by=username,
-            updated_at=now,
-            updated_by=username,
         )
 
 
