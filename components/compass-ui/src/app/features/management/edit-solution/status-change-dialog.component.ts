@@ -60,7 +60,7 @@ type TagSeverity = 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'co
         <button 
           pButton 
           label="Confirm" 
-          [disabled]="!status_change_justification?.trim()"
+          [disabled]="!status_change_justification.trim()"
           (click)="onConfirm()">
         </button>
       </ng-template>
