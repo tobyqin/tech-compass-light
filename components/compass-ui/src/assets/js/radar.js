@@ -538,7 +538,11 @@ function radar_visualization(config) {
     }
 
     // blip shape
-    if (d.moved == 1) {
+    if (d.is_new_or_recommend_status_changed) {
+      blip.append("path")
+        .attr("d", d3.symbol().type(d3.symbolStar).size(200))
+        .style("fill", d.color);
+    } else if (d.moved == 1) {
       blip.append("path")
         .attr("d", "M -11,5 11,5 0,-13 z") // triangle pointing up
         .style("fill", d.color);
