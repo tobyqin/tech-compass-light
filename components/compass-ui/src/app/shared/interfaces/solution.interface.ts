@@ -62,7 +62,6 @@ export interface Solution {
   upskilling?: string;
   provider_type: "VENDOR" | "INTERNAL";
   adoption_complexity: "AUTOMATED" | "EASY" | "SUPPORT_REQUIRED";
-  status_change_justification?: string;
   status_change_justifications?: { [key: string]: string };
 }
 
