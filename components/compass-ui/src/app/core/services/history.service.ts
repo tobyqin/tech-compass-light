@@ -18,6 +18,7 @@ export interface HistoryRecord {
   change_type: "create" | "update" | "delete";
   changed_fields: ChangeField[];
   change_summary: string;
+  status_change_justification: string;
   created_at: string;
   created_by: string;
   updated_at: string;

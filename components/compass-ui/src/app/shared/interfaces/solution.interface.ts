@@ -42,6 +42,7 @@ export interface Solution {
   tags: string[];
   pros?: string[];
   cons?: string[];
+  review_status: "PENDING" | "APPROVED" | "REJECTED";
   recommend_status: "ADOPT" | "TRIAL" | "ASSESS" | "HOLD" | "EXIT";
   stage: "DEVELOPING" | "UAT" | "PRODUCTION" | "DEPRECATED" | "RETIRED";
   adoption_level: "PILOT" | "TEAM" | "DEPARTMENT" | "ENTERPRISE" | "INDUSTRY";
@@ -61,6 +62,7 @@ export interface Solution {
   upskilling?: string;
   provider_type: "VENDOR" | "INTERNAL";
   adoption_complexity: "AUTOMATED" | "EASY" | "SUPPORT_REQUIRED";
+  status_change_justifications?: { [key: string]: string };
 }
 
 export interface SolutionResponse {

@@ -14,12 +14,13 @@ class ChangeType(str, Enum):
     DELETE = "delete"
 
 
-class ChangeField(BaseModel):
+class ChangedField(BaseModel):
     """Represents a field that was changed"""
 
-    field_name: str = Field(..., description="Name of the field that was changed")
-    old_value: Optional[Any] = Field(None, description="Previous value of the field")
-    new_value: Optional[Any] = Field(None, description="New value of the field")
+    field_name: str
+    old_value: Any = None
+    new_value: Any = None
+    status_change_justification: Optional[str] = None
 
 
 class HistoryRecord(AuditModel):
@@ -29,8 +30,8 @@ class HistoryRecord(AuditModel):
     object_id: str = Field(..., description="ID of the object that was changed")
     object_name: str = Field(..., description="Name of the object for easy reference")
     change_type: ChangeType = Field(..., description="Type of change (create, update, delete)")
-    changed_fields: List[ChangeField] = Field(default_factory=list, description="List of fields that were changed")
-    change_summary: str = Field(..., description="Summary of changes made")
+    changed_fields: List[ChangedField] = Field(default_factory=list, description="List of fields that were changed")
+    change_summary: Optional[str] = Field(None, description="Summary of changes made")
 
     @classmethod
     def create_record(
@@ -43,6 +44,7 @@ class HistoryRecord(AuditModel):
         changes: Dict[str, Any] = None,
         old_values: Dict[str, Any] = None,
         change_summary: Optional[str] = None,
+        status_change_justification: Optional[str] = None,
     ) -> "HistoryRecord":
         """
         Create a history record for an object change
@@ -56,6 +58,7 @@ class HistoryRecord(AuditModel):
             changes: Dictionary of changed fields and their new values
             old_values: Dictionary of old values for the changed fields
             change_summary: Optional summary of changes
+            status_change_justification: Optional justification for the change
 
         Returns:
             A new HistoryRecord instance
@@ -67,7 +70,14 @@ class HistoryRecord(AuditModel):
                 old_value = old_values.get(field_name) if old_values else None
                 # Only record if the value actually changed
                 if old_value != new_value:
-                    changed_fields.append(ChangeField(field_name=field_name, old_value=old_value, new_value=new_value))
+                    changed_fields.append(
+                        ChangedField(
+                            field_name=field_name,
+                            old_value=old_value,
+                            new_value=new_value,
+                            status_change_justification=status_change_justification,
+                        )
+                    )
 
         # Generate a default change summary if none provided
         if not change_summary:
@@ -86,8 +96,6 @@ class HistoryRecord(AuditModel):
             change_type=change_type,
             changed_fields=changed_fields,
             change_summary=change_summary,
-            created_by=username,
-            updated_by=username,
         )
 
 

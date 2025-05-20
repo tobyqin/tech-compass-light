@@ -242,7 +242,12 @@ async def update_solution(
                 detail="Only superusers can modify the review status",
             )
 
-        solution_in_db = await solution_service.update_solution_by_slug(slug, solution_update, current_user.username)
+        # Get status change justifications from the request body
+        status_change_justifications = solution_update.status_change_justifications or {}
+
+        solution_in_db = await solution_service.update_solution_by_slug(
+            slug, solution_update, current_user.username, status_change_justifications=status_change_justifications
+        )
         return StandardResponse.of(solution_in_db)
     except HTTPException as e:
         raise e
