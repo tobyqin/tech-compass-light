@@ -101,9 +101,9 @@ class HistoryService:
                 if "updated_at" not in record:
                     record["updated_at"] = record.get("created_at", datetime.utcnow())
 
-                # Convert change_type to uppercase for enum compatibility
-                if "change_type" in record:
-                    record["change_type"] = record["change_type"].upper()
+                # Convert change_type to lowercase for enum compatibility
+                if "change_type" in record and isinstance(record["change_type"], str):
+                    record["change_type"] = record["change_type"].lower()
 
                 # Convert changed_fields to proper format if needed
                 if "changed_fields" in record:
