@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List
 
 from app.core.database import get_database
@@ -50,14 +51,27 @@ class TechRadarService:
             if category.radar_quadrant < 0:
                 continue
 
+            # 判断逻辑：优先 recommen_status_updated_at，其次 created_at
+            is_new_or_recommend_status_changed = False
+            now = datetime.utcnow()
+            rs_updated_at = solution.get("recommen_status_updated_at")
+            if rs_updated_at:
+                if (now - rs_updated_at).days < 14:
+                    is_new_or_recommend_status_changed = True
+            else:
+                created_at = solution.get("created_at")
+                if created_at and (now - created_at).days < 14:
+                    is_new_or_recommend_status_changed = True
+
             # Create radar entry
             entry = TechRadarEntry(
                 quadrant=category.radar_quadrant,
                 ring=status_to_ring[solution["recommend_status"]],
                 label=solution["name"],
                 link=f"/tech-radar/items/{solution.get('slug', '')}",
-                active=True,  # Always true for approved solutions
-                moved=0,  # Always 0 as per requirements
+                active=True,
+                moved=0,
+                is_new_or_recommend_status_changed=is_new_or_recommend_status_changed,
             )
             entries.append(entry)
 
