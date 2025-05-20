@@ -10,9 +10,9 @@ from pydantic import BaseModel, Field
 class ChangeType(str, Enum):
     """Type of change made to an object"""
 
-    CREATE = "CREATE"
-    UPDATE = "UPDATE"
-    DELETE = "DELETE"
+    CREATE = "create"
+    UPDATE = "update"
+    DELETE = "delete"
 
 
 class ChangedField(BaseModel):
