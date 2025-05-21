@@ -19,23 +19,56 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    let req = request;
-    // 只要是发往后端 API 的请求，都加 withCredentials 和 token
-    if (request.url.startsWith(this.apiUrl)) {
-      req = request.clone({ withCredentials: true });
+    // Only add token for specific APIs
+    if (this.shouldAddToken(request)) {
       const token = this.getAuthToken();
       if (token) {
-        req = req.clone({
+        request = request.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`,
           },
         });
       }
     }
-    return next.handle(req);
+
+    return next.handle(request);
   }
 
   private getAuthToken(): string | null {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  private shouldAddToken(request: HttpRequest<unknown>): boolean {
+    const url = request.url;
+    const method = request.method.toLowerCase();
+
+    // Always add token for protected endpoints
+    if (
+      url === `${this.apiUrl}/users/me` ||
+      url.includes("/solutions/my/") ||
+      url.includes("/comments/my/") ||
+      url.includes("/ratings/my/") ||
+      url.includes("/site-config")
+    ) {
+      return true;
+    }
+
+    // Add token for justification PATCH API
+    if (
+      method === "patch" &&
+      url.includes("/history/") && url.endsWith("/justification")
+    ) {
+      return true;
+    }
+
+    // Add token for all POST, PUT and DELETE requests
+    if (
+      url.startsWith(this.apiUrl) &&
+      (method === "post" || method === "put" || method === "delete")
+    ) {
+      return true;
+    }
+
+    return false;
   }
 }
