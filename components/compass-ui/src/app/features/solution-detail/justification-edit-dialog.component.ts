@@ -16,15 +16,15 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
       [closable]="false"
       [style]="{ width: '500px' }"
       [baseZIndex]="1100"
-      [contentStyle]="{ 'text-align': 'center' }"
+      [contentStyle]="{ 'text-align': 'center', 'min-height': '120px' }"
       [draggable]="false"
       [resizable]="false"
       [dismissableMask]="true"
       [showHeader]="true"
       header="Edit Justification"
     >
-      <div style="margin-bottom: 1rem;">
-        <textarea id="justification" pInputTextarea [(ngModel)]="justification" [rows]="4" [autoResize]="true" style="width: 100%; margin-top: 0.5rem;" placeholder="Enter justification..."></textarea>
+      <div style="margin-bottom: 0.5rem; width: 100%;">
+        <textarea id="justification" pInputTextarea [(ngModel)]="justification" [rows]="4" style="width: 100%; margin-top: 0.5rem; min-height: 80px; resize: vertical;" placeholder="Enter justification..."></textarea>
       </div>
       <ng-template pTemplate="footer">
         <button pButton label="Cancel" class="p-button-text" (click)="cancel()"></button>
