@@ -2,12 +2,13 @@ import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
-from app.core.mongodb import close_mongo_connection, connect_to_mongo
-from app.routers import api_router
-from app.services.user_service import UserService
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+
+from app.core.mongodb import connect_to_mongo, close_mongo_connection
+from app.routers import api_router
+from app.services.user_service import UserService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
