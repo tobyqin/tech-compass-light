@@ -51,7 +51,7 @@ class TechRadarService:
             if category.radar_quadrant < 0:
                 continue
 
-            # 判断逻辑：优先 recommen_status_updated_at，其次 created_at
+            # Logic: prioritize recommen_status_updated_at, then created_at
             is_new_or_recommend_status_changed = False
             now = datetime.utcnow()
             rs_updated_at = solution.get("recommen_status_updated_at")
