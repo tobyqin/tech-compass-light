@@ -211,3 +211,23 @@ class HistoryService:
         history_record["_id"] = str(result.inserted_id)
 
         return HistoryRecord(**history_record)
+
+    async def update_justification(self, history_id: str, field_name: str, justification: str) -> bool:
+        """
+        Update the justification for a specific field in a history record.
+
+        Args:
+            history_id: The ID of the history record
+            field_name: The field name to update justification for
+            justification: The new justification text
+
+        Returns:
+            True if updated, False otherwise
+        """
+        from bson import ObjectId
+
+        result = await self.collection.update_one(
+            {"_id": ObjectId(history_id), "changed_fields.field_name": field_name},
+            {"$set": {"changed_fields.$.status_change_justification": justification, "updated_at": datetime.utcnow()}},
+        )
+        return result.modified_count > 0
