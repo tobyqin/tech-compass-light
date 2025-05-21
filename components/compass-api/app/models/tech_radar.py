@@ -17,6 +17,9 @@ class TechRadarEntry(BaseModel):
     link: str = Field(..., description="Link to solution detail page")
     active: bool = Field(True, description="Whether the solution is approved")
     moved: int = Field(default=0, description="Movement indicator (always 0)")
+    is_new_or_recommend_status_changed: bool = Field(
+        default=False, description="Whether the solution is new or has recommend_status changes in the last 14 days"
+    )
 
 
 class TechRadarData(BaseModel):

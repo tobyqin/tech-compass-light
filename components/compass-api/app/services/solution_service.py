@@ -383,13 +383,19 @@ class SolutionService:
         # Process common update operations
         await self._process_solution_update(update_dict, username, existing_solution)
 
+        # Update timestamp if recommend_status changes
+        if "recommend_status" in update_dict and update_dict["recommend_status"] != getattr(
+            existing_solution, "recommend_status"
+        ):
+            update_dict["recommen_status_updated_at"] = datetime.utcnow()
+
         result = await self.collection.update_one({"_id": existing_solution.id}, {"$set": update_dict})
         if result.modified_count:
             updated_solution = await self.get_solution_by_id(str(existing_solution.id))
 
             # Record history
             if updated_solution:
-                # remove fields that don't need to be tracked in history
+                # Remove fields that don't need to be tracked in history
                 history_update_dict = {
                     k: v for k, v in update_dict.items() if k not in ["slug", "updated_at", "updated_by"]
                 }
