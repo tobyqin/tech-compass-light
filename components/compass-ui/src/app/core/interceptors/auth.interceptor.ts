@@ -53,18 +53,10 @@ export class AuthInterceptor implements HttpInterceptor {
       return true;
     }
 
-    // Add token for justification PATCH API
-    if (
-      method === "patch" &&
-      url.includes("/history/") && url.endsWith("/justification")
-    ) {
-      return true;
-    }
-
-    // Add token for all POST, PUT and DELETE requests
+    // Add token for all POST, PUT, PATCH, DELETE requests
     if (
       url.startsWith(this.apiUrl) &&
-      (method === "post" || method === "put" || method === "delete")
+      (method === "post" || method === "put" || method === "delete" || method === "patch")
     ) {
       return true;
     }
