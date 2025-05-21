@@ -62,4 +62,16 @@ export class HistoryService {
       { params: httpParams }
     );
   }
+
+  updateJustification(
+    slug: string,
+    historyId: string,
+    fieldName: string,
+    justification: string
+  ): Observable<any> {
+    return this.http.patch(
+      `${environment.apiUrl}/solutions/${slug}/history/${historyId}/justification`,
+      { field_name: fieldName, justification }
+    );
+  }
 }

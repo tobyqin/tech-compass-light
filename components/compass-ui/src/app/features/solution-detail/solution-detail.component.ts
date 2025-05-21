@@ -5,7 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { DialogService } from "primeng/dynamicdialog";
-import { BehaviorSubject, Subject, finalize, takeUntil } from "rxjs";
+import { BehaviorSubject, Subject, finalize, take, takeUntil } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoginDialogComponent } from "../../core/components/login-dialog/login-dialog.component";
 import { AssetService } from '../../core/services/asset.service';
@@ -40,6 +40,7 @@ import { TooltipModule } from "primeng/tooltip";
 
 // Markdown
 import { MarkdownModule } from "ngx-markdown";
+import { JustificationEditDialogComponent } from './justification-edit-dialog.component';
 
 type Severity =
   | "success"
@@ -73,6 +74,7 @@ type Severity =
     TooltipModule,
     MarkdownModule,
     TableModule,
+    JustificationEditDialogComponent,
   ],
   providers: [DialogService],
 })
@@ -139,6 +141,13 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
 
   environment = environment;
 
+  isAdmin = false;
+
+  showJustificationDialog = false;
+  justificationDialogValue = '';
+  justificationDialogRecord: HistoryRecord | null = null;
+  justificationDialogField: any = null;
+
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -165,6 +174,10 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
 
     this.authService.currentUser$.subscribe((user) => {
       this.isLoggedIn = !!user;
+    });
+
+    this.authService.currentUser$.pipe(take(1)).subscribe(user => {
+      this.isAdmin = user?.is_superuser || false;
     });
   }
 
@@ -536,17 +549,20 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
+          const records = (response.data || []).map((rec: any) => ({
+            ...rec,
+            id: rec.id || rec._id
+          }));
           if (loadMore) {
-            this.history$.next([...this.history$.getValue(), ...response.data]);
+            this.history$.next([...this.history$.getValue(), ...records]);
           } else {
-            this.history$.next(response.data);
+            this.history$.next(records);
           }
           this.totalHistory = response.total;
           this.hasMoreHistory =
             this.history$.getValue().length < response.total;
         },
         error: (error) => {
-          console.error("Error loading history:", error);
           this.messageService.add({
             severity: "error",
             summary: "Error",
@@ -622,5 +638,40 @@ export class SolutionDetailComponent implements OnInit, OnDestroy {
         detail: 'Failed to copy to clipboard'
       });
     });
+  }
+
+  editJustification(record: HistoryRecord, field: any) {
+    if (!this.isAdmin) return;
+    this.justificationDialogValue = field.status_change_justification || '';
+    this.justificationDialogRecord = record;
+    this.justificationDialogField = field;
+    this.showJustificationDialog = true;
+  }
+
+  onJustificationDialogConfirm(newJustification: string) {
+    if (!this.justificationDialogRecord || !this.justificationDialogField) return;
+    this.historyService.updateJustification(
+      this.solution$.value?.slug || '',
+      this.justificationDialogRecord.id,
+      this.justificationDialogField.field_name,
+      newJustification
+    ).subscribe({
+      next: () => {
+        this.loadHistory(this.solution$.value?.slug || '', false);
+        this.showJustificationDialog = false;
+      },
+      error: err => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.error?.detail || 'Failed to update justification'
+        });
+        this.showJustificationDialog = false;
+      }
+    });
+  }
+
+  onJustificationDialogCancel() {
+    this.showJustificationDialog = false;
   }
 }
