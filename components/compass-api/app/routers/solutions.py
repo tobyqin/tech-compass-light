@@ -462,26 +462,25 @@ async def update_history_justification(
     history_id: str,
     field_name: str = Body(..., embed=True),
     justification: str = Body(..., embed=True),
-    current_user: User = Depends(get_current_superuser),  # 只允许admin
     history_service: HistoryService = Depends(),
     solution_service: SolutionService = Depends(),
 ):
     """
     Update justification for a specific field in a history record.
     """
-    # 校验 solution 存在
+    # Verify that the solution exists
     solution = await solution_service.get_solution_by_slug(slug)
     if not solution:
         raise HTTPException(status_code=404, detail="Solution not found")
 
-    # 校验 history 属于该 solution
+    # Verify that the history belongs to the solution
     from bson import ObjectId
 
     record = await history_service.collection.find_one({"_id": ObjectId(history_id), "object_id": str(solution.id)})
     if not record:
         raise HTTPException(status_code=404, detail="History record not found")
 
-    # 更新 justification
+    # Update justification
     updated = await history_service.update_justification(history_id, field_name, justification)
     if not updated:
         raise HTTPException(status_code=400, detail="Failed to update justification")
