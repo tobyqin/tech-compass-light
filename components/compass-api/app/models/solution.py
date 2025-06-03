@@ -164,6 +164,7 @@ class SolutionUpdate(BaseModel):
     review_status: Optional[ReviewStatusEnum] = None
     replaced_by: Optional[str] = None
     status_change_justifications: Optional[Dict[str, str]] = None
+    group: Optional[str] = None
 
 
 class SolutionInDB(SolutionInDBBase, AuditModel):
