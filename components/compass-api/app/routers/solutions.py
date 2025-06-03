@@ -473,7 +473,7 @@ async def update_history_justification(
     if not solution:
         raise HTTPException(status_code=404, detail="Solution not found")
 
-    # Verify that the history belongs to the solution
+    # Verify that history belongs to the solution
     from bson import ObjectId
 
     record = await history_service.collection.find_one({"_id": ObjectId(history_id), "object_id": str(solution.id)})
