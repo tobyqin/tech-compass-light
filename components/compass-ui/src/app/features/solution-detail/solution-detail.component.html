@@ -97,6 +97,7 @@
                       <tr>
                         <th>Date</th>
                         <th>Field</th>
+                        <th>Justification</th>
                         <th>Old Value</th>
                         <th>New Value</th>
                         <th>Changed By</th>
@@ -107,6 +108,17 @@
                         <tr *ngIf="field.field_name === 'recommend_status' || field.field_name === 'review_status'">
                           <td>{{ record.created_at | date:'medium' }}</td>
                           <td>{{ getFieldDisplayName(field.field_name) }}</td>
+                          <td>
+                            <span
+                              [pTooltip]="field.status_change_justification"
+                              tooltipPosition="top"
+                              class="justification-ellipsis"
+                            >
+                              {{ field.status_change_justification ? (field.status_change_justification.length > 15 ? (field.status_change_justification | slice:0:15) + '...' : field.status_change_justification) : 'No justification provided' }}
+                            </span>
+                            <button *ngIf="isAdmin" pButton icon="pi pi-pencil" class="p-button-text p-button-sm"
+                              (click)="editJustification(record, field)" pTooltip="Edit Justification"></button>
+                          </td>
                           <td>
                             <p-tag *ngIf="field.field_name === 'recommend_status'"
                               [value]="formatValue(field.old_value)"
@@ -271,3 +283,10 @@
 </div>
 
 <p-toast></p-toast>
+
+<app-justification-edit-dialog
+  [visible]="showJustificationDialog"
+  [justification]="justificationDialogValue"
+  (confirmEvent)="onJustificationDialogConfirm($event)"
+  (cancelEvent)="onJustificationDialogCancel()"
+></app-justification-edit-dialog>

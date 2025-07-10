@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from app.models import AuditModel
 from pydantic import BaseModel, Field
@@ -121,6 +121,9 @@ class SolutionInDBBase(SolutionBase):
     """Base model for database solutions with review status"""
 
     review_status: ReviewStatusEnum = Field(default="PENDING", description="Review status (PENDING/APPROVED/REJECTED)")
+    status_change_justifications: Optional[Dict[str, str]] = Field(
+        default=None, description="Justifications for status changes"
+    )
 
 
 class SolutionUpdate(BaseModel):
@@ -160,6 +163,8 @@ class SolutionUpdate(BaseModel):
     recommend_status: Optional[RecommendStatusEnum] = None
     review_status: Optional[ReviewStatusEnum] = None
     replaced_by: Optional[str] = None
+    status_change_justifications: Optional[Dict[str, str]] = None
+    group: Optional[str] = None
 
 
 class SolutionInDB(SolutionInDBBase, AuditModel):

@@ -936,3 +936,13 @@
     color: var(--text-color-secondary);
   }
 }
+
+.justification-ellipsis {
+  display: inline-block;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  cursor: pointer;
+}

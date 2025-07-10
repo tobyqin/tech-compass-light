@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -11,6 +11,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { take } from "rxjs/operators";
 import { AuthService } from "../../../core/services/auth.service";
+import { StatusChangeDialogComponent } from './status-change-dialog.component';
 
 import { ButtonModule } from "primeng/button";
 import { ChipsModule } from "primeng/chips";
@@ -44,10 +45,13 @@ import { Solution } from "../../../shared/interfaces/solution.interface";
     InputTextareaModule,
     InputNumberModule,
     MessagesModule,
+    StatusChangeDialogComponent
   ],
-  providers: [MessageService],
+  providers: [MessageService]
 })
 export class EditSolutionComponent implements OnInit {
+  @ViewChild('statusChangeDialog') statusChangeDialog!: StatusChangeDialogComponent;
+
   categories: { name: string }[] = [];
   departments: string[] = [];
   groups: Group[] = [];
@@ -97,6 +101,69 @@ export class EditSolutionComponent implements OnInit {
   ];
 
   solutionForm: FormGroup;
+
+  private pendingStatusChanges: {
+    field: string;
+    oldValue: string;
+    newValue: string;
+    justification: string;
+  }[] = [];
+
+  private initStatusChangeTracking() {
+    const recommendStatusControl = this.solutionForm.get('recommend_status');
+    const reviewStatusControl = this.solutionForm.get('review_status');
+
+    // Store original values
+    let originalRecommendStatus = recommendStatusControl?.value;
+    let originalReviewStatus = reviewStatusControl?.value;
+
+    recommendStatusControl?.valueChanges.subscribe(async (newValue) => {
+      if (newValue !== originalRecommendStatus) {
+        try {
+          const justification = await this.statusChangeDialog.show('Recommend Status', originalRecommendStatus, newValue);
+          // Find and remove any existing recommend_status change
+          this.pendingStatusChanges = this.pendingStatusChanges.filter(change => change.field !== 'recommend_status');
+          // Add the new change
+          this.pendingStatusChanges.push({
+            field: 'recommend_status',
+            oldValue: originalRecommendStatus,
+            newValue,
+            justification
+          });
+          originalRecommendStatus = newValue;
+        } catch {
+          // If dialog is cancelled, revert the value
+          recommendStatusControl?.setValue(originalRecommendStatus, { emitEvent: false });
+        }
+      }
+    });
+
+    reviewStatusControl?.valueChanges.subscribe(async (newValue) => {
+      if (newValue !== originalReviewStatus) {
+        try {
+          const justification = await this.statusChangeDialog.show('Review Status', originalReviewStatus, newValue);
+          // Find and remove any existing review_status change
+          this.pendingStatusChanges = this.pendingStatusChanges.filter(change => change.field !== 'review_status');
+          // Add the new change
+          this.pendingStatusChanges.push({
+            field: 'review_status',
+            oldValue: originalReviewStatus,
+            newValue,
+            justification
+          });
+          originalReviewStatus = newValue;
+        } catch {
+          // If dialog is cancelled, revert the value
+          reviewStatusControl?.setValue(originalReviewStatus, { emitEvent: false });
+        }
+      }
+    });
+  }
+
+  private initialFormValues: {
+    recommend_status: string | null;
+    review_status: string | null;
+  } | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -213,6 +280,18 @@ export class EditSolutionComponent implements OnInit {
             cons: response.data.cons?.join("\n") || "",
           };
           this.solutionForm.patchValue(formValue);
+          
+          // Store initial values after form is populated
+          this.initialFormValues = {
+            recommend_status: formValue.recommend_status || null,
+            review_status: formValue.review_status || null
+          };
+          
+          // Initialize status change tracking after form is populated
+          setTimeout(() => {
+            this.initStatusChangeTracking();
+          });
+          
           this.loading = false;
         } else {
           this.messageService.add({
@@ -233,6 +312,14 @@ export class EditSolutionComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  private hasStatusChanged(): boolean {
+    if (!this.initialFormValues) return false;
+    const currentRecommendStatus = this.solutionForm.get('recommend_status')?.value;
+    const currentReviewStatus = this.solutionForm.get('review_status')?.value;
+    return currentRecommendStatus !== this.initialFormValues.recommend_status || 
+           currentReviewStatus !== this.initialFormValues.review_status;
   }
 
   onSubmit() {
@@ -263,7 +350,13 @@ export class EditSolutionComponent implements OnInit {
         };
       }
 
-      this.solutionService.updateSolution(this.slug, solutionData).subscribe({
+      // Create headers object for status change justifications
+      const headers: { [key: string]: string } = {};
+      this.pendingStatusChanges.forEach(change => {
+        headers[`X-Status-Change-Justification-${change.field}`] = change.justification;
+      });
+
+      this.solutionService.updateSolution(this.slug, solutionData, headers).subscribe({
         next: (response) => {
           if (response.success) {
             this.messageService.add({
@@ -272,6 +365,8 @@ export class EditSolutionComponent implements OnInit {
               detail: "Solution updated successfully",
               life: 3000,
             });
+            // Reset pending status changes after successful update
+            this.pendingStatusChanges = [];
           } else {
             this.messageService.add({
               severity: "error",

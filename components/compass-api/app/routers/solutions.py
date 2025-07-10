@@ -11,7 +11,7 @@ from app.services.history_service import HistoryService
 from app.services.rating_service import RatingService
 from app.services.solution_service import SolutionService
 from app.services.user_service import UserService
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from fastapi.responses import Response
 
 logger = logging.getLogger(__name__)
@@ -242,7 +242,12 @@ async def update_solution(
                 detail="Only superusers can modify the review status",
             )
 
-        solution_in_db = await solution_service.update_solution_by_slug(slug, solution_update, current_user.username)
+        # Get status change justifications from the request body
+        status_change_justifications = solution_update.status_change_justifications or {}
+
+        solution_in_db = await solution_service.update_solution_by_slug(
+            slug, solution_update, current_user.username, status_change_justifications=status_change_justifications
+        )
         return StandardResponse.of(solution_in_db)
     except HTTPException as e:
         raise e
@@ -449,3 +454,35 @@ async def get_solution_by_name(
     except Exception as e:
         logger.error(f"Error getting solution by name: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error getting solution by name: {str(e)}")
+
+
+@router.patch("/{slug}/history/{history_id}/justification")
+async def update_history_justification(
+    slug: str,
+    history_id: str,
+    field_name: str = Body(..., embed=True),
+    justification: str = Body(..., embed=True),
+    history_service: HistoryService = Depends(),
+    solution_service: SolutionService = Depends(),
+):
+    """
+    Update justification for a specific field in a history record.
+    """
+    # Verify that the solution exists
+    solution = await solution_service.get_solution_by_slug(slug)
+    if not solution:
+        raise HTTPException(status_code=404, detail="Solution not found")
+
+    # Verify that history belongs to the solution
+    from bson import ObjectId
+
+    record = await history_service.collection.find_one({"_id": ObjectId(history_id), "object_id": str(solution.id)})
+    if not record:
+        raise HTTPException(status_code=404, detail="History record not found")
+
+    # Update justification
+    updated = await history_service.update_justification(history_id, field_name, justification)
+    if not updated:
+        raise HTTPException(status_code=400, detail="Failed to update justification")
+
+    return {"success": True}

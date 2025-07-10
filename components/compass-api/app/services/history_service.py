@@ -1,7 +1,8 @@
-from typing import Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from app.core.database import get_database
-from app.models.history import ChangeType, HistoryQuery, HistoryRecord
+from app.models.history import ChangedField, ChangeType, HistoryQuery, HistoryRecord
 from bson.objectid import ObjectId
 from pymongo import DESCENDING
 
@@ -86,14 +87,43 @@ class HistoryService:
         # Convert to HistoryRecord objects
         records = []
         async for record in cursor:
-            # Convert _id from ObjectId to string
-            if "_id" in record and isinstance(record["_id"], ObjectId):
-                record["_id"] = str(record["_id"])
+            try:
+                # Convert _id from ObjectId to string
+                if "_id" in record and isinstance(record["_id"], ObjectId):
+                    record["_id"] = str(record["_id"])
 
-            # Recursively convert any nested ObjectId fields to strings
-            self._convert_objectids(record)
+                # Recursively convert any nested ObjectId fields to strings
+                self._convert_objectids(record)
 
-            records.append(HistoryRecord(**record))
+                # Handle missing updated_by/updated_at fields for backward compatibility
+                if "updated_by" not in record:
+                    record["updated_by"] = record.get("created_by", "system")
+                if "updated_at" not in record:
+                    record["updated_at"] = record.get("created_at", datetime.utcnow())
+
+                # Convert change_type to lowercase for enum compatibility
+                if "change_type" in record and isinstance(record["change_type"], str):
+                    record["change_type"] = record["change_type"].lower()
+
+                # Convert changed_fields to proper format if needed
+                if "changed_fields" in record:
+                    changed_fields = []
+                    for field in record["changed_fields"]:
+                        if isinstance(field, dict):
+                            # Ensure the field has all required attributes
+                            field_data = {
+                                "field_name": field.get("field_name"),
+                                "old_value": field.get("old_value"),
+                                "new_value": field.get("new_value"),
+                                "status_change_justification": field.get("status_change_justification"),
+                            }
+                            changed_fields.append(field_data)
+                    record["changed_fields"] = changed_fields
+
+                records.append(HistoryRecord(**record))
+            except Exception as e:
+                logger.error(f"Error processing history record: {str(e)}, Record: {record}")
+                continue
 
         return records, total
 
@@ -143,34 +173,61 @@ class HistoryService:
         object_name: str,
         change_type: ChangeType,
         username: str,
-        changes: Optional[Dict] = None,
-        old_values: Optional[Dict] = None,
+        changed_fields: List[Dict[str, Any]],
         change_summary: Optional[str] = None,
-    ) -> str:
-        """
-        Record a change to an object
+    ) -> HistoryRecord:
+        """Record a change to an object in the history collection.
 
         Args:
-            object_type: Type of object
-            object_id: ID of the object
-            object_name: Name of the object
-            change_type: Type of change
-            username: Username who made the change
-            changes: Dictionary of changed fields and their new values
-            old_values: Dictionary of old values for the changed fields
-            change_summary: Optional summary of changes
+            object_type: Type of object being changed (e.g., "solution", "category")
+            object_id: ID of the object being changed
+            object_name: Name of the object for easy reference
+            change_type: Type of change (create, update, delete)
+            username: Username of the user making the change
+            changed_fields: List of changed fields with their old and new values
+            change_summary: Optional summary of the changes
 
         Returns:
-            The ID of the created history record
+            The created history record
         """
-        record = HistoryRecord.create_record(
-            object_type=object_type,
-            object_id=object_id,
-            object_name=object_name,
-            change_type=change_type,
-            username=username,
-            changes=changes,
-            old_values=old_values,
-            change_summary=change_summary,
+        now = datetime.utcnow()
+
+        # Create history record
+        history_record = {
+            "object_type": object_type,
+            "object_id": object_id,
+            "object_name": object_name,
+            "change_type": change_type,
+            "changed_fields": [ChangedField(**field).model_dump() for field in changed_fields],
+            "change_summary": change_summary,
+            "created_at": now,
+            "created_by": username,
+            "updated_at": now,
+            "updated_by": username,
+        }
+
+        # Insert into database
+        result = await self.collection.insert_one(history_record)
+        history_record["_id"] = str(result.inserted_id)
+
+        return HistoryRecord(**history_record)
+
+    async def update_justification(self, history_id: str, field_name: str, justification: str) -> bool:
+        """
+        Update the justification for a specific field in a history record.
+
+        Args:
+            history_id: The ID of the history record
+            field_name: The field name to update justification for
+            justification: The new justification text
+
+        Returns:
+            True if updated, False otherwise
+        """
+        from bson import ObjectId
+
+        result = await self.collection.update_one(
+            {"_id": ObjectId(history_id), "changed_fields.field_name": field_name},
+            {"$set": {"changed_fields.$.status_change_justification": justification, "updated_at": datetime.utcnow()}},
         )
-        return await self.create_history_record(record)
+        return result.modified_count > 0

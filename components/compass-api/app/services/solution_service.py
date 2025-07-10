@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from app.core.database import get_database
 from app.models.history import ChangeType
@@ -254,14 +254,15 @@ class SolutionService:
 
         # Record history for creation
         if created_solution:
+            changed_fields = [{"field_name": k, "old_value": None, "new_value": v} for k, v in solution_dict.items()]
             await self.history_service.record_object_change(
                 object_type="solution",
                 object_id=str(result.inserted_id),
                 object_name=created_solution.name,
                 change_type=ChangeType.CREATE,
                 username=username or "system",
-                changes=solution_dict,
-                old_values=None,
+                changed_fields=changed_fields,
+                change_summary=f"Created solution '{created_solution.name}'",
             )
 
         return created_solution
@@ -352,6 +353,7 @@ class SolutionService:
         existing_solution: SolutionInDB,
         solution_update: SolutionUpdate,
         username: Optional[str] = None,
+        status_change_justifications: Optional[Dict[str, str]] = None,
     ) -> Optional[SolutionInDB]:
         """Update a solution
 
@@ -359,6 +361,7 @@ class SolutionService:
             existing_solution: The existing solution to update
             solution_update: The update data
             username: The username of the user making the update
+            status_change_justifications: Optional dictionary mapping field names to their justifications
 
         Returns:
             Updated solution if successful, None otherwise
@@ -373,8 +376,18 @@ class SolutionService:
             base_slug = generate_slug(update_dict["name"])
             update_dict["slug"] = await self.ensure_unique_slug(base_slug, str(existing_solution.id))
 
+        # Add status change justifications to update_dict if provided
+        if status_change_justifications:
+            update_dict["status_change_justifications"] = status_change_justifications
+
         # Process common update operations
         await self._process_solution_update(update_dict, username, existing_solution)
+
+        # Update timestamp if recommend_status changes
+        if "recommend_status" in update_dict and update_dict["recommend_status"] != getattr(
+            existing_solution, "recommend_status"
+        ):
+            update_dict["recommen_status_updated_at"] = datetime.utcnow()
 
         result = await self.collection.update_one({"_id": existing_solution.id}, {"$set": update_dict})
         if result.modified_count:
@@ -382,34 +395,64 @@ class SolutionService:
 
             # Record history
             if updated_solution:
-                # remove field: slug, updated_at, updated_by
-                update_dict.pop("slug", None)
-                update_dict.pop("updated_at", None)
-                update_dict.pop("updated_by", None)
+                # Remove fields that don't need to be tracked in history
+                history_update_dict = {
+                    k: v for k, v in update_dict.items() if k not in ["slug", "updated_at", "updated_by"]
+                }
 
-                # record change if update_dict is not empty
-                if update_dict:
-                    await self.history_service.record_object_change(
-                        object_type="solution",
-                        object_id=str(existing_solution.id),
-                        object_name=updated_solution.name,
-                        change_type=ChangeType.UPDATE,
-                        username=username or "system",
-                        changes=update_dict,
-                        old_values=old_values,
-                    )
+                # Record changes if there are any
+                if history_update_dict:
+                    changed_fields = []
+                    for field_name, new_value in history_update_dict.items():
+                        if field_name == "status_change_justifications":
+                            continue  # Skip this field for history tracking
+                        old_value = old_values.get(field_name)
+                        if old_value != new_value:
+                            field_data = {
+                                "field_name": field_name,
+                                "old_value": old_value,
+                                "new_value": new_value,
+                            }
+
+                            # Add status_change_justification for status fields if provided
+                            if field_name in ["recommend_status", "review_status"] and status_change_justifications:
+                                field_data["status_change_justification"] = status_change_justifications.get(field_name)
+
+                            changed_fields.append(field_data)
+
+                    if changed_fields:
+                        # Determine if any status fields were changed
+                        has_status_change = any(
+                            field["field_name"] in ["recommend_status", "review_status"] for field in changed_fields
+                        )
+
+                        await self.history_service.record_object_change(
+                            object_type="solution",
+                            object_id=str(existing_solution.id),
+                            object_name=updated_solution.name,
+                            change_type=ChangeType.UPDATE,
+                            username=username or "system",
+                            changed_fields=changed_fields,
+                            change_summary="Status changed" if has_status_change else None,
+                        )
 
             return updated_solution
         return None
 
     async def update_solution_by_slug(
-        self, slug: str, solution_update: SolutionUpdate, username: Optional[str] = None
+        self,
+        slug: str,
+        solution_update: SolutionUpdate,
+        username: Optional[str] = None,
+        status_change_justifications: Optional[Dict[str, str]] = None,
     ) -> Optional[SolutionInDB]:
         """Update a solution by slug"""
         solution = await self.get_solution_by_slug(slug)
         if not solution:
             return None
-        return await self.update_solution(solution, solution_update, username)
+        return await self.update_solution(
+            solution, solution_update, username, status_change_justifications=status_change_justifications
+        )
 
     async def delete_solution(self, solution_id: str, username: Optional[str] = None) -> bool:
         """Delete a solution"""

@@ -26,6 +26,7 @@ interface TechRadarEntry {
   link: string; // Technology link
   active: boolean; // Active status
   moved: number; // Movement status
+  is_new_or_recommend_status_changed?: boolean;
 }
 
 interface TechRadarData {
@@ -327,6 +328,7 @@ export class TechRadarComponent implements OnInit, OnDestroy {
       link: String(entry.link),
       active: Boolean(entry.active),
       moved: Number(entry.moved),
+      is_new_or_recommend_status_changed: Boolean(entry.is_new_or_recommend_status_changed),
     };
   }
 

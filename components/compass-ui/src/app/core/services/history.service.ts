@@ -18,6 +18,7 @@ export interface HistoryRecord {
   change_type: "create" | "update" | "delete";
   changed_fields: ChangeField[];
   change_summary: string;
+  status_change_justification: string;
   created_at: string;
   created_by: string;
   updated_at: string;
@@ -59,6 +60,18 @@ export class HistoryService {
     return this.http.get<StandardResponse<HistoryRecord[]>>(
       `${this.apiUrl}/solutions/${slug}/history`,
       { params: httpParams }
+    );
+  }
+
+  updateJustification(
+    slug: string,
+    historyId: string,
+    fieldName: string,
+    justification: string
+  ): Observable<any> {
+    return this.http.patch(
+      `${environment.apiUrl}/solutions/${slug}/history/${historyId}/justification`,
+      { field_name: fieldName, justification }
     );
   }
 }
