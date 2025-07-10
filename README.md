@@ -194,6 +194,10 @@ cd components/compass-ui
 ng test
 ```
 
+## ✨ IDE
+
+This project is created by [PyCharm](https://www.jetbrains.com/pycharm/).
+
 ## 🤝 Contributing
 
 We welcome contributions! Please search existing issues before creating new ones. For code contributions, fork the repo, make your changes with tests, and submit a PR.
